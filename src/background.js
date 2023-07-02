@@ -80,7 +80,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 				res.end("错误404");
 			} else {
 				if (stats.isDirectory()) {
-					res.end("这是一个目录");
 					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
 						if (err) {
 							res.statusCode = 500;
@@ -98,7 +97,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 					stream.pipe(res);
 				}
 			}
-		})
+		});
 	});
 
 	server.listen(sharePort, () => {

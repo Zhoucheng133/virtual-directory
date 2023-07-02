@@ -62,7 +62,8 @@ if (isDevelopment) {
 	}
 }
 
-let server
+let server;
+var sockets = [];
 
 // 打开服务器函数
 ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
@@ -100,16 +101,26 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 		});
 	});
 
+	server.on("connection", function (socket) {
+		sockets.push(socket);
+		socket.once("close", function () {
+			sockets.splice(sockets.indexOf(socket), 1);
+		});
+	});	  
+
 	server.listen(sharePort, () => {
 		event.reply('serverOnResponse', 'Success');
 	});
 });
 
 // 关闭服务器函数
-ipcMain.on("serverOff",async (event)=>{
-	try {
+ipcMain.on("serverOff", async (event) => {
+	sockets.forEach(function(socket){
+		socket.destroy();
+	});
+	if (server) {
 		server.close();
-	} catch (error) {
+	} else {
 		event.reply('serverOffResponse', 'Error');
 	}
 	event.reply('serverOffResponse', 'Success');

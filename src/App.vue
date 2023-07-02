@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
-		<button @click="test">测试按钮</button>
+		<button @click="serverOn">启动测试按钮</button>
+		<button @click="serverOff">关闭测试按钮</button>
 	</div>
 </template>
 
@@ -8,8 +9,11 @@
 import { ipcRenderer } from 'electron';
 export default {
 	methods: {
-		test(){
+		serverOn(){
 			ipcRenderer.send('serverOn', "/Users/zhoucheng/Desktop/",4040);
+		},
+		serverOff(){
+			ipcRenderer.send('serverOff');
 		}
 	},
 }

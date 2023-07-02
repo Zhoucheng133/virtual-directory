@@ -64,24 +64,36 @@ if (isDevelopment) {
 
 let server
 
+// 打开服务器函数
 ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 	// 获取依赖
 	const http = require('http');
 	const fs = require('fs');
 	const path = require('path');
-	
-	server = http.createServer((req, res) => {
-		const reqPath=path.join(sharePath,decodeURIComponent(req.url));
 
-		fs.stat(reqPath,(err,stats)=>{
-			if(err){
-				res.statusCode=404;
+	server = http.createServer((req, res) => {
+		const reqPath = path.join(sharePath, decodeURIComponent(req.url));
+
+		fs.stat(reqPath, (err, stats) => {
+			if (err) {
+				res.statusCode = 404;
 				res.end("错误404");
-			}else{
-				if(stats.isDirectory()){
+			} else {
+				if (stats.isDirectory()) {
 					res.end("这是一个目录");
-				}else{
-					const stream=fs.createReadStream(reqPath);
+					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
+						if (err) {
+							res.statusCode = 500;
+							res.end("NO FILE!");
+							return;
+						} else {
+							res.setHeader('Content-Type', 'text/html; charset=utf-8');
+							res.end(data);
+							return;
+						}
+					});
+				} else {
+					const stream = fs.createReadStream(reqPath);
 					res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(path.basename(reqPath))}"`);
 					stream.pipe(res);
 				}
@@ -89,11 +101,12 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 		})
 	});
 
-	server.listen(sharePort,()=>{
+	server.listen(sharePort, () => {
 		event.reply('serverOnResponse', 'Success');
 	});
 });
 
+// 关闭服务器函数
 ipcMain.on("serverOff",async (event)=>{
 	try {
 		server.close();

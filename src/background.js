@@ -78,18 +78,59 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
 				res.statusCode = 404;
-				res.end("错误404");
+				fs.readFile("src/components/Error404.html", "utf8", (err, data) => {
+					if (err) {
+						res.statusCode = 500;
+						res.end("NO FILE!");
+						return;
+					} else {
+						res.setHeader('Content-Type', 'text/html; charset=utf-8');
+						res.end(data);
+						return;
+					}
+				});
 			} else {
 				if (stats.isDirectory()) {
 					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
 						if (err) {
-							res.statusCode = 500;
-							res.end("NO FILE!");
-							return;
+							fs.readFile("src/components/Error404.html", "utf8", (err, data) => {
+								if (err) {
+									res.statusCode = 500;
+									res.end("NO FILE!");
+									return;
+								} else {
+									res.setHeader('Content-Type', 'text/html; charset=utf-8');
+									res.end(data);
+									return;
+								}
+							});
 						} else {
 							res.setHeader('Content-Type', 'text/html; charset=utf-8');
-							const modifiedHTML = data.replace('{reqPath}', reqPath);
-							res.end(modifiedHTML);
+
+							fs.readdir(reqPath, (err, files) => {
+								if (err) {
+									res.statusCode = 500;
+									res.end('连接错误');
+								} else {
+									var dirList=[];
+									files.forEach(file => {
+										const filePath = path.join(reqPath, file);
+										const stats = fs.statSync(filePath);
+										if (stats.isFile()) {
+											// console.log('File:', filePath);
+											dirList.push({"type":"file","name":file});
+										} else if (stats.isDirectory()) {
+											// console.log('Directory:', filePath);
+											dirList.push({"type":"dir","name":file})
+										}
+									});
+
+									const modifiedHTML = data.replace('<!--DIRLIST_JSON-->', JSON.stringify(dirList));
+									console.log(dirList);
+
+									res.end(modifiedHTML);
+								}
+							});
 							return;
 						}
 					});

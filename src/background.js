@@ -127,7 +127,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										dirList.push({"type":"dir","name":file})
 									}
 								});
-								console.log(dirList);
 
 								res.end(`
 								<!DOCTYPE html>
@@ -237,6 +236,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										display: flex;
 										text-align: left;
 										font-size: 26px;
+										margin-bottom: 10px;
 									}
 									.backFolder_style:hover{
 										color: rgb(255, 150, 0);

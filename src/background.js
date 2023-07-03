@@ -356,6 +356,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								</script>
 
 								<style>
+									.title{
+										margin-top:20px;
+									}
 									table{
 										transition: all ease-in-out .2s;
 									}
@@ -390,10 +393,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										padding: 5px 5px 5px 5px;
 									}
 									#app {
-										padding-top: 20px;
 										padding-left: 20px;
 										padding-right: 20px;
-										padding-bottom: 20px;
 										user-select: none;
 										font-family: Avenir, Helvetica, Arial, sans-serif;
 										-webkit-font-smoothing: antialiased;

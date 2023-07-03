@@ -145,6 +145,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								<body>
 									<div id="app">
 										<table>
+											<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
+												<td><i class="el-icon-folder mainIcon"></i></td>
+												<td>../</td>
+												<td>上一层</td>
+											</tr>
 											<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
 												<td width="30px">
 													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
@@ -168,13 +173,21 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 											list: ${JSON.stringify(dirList)}
 										},
 										methods: {
+											getPath(){
+												return  window.location.pathname;
+											},
 											backFolder(){
 												const currentURL = window.location.href;
 												const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
 												window.location.href = parentURL;
 											},
 											isRoot(){
-												return window.location.origin==window.location.href?true:false;
+												if(window.location.origin==window.location.href){
+													return true;
+												}else if(window.location.origin+'/'==window.location.href){
+													return true;
+												}
+												return false;
 											},
 											linkTO(item){
 												var nowURL=window.location.href;
@@ -210,6 +223,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								</script>
 								
 								<style>
+									.backFolder_style:hover{
+										color: rgb(255, 150, 0);
+										cursor: pointer;
+									}
+									.backFolder_style{
+										color: rgb(165, 165, 165);
+										transition: all ease-in-out .2s;
+									}
 									tr{
 										transition: all ease-in-out .2s;
 									}

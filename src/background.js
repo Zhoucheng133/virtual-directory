@@ -85,17 +85,83 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
 				res.end(`
-					<!DOCTYPE html>
-					<html lang="zh-cn">
-					<head>
-						<meta charset="UTF-8">
-						<meta name="viewport" content="width=device-width, initial-scale=1.0">
-						<title>Virtual Directory</title>
-					</head>
-					<body>
-						没有找到文件
-					</body>
-					</html>
+				<!DOCTYPE html>
+				<html lang="zh-cn">
+				<head>
+					<meta charset="UTF-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<title>Virtual Directory</title>
+					<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+					<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+				</head>
+				<body>
+					<div id="app">
+						<div class="content">
+							<div class="mainTip">错误：找不到目录或文件</div>
+							<div class="smallTip" @click="backToHome()">返回到主页</div>
+						</div>
+					</div>
+				</body>
+				
+				<script>
+					var app = new Vue({
+						el: '#app',
+						data: {
+							
+						},
+						methods: {
+							backToHome(){
+								window.location.href=window.location.origin;
+							}
+						},
+					})
+				</script>
+				
+				<style>
+					body{
+						margin: 0;
+					}
+					.smallTip:hover{
+						color: rgb(255, 150, 0);
+						cursor: pointer;
+					}
+					.smallTip{
+						transition: all ease-in-out .2s;
+						margin-top: 10px;
+					}
+					.mainTip{
+						font-size: 20px;
+					}
+					.content{
+						width: 500px;
+						height: 300px;
+						align-items: center;
+						flex-direction: column;
+						justify-content: center;
+						background-color: rgba(255, 255, 255, 0.4);
+						backdrop-filter: blur(25px);
+						-webkit-backdrop-filter: blur(25px);
+						border-radius: 10px;
+						display: flex;
+					}
+					#app {
+						background: linear-gradient(to bottom right, rgb(255, 222, 176), rgb(255, 255, 255));
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						user-select: none;
+						font-family: Avenir, Helvetica, Arial, sans-serif;
+						-webkit-font-smoothing: antialiased;
+						-moz-osx-font-smoothing: grayscale;
+						color: #2c3e50;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						min-height: 100vh;
+						margin: 0;
+					}
+				</style>
+				</html>
 				`)
 			} else {
 				if (stats.isDirectory()) {
@@ -104,17 +170,83 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 						fs.readdir(reqPath, (err, files) => {
 							if (err) {
 								res.end(`
-									<!DOCTYPE html>
-									<html lang="zh-cn">
-									<head>
-										<meta charset="UTF-8">
-										<meta name="viewport" content="width=device-width, initial-scale=1.0">
-										<title>Virtual Directory</title>
-									</head>
-									<body>
-										读取目录出错
-									</body>
-									</html>
+								<!DOCTYPE html>
+								<html lang="zh-cn">
+								<head>
+									<meta charset="UTF-8">
+									<meta name="viewport" content="width=device-width, initial-scale=1.0">
+									<title>Virtual Directory</title>
+									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+								</head>
+								<body>
+									<div id="app">
+										<div class="content">
+											<div class="mainTip">错误：读取目录或文件失败</div>
+											<div class="smallTip" @click="backToHome()">返回到主页</div>
+										</div>
+									</div>
+								</body>
+								
+								<script>
+									var app = new Vue({
+										el: '#app',
+										data: {
+											
+										},
+										methods: {
+											backToHome(){
+												window.location.href=window.location.origin;
+											}
+										},
+									})
+								</script>
+								
+								<style>
+									body{
+										margin: 0;
+									}
+									.smallTip:hover{
+										color: rgb(255, 150, 0);
+										cursor: pointer;
+									}
+									.smallTip{
+										transition: all ease-in-out .2s;
+										margin-top: 10px;
+									}
+									.mainTip{
+										font-size: 20px;
+									}
+									.content{
+										width: 500px;
+										height: 300px;
+										align-items: center;
+										flex-direction: column;
+										justify-content: center;
+										background-color: rgba(255, 255, 255, 0.4);
+										backdrop-filter: blur(25px);
+										-webkit-backdrop-filter: blur(25px);
+										border-radius: 10px;
+										display: flex;
+									}
+									#app {
+										background: linear-gradient(to bottom right, rgb(255, 222, 176), rgb(255, 255, 255));
+										display: flex;
+										flex-direction: column;
+										align-items: center;
+										user-select: none;
+										font-family: Avenir, Helvetica, Arial, sans-serif;
+										-webkit-font-smoothing: antialiased;
+										-moz-osx-font-smoothing: grayscale;
+										color: #2c3e50;
+										display: flex;
+										justify-content: center;
+										align-items: center;
+										min-height: 100vh;
+										margin: 0;
+									}
+								</style>
+								</html>
 								`)
 							} else {
 								var dirList=[];

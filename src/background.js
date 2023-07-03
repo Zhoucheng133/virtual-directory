@@ -77,7 +77,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
-				res.statusCode = 404;
 				res.end(`
 					<!DOCTYPE html>
 					<html lang="zh-cn">
@@ -87,84 +86,79 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 						<title>Document</title>
 					</head>
 					<body>
-						错误404
+						没有找到文件
 					</body>
 					</html>
 				`)
 			} else {
 				if (stats.isDirectory()) {
 					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
-						if (err) {
-							res.end(`
-								<!DOCTYPE html>
-								<html lang="zh-cn">
-								<head>
-									<meta charset="UTF-8">
-									<meta name="viewport" content="width=device-width, initial-scale=1.0">
-									<title>Document</title>
-								</head>
-								<body>
-									错误404
-								</body>
-								</html>
-							`)
-						} else {
-							res.setHeader('Content-Type', 'text/html; charset=utf-8');
+						res.setHeader('Content-Type', 'text/html; charset=utf-8');
+						fs.readdir(reqPath, (err, files) => {
+							if (err) {
+								res.end(`
+									<!DOCTYPE html>
+									<html lang="zh-cn">
+									<head>
+										<meta charset="UTF-8">
+										<meta name="viewport" content="width=device-width, initial-scale=1.0">
+										<title>Document</title>
+									</head>
+									<body>
+										读取目录出错
+									</body>
+									</html>
+								`)
+							} else {
+								var dirList=[];
+								files.forEach(file => {
+									const filePath = path.join(reqPath, file);
+									const stats = fs.statSync(filePath);
+									if (stats.isFile()) {
+										dirList.push({"type":"file","name":file});
+									} else if (stats.isDirectory()) {
+										dirList.push({"type":"dir","name":file})
+									}
+								});
 
-							fs.readdir(reqPath, (err, files) => {
-								if (err) {
-									res.end(`
-										<!DOCTYPE html>
-										<html lang="zh-cn">
-										<head>
-											<meta charset="UTF-8">
-											<meta name="viewport" content="width=device-width, initial-scale=1.0">
-											<title>Document</title>
-										</head>
-										<body>
-											错误404
-										</body>
-										</html>
-									`)
-								} else {
-									var dirList=[];
-									files.forEach(file => {
-										const filePath = path.join(reqPath, file);
-										const stats = fs.statSync(filePath);
-										if (stats.isFile()) {
-											dirList.push({"type":"file","name":file});
-										} else if (stats.isDirectory()) {
-											dirList.push({"type":"dir","name":file})
-										}
-									});
-
-									// const modifiedHTML = data.replace('<!--DIRLIST_JSON-->', JSON.stringify(dirList));
-
-
-									res.end(`
-										<!DOCTYPE html>
-										<html lang="zh-cn">
-										<head>
-											<meta charset="UTF-8">
-											<meta name="viewport" content="width=device-width, initial-scale=1.0">
-											<title>Document</title>
-										</head>
-										<body>
-											<h1 id="testLabel"></h1>
-										</body>
-										
-										<script>
-											window.onload=function(){
-												var dirList = ${JSON.stringify(dirList)};
-												console.log(dirList);
+								res.end(`
+									<!DOCTYPE html>
+									<html lang="zh-cn">
+									<head>
+										<meta charset="UTF-8">
+										<meta name="viewport" content="width=device-width, initial-scale=1.0">
+										<title>Virtual Dir</title>
+										<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+									</head>
+									<body>
+										<div id="app">
+											<div v-for="item in list">
+												<li v-if="item.name[0]!='.'">
+													{{ item.name }}
+												</li>
+											</div>
+										</div>
+									</body>
+									
+									<script>
+										var app = new Vue({
+											el: '#app',
+											data: {
+												list: ${JSON.stringify(dirList)}
 											}
-										</script>
-										</html>
-									`);
-								}
-							});
-							return;
-						}
+									  	})
+									</script>
+
+									<style>
+									#app{
+										user-select: none;
+									}
+									</style>
+									</html>
+								`);
+							}
+						});
+						return;
 					});
 				} else {
 					const stream = fs.createReadStream(reqPath);

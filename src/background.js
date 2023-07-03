@@ -117,16 +117,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										const filePath = path.join(reqPath, file);
 										const stats = fs.statSync(filePath);
 										if (stats.isFile()) {
-											// console.log('File:', filePath);
 											dirList.push({"type":"file","name":file});
 										} else if (stats.isDirectory()) {
-											// console.log('Directory:', filePath);
 											dirList.push({"type":"dir","name":file})
 										}
 									});
 
 									const modifiedHTML = data.replace('<!--DIRLIST_JSON-->', JSON.stringify(dirList));
-									console.log(dirList);
 
 									res.end(modifiedHTML);
 								}

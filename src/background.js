@@ -78,39 +78,54 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
 				res.statusCode = 404;
-				fs.readFile("src/components/Error404.html", "utf8", (err, data) => {
-					if (err) {
-						res.statusCode = 500;
-						res.end("NO FILE!");
-						return;
-					} else {
-						res.setHeader('Content-Type', 'text/html; charset=utf-8');
-						res.end(data);
-						return;
-					}
-				});
+				res.end(`
+					<!DOCTYPE html>
+					<html lang="zh-cn">
+					<head>
+						<meta charset="UTF-8">
+						<meta name="viewport" content="width=device-width, initial-scale=1.0">
+						<title>Document</title>
+					</head>
+					<body>
+						错误404
+					</body>
+					</html>
+				`)
 			} else {
 				if (stats.isDirectory()) {
 					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
 						if (err) {
-							fs.readFile("src/components/Error404.html", "utf8", (err, data) => {
-								if (err) {
-									res.statusCode = 500;
-									res.end("NO FILE!");
-									return;
-								} else {
-									res.setHeader('Content-Type', 'text/html; charset=utf-8');
-									res.end(data);
-									return;
-								}
-							});
+							res.end(`
+								<!DOCTYPE html>
+								<html lang="zh-cn">
+								<head>
+									<meta charset="UTF-8">
+									<meta name="viewport" content="width=device-width, initial-scale=1.0">
+									<title>Document</title>
+								</head>
+								<body>
+									错误404
+								</body>
+								</html>
+							`)
 						} else {
 							res.setHeader('Content-Type', 'text/html; charset=utf-8');
 
 							fs.readdir(reqPath, (err, files) => {
 								if (err) {
-									res.statusCode = 500;
-									res.end('连接错误');
+									res.end(`
+										<!DOCTYPE html>
+										<html lang="zh-cn">
+										<head>
+											<meta charset="UTF-8">
+											<meta name="viewport" content="width=device-width, initial-scale=1.0">
+											<title>Document</title>
+										</head>
+										<body>
+											错误404
+										</body>
+										</html>
+									`)
 								} else {
 									var dirList=[];
 									files.forEach(file => {
@@ -123,9 +138,29 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										}
 									});
 
-									const modifiedHTML = data.replace('<!--DIRLIST_JSON-->', JSON.stringify(dirList));
+									// const modifiedHTML = data.replace('<!--DIRLIST_JSON-->', JSON.stringify(dirList));
 
-									res.end(modifiedHTML);
+
+									res.end(`
+										<!DOCTYPE html>
+										<html lang="zh-cn">
+										<head>
+											<meta charset="UTF-8">
+											<meta name="viewport" content="width=device-width, initial-scale=1.0">
+											<title>Document</title>
+										</head>
+										<body>
+											<h1 id="testLabel"></h1>
+										</body>
+										
+										<script>
+											window.onload=function(){
+												var dirList = ${JSON.stringify(dirList)};
+												console.log(dirList);
+											}
+										</script>
+										</html>
+									`);
 								}
 							});
 							return;

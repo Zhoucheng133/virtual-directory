@@ -144,6 +144,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								
 								<body>
 									<div id="app">
+										<div class="head">
+											当前路径：{{getPath()}}
+										</div>
 										<table>
 											<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
 												<td><i class="el-icon-folder mainIcon"></i></td>
@@ -190,6 +193,12 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 												return false;
 											},
 											linkTO(item){
+												if(this.isRoot()){
+													var url=window.location.origin+'/';
+													url+=item.name;
+													window.location.href=url;
+													return;
+												}
 												var nowURL=window.location.href;
 												nowURL+="/"
 												nowURL+=item.name;
@@ -223,6 +232,12 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								</script>
 								
 								<style>
+									.head{
+										width: 1000px;
+										display: flex;
+										text-align: left;
+										font-size: 26px;
+									}
 									.backFolder_style:hover{
 										color: rgb(255, 150, 0);
 										cursor: pointer;

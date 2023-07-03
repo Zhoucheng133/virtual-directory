@@ -90,7 +90,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 					<head>
 						<meta charset="UTF-8">
 						<meta name="viewport" content="width=device-width, initial-scale=1.0">
-						<title>Document</title>
+						<title>Virtual Directory</title>
 					</head>
 					<body>
 						没有找到文件
@@ -109,7 +109,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 									<head>
 										<meta charset="UTF-8">
 										<meta name="viewport" content="width=device-width, initial-scale=1.0">
-										<title>Document</title>
+										<title>Virtual Directory</title>
 									</head>
 									<body>
 										读取目录出错

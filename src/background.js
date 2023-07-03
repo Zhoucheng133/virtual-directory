@@ -225,7 +225,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								<head>
 									<meta charset="UTF-8">
 									<meta name="viewport" content="width=device-width, initial-scale=1.0">
-									<link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+									<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 									<title>Virtual Directory</title>
 									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 								</head>

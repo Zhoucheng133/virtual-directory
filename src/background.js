@@ -96,13 +96,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 				</head>
 				<body>
 					<div id="app">
-						<div class="content">
-							<div class="mainTip">错误：找不到目录或文件</div>
-							<div class="smallTip" @click="backToHome()">返回到主页</div>
-						</div>
+						<div class="mainTip">错误：找不到目录或文件</div>
+						<div class="smallTip" @click="backToHome()">返回到主页</div>
 					</div>
 				</body>
-				
+
 				<script>
 					var app = new Vue({
 						el: '#app',
@@ -116,7 +114,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 						},
 					})
 				</script>
-				
+
 				<style>
 					body{
 						margin: 0;
@@ -132,32 +130,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 					.mainTip{
 						font-size: 20px;
 					}
-					.content{
-						width: 500px;
-						height: 300px;
-						align-items: center;
-						flex-direction: column;
-						justify-content: center;
-						background-color: rgba(255, 255, 255, 0.4);
-						backdrop-filter: blur(25px);
-						-webkit-backdrop-filter: blur(25px);
-						border-radius: 10px;
-						display: flex;
-					}
 					#app {
-						background: linear-gradient(to bottom right, rgb(255, 222, 176), rgb(255, 255, 255));
-						display: flex;
-						flex-direction: column;
-						align-items: center;
+						padding-top: 10px;
+						padding-left: 10px;
 						user-select: none;
 						font-family: Avenir, Helvetica, Arial, sans-serif;
 						-webkit-font-smoothing: antialiased;
 						-moz-osx-font-smoothing: grayscale;
 						color: #2c3e50;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						min-height: 100vh;
 						margin: 0;
 					}
 				</style>
@@ -181,13 +161,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								</head>
 								<body>
 									<div id="app">
-										<div class="content">
-											<div class="mainTip">错误：读取目录或文件失败</div>
-											<div class="smallTip" @click="backToHome()">返回到主页</div>
-										</div>
+										<div class="mainTip">错误：读取目录或文件失败</div>
+										<div class="smallTip" @click="backToHome()">返回到主页</div>
 									</div>
 								</body>
-								
+
 								<script>
 									var app = new Vue({
 										el: '#app',
@@ -201,7 +179,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										},
 									})
 								</script>
-								
+
 								<style>
 									body{
 										margin: 0;
@@ -217,32 +195,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 									.mainTip{
 										font-size: 20px;
 									}
-									.content{
-										width: 500px;
-										height: 300px;
-										align-items: center;
-										flex-direction: column;
-										justify-content: center;
-										background-color: rgba(255, 255, 255, 0.4);
-										backdrop-filter: blur(25px);
-										-webkit-backdrop-filter: blur(25px);
-										border-radius: 10px;
-										display: flex;
-									}
 									#app {
-										background: linear-gradient(to bottom right, rgb(255, 222, 176), rgb(255, 255, 255));
-										display: flex;
-										flex-direction: column;
-										align-items: center;
+										padding-top: 10px;
+										padding-left: 10px;
 										user-select: none;
 										font-family: Avenir, Helvetica, Arial, sans-serif;
 										-webkit-font-smoothing: antialiased;
 										-moz-osx-font-smoothing: grayscale;
 										color: #2c3e50;
-										display: flex;
-										justify-content: center;
-										align-items: center;
-										min-height: 100vh;
 										margin: 0;
 									}
 								</style>
@@ -263,7 +223,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								res.end(`
 								<!DOCTYPE html>
 								<html lang="zh-cn">
-								
+
 								<head>
 									<meta charset="UTF-8">
 									<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -272,142 +232,178 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 								</head>
-								
+
 								<body>
-									<div id="app">
-										<div class="head">
-											当前路径：{{getPath()}}
+									<div id="app" :style="flexContent==true?{'display':'flex','justify-content': 'center'}:{}">
+										<div>
+											<div class="title">
+												Virtual Directory
+											</div>
+											<div class="head">
+												当前路径：<br/>{{getPath()}}
+											</div>
+											<table :style="{width:tableWidth+'px'}">
+												<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
+													<td><i class="el-icon-folder mainIcon"></i></td>
+													<td>../</td>
+													<td style="text-align: right;">上一层</td>
+												</tr>
+												<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+													<td width="30px">
+														<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
+														<i class="el-icon-tickets mainIcon" v-else></i>
+													</td>
+													<td>
+														{{ item.name }}
+													</td>
+													<td v-if="item.type=='file'" width="100px" style="text-align: right;">
+														{{ shownSize(item.size) }}
+													</td>
+												</tr>
+											</table>
 										</div>
-										<table>
-											<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
-												<td><i class="el-icon-folder mainIcon"></i></td>
-												<td>../</td>
-												<td>上一层</td>
-											</tr>
-											<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
-												<td width="30px">
-													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
-													<i class="el-icon-tickets mainIcon" v-else></i>
-												</td>
-												<td>
-													{{ item.name }}
-												</td>
-												<td v-if="item.type=='file'" width="100px">
-													{{ shownSize(item.size) }}
-												</td>
-											</tr>
-										</table>
 									</div>
 								</body>
-								
+
 								<script>
 									var app = new Vue({
 										el: '#app',
 										data: {
+											tableWidth:340,
+											flexContent:true,
 											list: ${JSON.stringify(dirList)}
 										},
 										methods: {
-											getPath(){
+											getPath() {
 												return decodeURIComponent(window.location.pathname);
 											},
-											backFolder(){
+											backFolder() {
 												const currentURL = window.location.href;
 												const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
 												window.location.href = parentURL;
 											},
-											isRoot(){
-												if(window.location.origin==window.location.href){
+											isRoot() {
+												if (window.location.origin == window.location.href) {
 													return true;
-												}else if(window.location.origin+'/'==window.location.href){
+												} else if (window.location.origin + '/' == window.location.href) {
 													return true;
 												}
 												return false;
 											},
-											linkTO(item){
-												if(this.isRoot()){
-													var url=window.location.origin+'/';
-													url+=item.name;
-													window.location.href=url;
+											linkTO(item) {
+												if (this.isRoot()) {
+													var url = window.location.origin + '/';
+													url += item.name;
+													window.location.href = url;
 													return;
 												}
-												var nowURL=window.location.href;
-												nowURL+="/"
-												nowURL+=item.name;
-												window.location.href=nowURL;
+												var nowURL = window.location.href;
+												nowURL += "/"
+												nowURL += item.name;
+												window.location.href = nowURL;
 											},
-											shownSize(size){
-												if(size/1024>1){
-													size=size/1024;
-												}else{
-													return size.toFixed(2)+" B"
+											shownSize(size) {
+												if (size / 1024 > 1) {
+													size = size / 1024;
+												} else {
+													return size.toFixed(2) + " B"
 												}
-												if(size/1024>1){
-													size=size/1024;
-												}else{
-													return size.toFixed(2)+" KB"
+												if (size / 1024 > 1) {
+													size = size / 1024;
+												} else {
+													return size.toFixed(2) + " KB"
 												}
-												if(size/1024>1){
-													size=size/1024;
-												}else{
-													return size.toFixed(2)+" MB"
+												if (size / 1024 > 1) {
+													size = size / 1024;
+												} else {
+													return size.toFixed(2) + " MB"
 												}
-												if(size/1024>1){
-													size=size/1024;
-												}else{
-													return size.toFixed(2)+" GB"
+												if (size / 1024 > 1) {
+													size = size / 1024;
+												} else {
+													return size.toFixed(2) + " GB"
 												}
-												return size.toFixed(2)+" GB"
+												return size.toFixed(2) + " GB"
+											}
+										},
+										created() {
+											if(window.innerWidth<380){
+												this.flexContent=false;
+												this.tableWidth=340;
+											}else if(window.innerWidth<740){
+												this.tableWidth=window.innerWidth-40;
+												this.flexContent=false;
+											}else{
+												this.tableWidth=700;
+												this.flexContent=true;
+											}
+										},
+										mounted() {
+											window.onresize=()=>{
+												if(window.innerWidth<380){
+													this.flexContent=false;
+													this.tableWidth=340;
+												}else if(window.innerWidth<740){
+													this.tableWidth=window.innerWidth-40;
+													this.flexContent=false;
+												}else{
+													this.tableWidth=700;
+													this.flexContent=true;
+												}
 											}
 										},
 									})
 								</script>
-								
+
 								<style>
-									.head{
-										width: 1000px;
+									table{
+										transition: all ease-in-out .2s;
+									}
+									body {
+										margin: 0;
+									}
+									.head {
 										display: flex;
 										text-align: left;
 										font-size: 26px;
 										margin-bottom: 10px;
 									}
-									.backFolder_style:hover{
-										color: rgb(255, 150, 0);
+									.backFolder_style:hover {
+										color: rgb(255, 132, 0);
 										cursor: pointer;
 									}
-									.backFolder_style{
+									.backFolder_style {
 										color: rgb(165, 165, 165);
 										transition: all ease-in-out .2s;
 									}
-									tr{
+									tr {
 										transition: all ease-in-out .2s;
 									}
-									tr:hover{
-										color: rgb(255, 150, 0);
+									tr:hover {
+										color: rgb(255, 132, 0);
 										cursor: pointer;
 									}
-									.mainIcon{
+									.mainIcon {
 										font-size: 18px;
 									}
-									td{
-										/* border: 1px solid; */
+									td {
 										padding: 5px 5px 5px 5px;
 									}
-									table{
-										width: 1000px;
-										/* border: 1px solid; */
-									}
 									#app {
-										display: flex;
-										flex-direction: column;
-										align-items: center;
+										padding-top: 20px;
+										padding-left: 20px;
+										padding-right: 20px;
+										padding-bottom: 20px;
 										user-select: none;
 										font-family: Avenir, Helvetica, Arial, sans-serif;
 										-webkit-font-smoothing: antialiased;
 										-moz-osx-font-smoothing: grayscale;
 										color: #2c3e50;
+										min-height: 100vh;
+										margin: 0;
 									}
 								</style>
-								
+
 								</html>
 								`);
 							}

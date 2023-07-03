@@ -1,21 +1,136 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>Virtual Directory</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
+
 <body>
-    <h1 id="testLabel"></h1>
+    <div id="app">
+        <table>
+            <tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+                <td width="30px">
+                    <i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
+                    <i class="el-icon-tickets mainIcon" v-else></i>
+                </td>
+                <td>
+                    {{ item.name }}
+                </td>
+                <td v-if="item.type=='file'" width="100px">
+                    {{ shownSize(item.size) }}
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 
 <script>
-    window.onload=function(){
-        // document.getElementById("dirList").innerHTML='{dirList}';
-        // var dirList = '{dirList}';
-        // console.log(dirList);
-        var dirList = JSON.parse('<!--DIRLIST_JSON-->');
-        console.log(dirList);
-    }
+    var app = new Vue({
+        el: '#app',
+        data: {
+            list: [
+                { type: 'file', name: '.DS_Store', size: 26628 },
+                { type: 'file', name: '.localized', size: 0 },
+                {
+                    type: 'file',
+                    name: '6152433478846543. 社招新IQ（校招不看）答案以PDF为准_已解除密码_2027_4659.docx',
+                    size: 4297214
+                },
+                { type: 'dir', name: 'Ai文件' },
+                { type: 'dir', name: 'ApplicationList' },
+                { type: 'dir', name: 'Code' },
+                { type: 'dir', name: 'Dev' },
+                { type: 'dir', name: 'Dev附加文件' },
+                { type: 'dir', name: 'Drawing' },
+                { type: 'dir', name: 'FlutterPrj' },
+                { type: 'dir', name: 'JavaPrj' },
+                { type: 'file', name: 'Tomcat', size: 776 },
+                { type: 'dir', name: 'VuePrj' },
+                { type: 'dir', name: 'Wallpaper' },
+                { type: 'dir', name: 'file_sharer' },
+                { type: 'dir', name: 'ukt_player' },
+                { type: 'dir', name: 'virtual_dir' },
+                { type: 'dir', name: '图片' },
+                { type: 'dir', name: '学习用' },
+                { type: 'dir', name: '导出' },
+                { type: 'dir', name: '照片' },
+                { type: 'file', name: '缓存', size: 828 },
+                { type: 'dir', name: '编程指南' },
+                { type: 'dir', name: '视频素材' },
+                { type: 'file', name: '面试题.md', size: 7320 }
+            ]
+        },
+        methods: {
+            isRoot(){
+                return window.location.origin==window.location.href?true:false;
+            },
+            linkTO(item){
+                var nowURL=window.location.href;
+                nowURL+="/"
+                nowURL+=item.name;
+                window.location.href=nowURL;
+            },
+            shownSize(size){
+                if(size/1024>1){
+                    size=size/1024;
+                }else{
+                    return size.toFixed(2)+" B"
+                }
+                if(size/1024>1){
+                    size=size/1024;
+                }else{
+                    return size.toFixed(2)+" KB"
+                }
+                if(size/1024>1){
+                    size=size/1024;
+                }else{
+                    return size.toFixed(2)+" MB"
+                }
+                if(size/1024>1){
+                    size=size/1024;
+                }else{
+                    return size.toFixed(2)+" GB"
+                }
+                return size.toFixed(2)+" GB"
+            }
+        },
+    })
 </script>
+
+<style>
+    tr{
+        transition: all ease-in-out .2s;
+    }
+    tr:hover{
+        color: rgb(255, 150, 0);
+        cursor: pointer;
+    }
+    .mainIcon{
+        font-size: 18px;
+    }
+    td{
+        /* border: 1px solid; */
+        padding: 5px 5px 5px 5px;
+    }
+    table{
+        width: 1000px;
+        /* border: 1px solid; */
+    }
+    #app {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        user-select: none;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+    }
+</style>
+
 </html>

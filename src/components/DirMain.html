@@ -66,6 +66,11 @@
             ]
         },
         methods: {
+            backFolder(){
+                const currentURL = window.location.href;
+                const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+                window.location.href = parentURL;
+            },
             isRoot(){
                 return window.location.origin==window.location.href?true:false;
             },

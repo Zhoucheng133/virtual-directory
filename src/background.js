@@ -62,6 +62,13 @@ if (isDevelopment) {
 	}
 }
 
+const mime = require('mime-types');
+
+function getContentType(extension) {
+  const contentType = mime.contentType(extension);
+  return contentType || 'application/octet-stream';
+}
+
 let server;
 var sockets = [];
 
@@ -123,47 +130,128 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 								console.log(dirList);
 
 								res.end(`
-									<!DOCTYPE html>
-									<html lang="zh-cn">
-									<head>
-										<meta charset="UTF-8">
-										<meta name="viewport" content="width=device-width, initial-scale=1.0">
-										<title>Virtual Dir</title>
-										<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-									</head>
-									<body>
-										<div id="app">
-											<div v-for="item in list">
-												<li v-if="item.name[0]!='.'">
+								<!DOCTYPE html>
+								<html lang="zh-cn">
+								
+								<head>
+									<meta charset="UTF-8">
+									<meta name="viewport" content="width=device-width, initial-scale=1.0">
+									<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+									<title>Virtual Directory</title>
+									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+								</head>
+								
+								<body>
+									<div id="app">
+										<table>
+											<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+												<td width="30px">
+													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
+													<i class="el-icon-tickets mainIcon" v-else></i>
+												</td>
+												<td>
 													{{ item.name }}
-												</li>
-											</div>
-										</div>
-									</body>
-									
-									<script>
-										var app = new Vue({
-											el: '#app',
-											data: {
-												list: ${JSON.stringify(dirList)}
+												</td>
+												<td v-if="item.type=='file'" width="100px">
+													{{ shownSize(item.size) }}
+												</td>
+											</tr>
+										</table>
+									</div>
+								</body>
+								
+								<script>
+									var app = new Vue({
+										el: '#app',
+										data: {
+											list: ${JSON.stringify(dirList)}
+										},
+										methods: {
+											backFolder(){
+												const currentURL = window.location.href;
+												const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+												window.location.href = parentURL;
+											},
+											isRoot(){
+												return window.location.origin==window.location.href?true:false;
+											},
+											linkTO(item){
+												var nowURL=window.location.href;
+												nowURL+="/"
+												nowURL+=item.name;
+												window.location.href=nowURL;
+											},
+											shownSize(size){
+												if(size/1024>1){
+													size=size/1024;
+												}else{
+													return size.toFixed(2)+" B"
+												}
+												if(size/1024>1){
+													size=size/1024;
+												}else{
+													return size.toFixed(2)+" KB"
+												}
+												if(size/1024>1){
+													size=size/1024;
+												}else{
+													return size.toFixed(2)+" MB"
+												}
+												if(size/1024>1){
+													size=size/1024;
+												}else{
+													return size.toFixed(2)+" GB"
+												}
+												return size.toFixed(2)+" GB"
 											}
-									  	})
-									</script>
-
-									<style>
-									#app{
-										user-select: none;
+										},
+									})
+								</script>
+								
+								<style>
+									tr{
+										transition: all ease-in-out .2s;
 									}
-									</style>
-									</html>
+									tr:hover{
+										color: rgb(255, 150, 0);
+										cursor: pointer;
+									}
+									.mainIcon{
+										font-size: 18px;
+									}
+									td{
+										/* border: 1px solid; */
+										padding: 5px 5px 5px 5px;
+									}
+									table{
+										width: 1000px;
+										/* border: 1px solid; */
+									}
+									#app {
+										display: flex;
+										flex-direction: column;
+										align-items: center;
+										user-select: none;
+										font-family: Avenir, Helvetica, Arial, sans-serif;
+										-webkit-font-smoothing: antialiased;
+										-moz-osx-font-smoothing: grayscale;
+										color: #2c3e50;
+									}
+								</style>
+								
+								</html>
 								`);
 							}
 						});
 						return;
 					});
 				} else {
+					const extension = path.extname(reqPath).toLowerCase();
+					const contentType = getContentType(extension);
 					const stream = fs.createReadStream(reqPath);
 					res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(path.basename(reqPath))}"`);
+					res.setHeader('Content-Type', contentType);
 					stream.pipe(res);
 				}
 			}

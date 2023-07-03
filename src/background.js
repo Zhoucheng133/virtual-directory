@@ -92,7 +92,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 					<meta name="viewport" content="width=device-width, initial-scale=1.0">
 					<title>Virtual Directory</title>
 					<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-					<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 				</head>
 				<body>
 					<div id="app">
@@ -157,7 +156,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 									<meta name="viewport" content="width=device-width, initial-scale=1.0">
 									<title>Virtual Directory</title>
 									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 								</head>
 								<body>
 									<div id="app">
@@ -230,7 +228,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 									<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 									<title>Virtual Directory</title>
 									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 								</head>
 
 								<body>

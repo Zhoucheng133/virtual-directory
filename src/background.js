@@ -88,7 +88,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 							return;
 						} else {
 							res.setHeader('Content-Type', 'text/html; charset=utf-8');
-							res.end(data);
+							const modifiedHTML = data.replace('{reqPath}', reqPath);
+							res.end(modifiedHTML);
 							return;
 						}
 					});

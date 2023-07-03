@@ -177,7 +177,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
 										},
 										methods: {
 											getPath(){
-												return  window.location.pathname;
+												return decodeURIComponent(window.location.pathname);
 											},
 											backFolder(){
 												const currentURL = window.location.href;

@@ -24,7 +24,7 @@
 				</div>
 				<div class="row">
 					<div class="cell">
-						<a-radio-group v-model="secure" :disabled="status">
+						<a-radio-group v-model="secure" :disabled="status" button-style="solid">
 							<a-radio-button value="all">
 								所有人
 							</a-radio-button>
@@ -45,7 +45,18 @@
 						<a-input-password v-model="inputPass" placeholder="密码" :disabled="secure=='all'||status"></a-input-password>
 					</div>
 				</div>
-				
+				<div class="row1">
+					<div class="cell">打开/复制链接</div>
+				</div>
+				<div class="row3">
+					<div class="cell">
+						<a-button-group block>
+							<a-button type="primary" :disabled="!status">打开</a-button>
+							<a-button :disabled="!status">复制IPv4链接</a-button>
+							<a-button :disabled="!status">复制IPv6链接</a-button>
+						</a-button-group>
+					</div>
+				</div>
 				<div class="row">
 					<div class="cell">
 						端口号
@@ -159,8 +170,12 @@ export default {
 </style>
 
 <style scoped>
+.row3{
+	padding-bottom: 5px;
+	display: grid;
+	grid-template-columns: 300px;
+}
 .cell{
-	/* border: 1px solid; */
 	display: flex;
 	padding-left: 10px;
 	align-items: center;
@@ -171,7 +186,6 @@ export default {
 	grid-template-columns: 150px 150px;
 }
 .row{
-	/* padding-top: 5px; */
 	padding-bottom: 5px;
 	display: grid;
 	grid-template-columns: 200px 100px;

@@ -42,7 +42,7 @@
 						<a-input v-model="inputName" placeholder="用户名" :disabled="secure=='all'||status"></a-input>
 					</div>
 					<div class="cell">
-						<a-input v-model="inputPass" placeholder="密码" :disabled="secure=='all'||status"></a-input>
+						<a-input-password v-model="inputPass" placeholder="密码" :disabled="secure=='all'||status"></a-input-password>
 					</div>
 				</div>
 				

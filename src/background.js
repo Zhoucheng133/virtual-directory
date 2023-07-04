@@ -226,15 +226,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								res.end(`
 								<!DOCTYPE html>
 								<html lang="zh-cn">
-
 								<head>
 									<meta charset="UTF-8">
 									<meta name="viewport" content="width=device-width, initial-scale=1.0">
 									<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 									<title>Virtual Directory</title>
 									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 								</head>
-
 								<body>
 									<div id="app" :style="flexContent==true?{'display':'flex','justify-content': 'center'}:{}">
 										<div>
@@ -264,9 +263,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												</tr>
 											</table>
 										</div>
+										<div class=blank></div>
 									</div>
 								</body>
-
+								
 								<script>
 									var app = new Vue({
 										el: '#app',
@@ -356,10 +356,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										},
 									})
 								</script>
-
+								
 								<style>
+									.blank{
+										width: 100%;
+										height: 20px;
+									}
 									.title{
-										margin-top:20px;
+										padding-top:20px;
 									}
 									table{
 										transition: all ease-in-out .2s;
@@ -368,9 +372,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										margin: 0;
 									}
 									.head {
-										display: flex;
 										text-align: left;
 										font-size: 26px;
+										word-wrap: break-word;
 										margin-bottom: 10px;
 									}
 									.backFolder_style:hover {
@@ -406,7 +410,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										margin: 0;
 									}
 								</style>
-
 								</html>
 								`);
 							}

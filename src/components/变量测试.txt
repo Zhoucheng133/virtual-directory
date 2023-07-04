@@ -1,1 +1,33 @@
 list: ${JSON.stringify(dirList)}
+
+list: [
+    { type: 'file', name: '.DS_Store', size: 26628 },
+    { type: 'file', name: '.localized', size: 0 },
+    {
+        type: 'file',
+        name: '招新IQ（校招不看）答案以PDF为准.docx',
+        size: 4297214
+    },
+    { type: 'dir', name: 'Ai文件' },
+    { type: 'dir', name: 'ApplicationList' },
+    { type: 'dir', name: 'Code' },
+    { type: 'dir', name: 'Dev' },
+    { type: 'dir', name: 'Dev附加文件' },
+    { type: 'dir', name: 'Drawing' },
+    { type: 'dir', name: 'FlutterPrj' },
+    { type: 'dir', name: 'JavaPrj' },
+    { type: 'file', name: 'Tomcat', size: 776 },
+    { type: 'dir', name: 'VuePrj' },
+    { type: 'dir', name: 'Wallpaper' },
+    { type: 'dir', name: 'file_sharer' },
+    { type: 'dir', name: 'ukt_player' },
+    { type: 'dir', name: 'virtual_dir' },
+    { type: 'dir', name: '图片' },
+    { type: 'dir', name: '学习用' },
+    { type: 'dir', name: '导出' },
+    { type: 'dir', name: '照片' },
+    { type: 'file', name: '缓存', size: 828 },
+    { type: 'dir', name: '编程指南' },
+    { type: 'dir', name: '视频素材' },
+    { type: 'file', name: '面试题.md', size: 7320 }
+]

@@ -234,7 +234,7 @@ export default {
 }
 .end{
 	font-size: 13px;
-	padding-top: 40px;
+	padding-top: 35px;
 	color: gray;
 }
 .row3{

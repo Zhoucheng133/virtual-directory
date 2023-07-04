@@ -51,9 +51,9 @@
 				<div class="row3">
 					<div class="cell">
 						<a-button-group>
-							<a-button type="primary" :disabled="!status" style="width: 70px;">打开</a-button>
-							<a-button :disabled="!status" style="width: 115px;">复制IPv4链接</a-button>
-							<a-button :disabled="!status" style="width: 115px;">复制IPv6链接</a-button>
+							<a-button type="primary" :disabled="!status" style="width: 70px;" @click="openLink">打开</a-button>
+							<a-button :disabled="!status" style="width: 115px;" @click="copyIPv4">复制IPv4链接</a-button>
+							<a-button :disabled="!status" style="width: 115px;" @click="copyIPv6">复制IPv6链接</a-button>
 						</a-button-group>
 					</div>
 				</div>
@@ -78,7 +78,7 @@
 
 <script>
 import { ipcRenderer } from 'electron';
-import Clipboard from "clipboard";
+const {shell} = require('electron')
 export default {
 	data() {
 		return {
@@ -93,11 +93,37 @@ export default {
 		}
 	},
 	methods: {
+		openLink(){
+			shell.openExternal("http://"+this.IPv4+":"+this.inputPort);
+		},
 		copyIPv6(){
-
+			if(this.IPv6!=""){
+				this.doCopy("http://["+this.IPv6+"]:"+this.inputPort);
+			}else{
+				this.$error({
+					title: '复制失败',
+					content: '当前没有IPv6地址',
+				});
+			}
 		},
 		copyIPv4(){
-
+			if(this.IPv4!=""){
+				this.doCopy("http://"+this.IPv4+":"+this.inputPort);
+			}else{
+				this.$error({
+					title: '复制失败',
+					content: '当前没有IPv4地址',
+				});
+			}
+		},
+		doCopy(val) {
+			this.$copyText(val).then(function () {
+			}, function () {
+				this.$error({
+					title: '复制失败',
+					content: '稍后重试',
+				});
+			})
 		},
 		serverButton(){
 			if(this.status==false){
@@ -149,7 +175,7 @@ export default {
 			}
 		},
 		getIpResponse(event,val1,val2){
-			this.IPv4=val1;
+			this.IPv4=val1[0];
 			if(val2!=[]){
 				const filteredArray = val2.filter(item => !item.startsWith("fe80"));
 				this.IPv6=filteredArray[0];

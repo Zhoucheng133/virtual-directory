@@ -235,7 +235,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 								</head>
 								<body>
-									<div id="app" :style="flexContent==true?{'display':'flex','justify-content': 'center'}:{}">
+									<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
 										<div>
 											<div class="title">
 												Virtual Directory

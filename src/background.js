@@ -241,7 +241,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											<div class="title">
 												Virtual Directory
 											</div>
-											<div class="head">
+											<div class="head" :style="{width:tableWidth+'px'}">
 												当前路径：<br/>{{getPath()}}
 											</div>
 											<table :style="{width:tableWidth+'px'}">

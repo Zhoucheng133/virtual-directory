@@ -53,7 +53,7 @@
 				</div>
 				<div class="row1">
 					<div class="cell">
-						<a-input-number v-model="inputPort"></a-input-number>
+						<a-input-number v-model="inputPort" :disabled="status"></a-input-number>
 					</div>
 					<div class="cell">
 						<a-button :type="status==false?'primary':'danger'" block @click="serverButton">{{ status==false?'启动服务':'关闭服务' }}</a-button>
@@ -115,6 +115,11 @@ export default {
 		serverOffResponse(event,val){
 			if(val=="success"){
 				this.status=false;
+			}else{
+				this.$error({
+					title: '关闭服务失败',
+					content: '你可以强行关闭此程序',
+				});
 			}
 		},
 		serverOnResponse(event,val){

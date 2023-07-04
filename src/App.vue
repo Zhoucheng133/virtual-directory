@@ -103,7 +103,7 @@ export default {
 			shell.openExternal("http://"+this.IPv4+":"+this.inputPort);
 		},
 		copyIPv6(){
-			if(this.IPv6!=""){
+			if(this.IPv6!=""&&this.IPv6!=undefined){
 				this.doCopy("http://["+this.IPv6+"]:"+this.inputPort);
 			}else{
 				this.$error({
@@ -113,7 +113,7 @@ export default {
 			}
 		},
 		copyIPv4(){
-			if(this.IPv4!=""){
+			if(this.IPv4!=""&&this.IPv4!=undefined){
 				this.doCopy("http://"+this.IPv4+":"+this.inputPort);
 			}else{
 				this.$error({

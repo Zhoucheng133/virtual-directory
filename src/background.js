@@ -270,25 +270,23 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										<div class="head" :style="{width:tableWidth+'px'}">
 											当前路径：<br/>{{getPath()}}
 										</div>
-										<table :style="{width:tableWidth+'px'}">
-											<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
-												<td><i class="el-icon-folder mainIcon"></i></td>
-												<td>../</td>
-												<td style="text-align: right;">上一层</td>
-											</tr>
-											<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
-												<td width="30px">
+										<div class="container" :style="{width:tableWidth+'px'}">
+											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
+												<div class="cell"><i class="el-icon-folder mainIcon"></i></div>
+												<div class="cell">../</div>
+												<div class="cell" style="text-align: right">上一层</div>
+											</div>
+											<div class="row" v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+												<div class="cell">
 													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
 													<i class="el-icon-tickets mainIcon" v-else></i>
-												</td>
-												<td>
-													{{ item.name }}
-												</td>
-												<td v-if="item.type=='file'" width="100px" style="text-align: right;">
+												</div>
+												<div class="cell">{{ item.name }}</div>
+												<div class="cell" v-if="item.type=='file'" style="text-align: right">
 													{{ shownSize(item.size) }}
-												</td>
-											</tr>
-										</table>
+												</div>
+											</div>
+										</div>
 									</div>
 									<div class=blank></div>
 								</div>
@@ -366,6 +364,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											this.tableWidth=700;
 											this.flexContent=true;
 										}
+										console.log(this.tableWidth);
 									},
 									mounted() {
 										window.onresize=()=>{
@@ -385,15 +384,26 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							</script>
 							
 							<style>
+								.container {
+									display: grid;
+									/* grid-template-columns: 30px auto 100px; */
+								}
+								.row {
+									display: grid;
+									grid-template-columns: 30px auto 100px;
+									transition: all ease-in-out .2s;
+								}
+								.cell {
+									padding: 5px;
+									word-wrap: break-word;
+									word-break: break-all;
+								}
 								.blank{
 									width: 100%;
 									height: 20px;
 								}
 								.title{
 									padding-top:20px;
-								}
-								table{
-									transition: all ease-in-out .2s;
 								}
 								body {
 									margin: 0;
@@ -404,6 +414,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									word-wrap: break-word;
 									margin-bottom: 10px;
 								}
+								.row:hover{
+									color: rgb(255, 132, 0);
+									cursor: pointer;
+								}
 								.backFolder_style:hover {
 									color: rgb(255, 132, 0);
 									cursor: pointer;
@@ -412,18 +426,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									color: rgb(165, 165, 165);
 									transition: all ease-in-out .2s;
 								}
-								tr {
-									transition: all ease-in-out .2s;
-								}
-								tr:hover {
-									color: rgb(255, 132, 0);
-									cursor: pointer;
-								}
 								.mainIcon {
 									font-size: 18px;
-								}
-								td {
-									padding: 5px 5px 5px 5px;
 								}
 								#app {
 									padding-left: 20px;

@@ -31,3 +31,7 @@ list: [
     { type: 'dir', name: '视频素材' },
     { type: 'file', name: '面试题.md', size: 7320 }
 ]
+
+list: [
+    { type: 'file', name: 'IMG_0249_srcnn_anime_noise3_2x.jpg', size: 266234128 },
+],

@@ -210,6 +210,7 @@ export default {
 		ipcRenderer.on('getIpResponse', this.getIpResponse);
 
 		ipcRenderer.send('getIP');
+		document.title="Virtual Directory";
 	},
 }
 </script>

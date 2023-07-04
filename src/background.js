@@ -1,4 +1,4 @@
-import { BrowserWindow, app, ipcMain, protocol } from 'electron'
+import { BrowserWindow, app, ipcMain, protocol, dialog } from 'electron'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -7,10 +7,14 @@ protocol.registerSchemesAsPrivileged([
 	{ scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+let win;
+
 async function createWindow() {
-	const win = new BrowserWindow({
+	win = new BrowserWindow({
 		width: 400,
 		height: 600,
+		resizable: false,
+		titleBarStyle: 'hiddenInset',
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
@@ -61,6 +65,19 @@ if (isDevelopment) {
 		})
 	}
 }
+
+ipcMain.on("selectDir", async (event) => {
+	dialog.showOpenDialog(win, {
+		properties: ['openDirectory'],
+	}).then(result => {
+		const folderPath = result.filePaths[0];
+		win.webContents.send('folder-selected', folderPath);
+		event.reply('getDir', folderPath);
+	})
+	.catch(err => {
+		event.reply('getDir', "ERR!");
+	});
+});
 
 const mime = require('mime-types');
 

@@ -10,7 +10,7 @@ import { ipcRenderer } from 'electron';
 export default {
 	methods: {
 		serverOn(){
-			ipcRenderer.send('serverOn', "/Users/zhoucheng/Desktop",4040);
+			ipcRenderer.send('serverOn', "/Users/zhoucheng/Desktop",4040,"","");
 		},
 		serverOff(){
 			ipcRenderer.send('serverOff');

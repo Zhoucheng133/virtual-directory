@@ -73,11 +73,16 @@ let server;
 var sockets = [];
 
 // 打开服务器函数
-ipcMain.on("serverOn", async (event, sharePath, sharePort) => {
+ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
 	// 获取依赖
 	const http = require('http');
 	const fs = require('fs');
 	const path = require('path');
+
+	var needLogin=false;
+	if(username==""&&password==""){
+		needLogin=true;
+	}
 
 	server = http.createServer((req, res) => {
 		const reqPath = path.join(sharePath, decodeURIComponent(req.url));

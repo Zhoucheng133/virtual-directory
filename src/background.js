@@ -12,7 +12,7 @@ let win;
 async function createWindow() {
 	win = new BrowserWindow({
 		width: 400,
-		height: 600,
+		height: 500,
 		resizable: false,
 		titleBarStyle: 'hiddenInset',
 		webPreferences: {
@@ -483,7 +483,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 	});	  
 
 	server.listen(sharePort, () => {
-		event.reply('serverOnResponse', 'Success');
+		event.reply('serverOnResponse', 'success');
 	});
 });
 
@@ -497,5 +497,5 @@ ipcMain.on("serverOff", async (event) => {
 	} else {
 		event.reply('serverOffResponse', 'Error');
 	}
-	event.reply('serverOffResponse', 'Success');
+	event.reply('serverOffResponse', 'success');
 });

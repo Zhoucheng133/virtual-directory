@@ -14,7 +14,7 @@
 						<a-input disabled v-model="inputPath"></a-input>
 					</div>
 					<div class="cell">
-						<a-button @click="pickDir">选取目录</a-button>
+						<a-button @click="pickDir" :disabled="status">选取目录</a-button>
 					</div>
 				</div>
 				<div class="row">
@@ -24,7 +24,7 @@
 				</div>
 				<div class="row">
 					<div class="cell">
-						<a-radio-group v-model="secure">
+						<a-radio-group v-model="secure" :disabled="status">
 							<a-radio-button value="all">
 								所有人
 							</a-radio-button>
@@ -39,10 +39,10 @@
 				</div>
 				<div class="row1">
 					<div class="cell">
-						<a-input v-model="inputName" placeholder="用户名" :disabled="secure=='all'"></a-input>
+						<a-input v-model="inputName" placeholder="用户名" :disabled="secure=='all'||status"></a-input>
 					</div>
 					<div class="cell">
-						<a-input v-model="inputPass" placeholder="密码" :disabled="secure=='all'"></a-input>
+						<a-input v-model="inputPass" placeholder="密码" :disabled="secure=='all'||status"></a-input>
 					</div>
 				</div>
 				
@@ -56,7 +56,7 @@
 						<a-input-number v-model="inputPort"></a-input-number>
 					</div>
 					<div class="cell">
-						<a-button type="primary" block>启动服务</a-button>
+						<a-button :type="status==false?'primary':'danger'" block @click="serverButton">{{ status==false?'启动服务':'关闭服务' }}</a-button>
 					</div>
 				</div>
 			</div>
@@ -67,20 +67,6 @@
 <script>
 import { ipcRenderer } from 'electron';
 export default {
-	methods: {
-		getDir(event,val){
-			this.inputPath=val;
-		},
-		pickDir(){
-			ipcRenderer.send("selectDir");
-		},
-		serverOn(){
-			ipcRenderer.send('serverOn', "/Users/zhoucheng/Downloads",4040,"","");
-		},
-		serverOff(){
-			ipcRenderer.send('serverOff');
-		}
-	},
 	data() {
 		return {
 			inputName:"",
@@ -91,7 +77,67 @@ export default {
 			status:false,
 		}
 	},
+	methods: {
+		serverButton(){
+			if(this.status==false){
+				if(this.inputPath==""){
+					this.$error({
+						title: '启动失败',
+						content: '没有选取目录',
+					});
+					return;
+				}
+				if(this.secure=="userOnly" && (this.inputName=="" || this.inputPass=="")){
+					this.$error({
+						title: '启动失败',
+						content: '在指定用户模式下，用户名和密码不能为空',
+					});
+					return;
+				}
+				if(this.inputPort==null || this.inputPort<=1024){
+					this.$error({
+						title: '启动失败',
+						content: '端口号不合法，输入大于1024的端口号',
+					});
+					return;
+				}
+				var tmpName="";
+				var tmpPass="";
+				if(this.secure=="userOnly"){
+					tmpName=this.inputName;
+					tmpPass=this.inputPass;
+				}
+				this.serverOn(this.inputPath,this.inputPort,tmpName,tmpPass);
+			}else{
+				this.serverOff();
+			}
+		},
+		serverOffResponse(event,val){
+			if(val=="success"){
+				this.status=false;
+			}
+		},
+		serverOnResponse(event,val){
+			if(val=="success"){
+				this.status=true;
+			}
+		},
+		getDir(event,val){
+			this.inputPath=val;
+		},
+		pickDir(){
+			ipcRenderer.send("selectDir");
+		},
+		serverOn(path,port,username,password){
+			ipcRenderer.send('serverOn', path,port,username,password);
+		},
+		serverOff(){
+			ipcRenderer.send('serverOff');
+		}
+	},
 	created() {
+		ipcRenderer.on('serverOffResponse',this.serverOffResponse)
+		ipcRenderer.on('serverOnResponse',this.serverOnResponse)
 		ipcRenderer.on('getDir', this.getDir);
 	},
 }

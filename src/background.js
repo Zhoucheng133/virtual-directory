@@ -514,7 +514,6 @@ ipcMain.on("getIP",async (event) => {
 			}
 		});
 	});
-	console.log('IPv4 Addresses:', ipv4Addresses);
 	const ipv6Addresses = [];
 	Object.keys(networkInterfaces).forEach(interfaceName => {
 	  const addresses = networkInterfaces[interfaceName];
@@ -524,5 +523,5 @@ ipcMain.on("getIP",async (event) => {
 		}
 	  });
 	});
-	console.log('IPv6 Addresses:', ipv6Addresses);
+	event.reply('getIpResponse', ipv4Addresses, ipv6Addresses);
 });

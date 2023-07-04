@@ -87,6 +87,8 @@ export default {
 			inputPort:8081,
 			inputPath:"",
 			status:false,
+			IPv4:"",
+			IPv6:""
 		}
 	},
 	methods: {
@@ -139,6 +141,13 @@ export default {
 				this.status=true;
 			}
 		},
+		getIpResponse(event,val1,val2){
+			this.IPv4=val1;
+			if(val2!=[]){
+				const filteredArray = val2.filter(item => !item.startsWith("fe80"));
+				this.IPv6=filteredArray[0];
+			}
+		},
 		getDir(event,val){
 			this.inputPath=val;
 		},
@@ -159,6 +168,9 @@ export default {
 		ipcRenderer.on('serverOffResponse',this.serverOffResponse)
 		ipcRenderer.on('serverOnResponse',this.serverOnResponse)
 		ipcRenderer.on('getDir', this.getDir);
+		ipcRenderer.on('getIpResponse', this.getIpResponse);
+
+		ipcRenderer.send('getIP');
 	},
 }
 </script>

@@ -149,210 +149,227 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				`)
 			} else {
 				if (stats.isDirectory()) {
-					fs.readFile("src/components/DirMain.html", "utf8", (err, data) => {
-						res.setHeader('Content-Type', 'text/html; charset=utf-8');
-						fs.readdir(reqPath, (err, files) => {
-							if (err) {
-								res.end(`
-								<!DOCTYPE html>
-								<html lang="zh-cn">
-								<head>
-									<meta charset="UTF-8">
-									<meta name="viewport" content="width=device-width, initial-scale=1.0">
-									<title>Virtual Directory</title>
-									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-								</head>
-								<body>
-									<div id="app">
-										<div class="mainTip">错误：读取目录或文件失败</div>
-										<div class="smallTip" @click="backToHome()">返回到主页</div>
-									</div>
-								</body>
+					res.setHeader('Content-Type', 'text/html; charset=utf-8');
+					fs.readdir(reqPath, (err, files) => {
+						if (err) {
+							res.end(`
+							<!DOCTYPE html>
+							<html lang="zh-cn">
+							<head>
+								<meta charset="UTF-8">
+								<meta name="viewport" content="width=device-width, initial-scale=1.0">
+								<title>Virtual Directory</title>
+								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+							</head>
+							<body>
+								<div id="app">
+									<div class="mainTip">错误：读取目录或文件失败</div>
+									<div class="smallTip" @click="backToHome()">返回到主页</div>
+								</div>
+							</body>
 
-								<script>
-									var app = new Vue({
-										el: '#app',
-										data: {
-											
-										},
-										methods: {
-											backToHome(){
-												window.location.href=window.location.origin;
+							<script>
+								var app = new Vue({
+									el: '#app',
+									data: {
+										
+									},
+									methods: {
+										backToHome(){
+											window.location.href=window.location.origin;
+										}
+									},
+								})
+							</script>
+
+							<style>
+								body{
+									margin: 0;
+								}
+								.smallTip:hover{
+									color: rgb(255, 150, 0);
+									cursor: pointer;
+								}
+								.smallTip{
+									transition: all ease-in-out .2s;
+									margin-top: 10px;
+								}
+								.mainTip{
+									font-size: 20px;
+								}
+								#app {
+									padding-top: 10px;
+									padding-left: 10px;
+									user-select: none;
+									font-family: Avenir, Helvetica, Arial, sans-serif;
+									-webkit-font-smoothing: antialiased;
+									-moz-osx-font-smoothing: grayscale;
+									color: #2c3e50;
+									margin: 0;
+								}
+							</style>
+							</html>
+							`)
+						} else {
+							var dirList=[];
+							files.forEach(file => {
+								const filePath = path.join(reqPath, file);
+								const stats = fs.statSync(filePath);
+								if (stats.isFile()) {
+									dirList.push({"type":"file","name":file,"size":stats.size});
+								} else if (stats.isDirectory()) {
+									dirList.push({"type":"dir","name":file})
+								}
+							});
+
+							res.end(`
+							<!DOCTYPE html>
+							<html lang="zh-cn">
+							<head>
+								<meta charset="UTF-8">
+								<meta name="viewport" content="width=device-width, initial-scale=1.0">
+								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+								<title>Virtual Directory</title>
+								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+								<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+							</head>
+							<body>
+								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
+									<div v-if="needLogin==false">
+										<div class="title">
+											Virtual Directory
+										</div>
+										<div class="head" :style="{width:tableWidth+'px'}">
+											当前路径：<br/>{{getPath()}}
+										</div>
+										<table :style="{width:tableWidth+'px'}">
+											<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
+												<td><i class="el-icon-folder mainIcon"></i></td>
+												<td>../</td>
+												<td style="text-align: right;">上一层</td>
+											</tr>
+											<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+												<td width="30px">
+													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
+													<i class="el-icon-tickets mainIcon" v-else></i>
+												</td>
+												<td>
+													{{ item.name }}
+												</td>
+												<td v-if="item.type=='file'" width="100px" style="text-align: right;">
+													{{ shownSize(item.size) }}
+												</td>
+											</tr>
+										</table>
+									</div>
+									<div class="login" v-else>
+										<div class="loginTitle">需要登录</div>
+										<input type="text" v-model="inputName" placeholder="用户名">
+										<input type="password" v-model="inputPass" placeholder="密码" style="margin-top: 10px;">
+										<div class="loginButton" @click="login">登录</div>
+										<div class="tip" v-show="errorPass">账号或密码错误</div>
+									</div>
+									<div class=blank></div>
+								</div>
+							</body>
+							
+							<script>
+								var app = new Vue({
+									el: '#app',
+									data: {
+										tableWidth:340,
+										flexContent:true,
+										list: ${JSON.stringify(dirList)},
+										needLogin: ${needLogin},
+										username: "${username}",
+										password: "${password}",
+										inputName: "",
+										inputPass: "",
+										errorPass: false
+									},
+									methods: {
+										login(){
+											if(this.username==this.inputName && this.password==this.inputPass){
+												this.needLogin=false;
+												localStorage.setItem("username",this.username);
+												localStorage.setItem("password",this.password);
+											}else{
+												this.inputPass="";
+												this.inputName="";
+												this.errorPass=true;
 											}
 										},
-									})
-								</script>
-
-								<style>
-									body{
-										margin: 0;
-									}
-									.smallTip:hover{
-										color: rgb(255, 150, 0);
-										cursor: pointer;
-									}
-									.smallTip{
-										transition: all ease-in-out .2s;
-										margin-top: 10px;
-									}
-									.mainTip{
-										font-size: 20px;
-									}
-									#app {
-										padding-top: 10px;
-										padding-left: 10px;
-										user-select: none;
-										font-family: Avenir, Helvetica, Arial, sans-serif;
-										-webkit-font-smoothing: antialiased;
-										-moz-osx-font-smoothing: grayscale;
-										color: #2c3e50;
-										margin: 0;
-									}
-								</style>
-								</html>
-								`)
-							} else {
-								var dirList=[];
-								files.forEach(file => {
-									const filePath = path.join(reqPath, file);
-									const stats = fs.statSync(filePath);
-									if (stats.isFile()) {
-										dirList.push({"type":"file","name":file,"size":stats.size});
-									} else if (stats.isDirectory()) {
-										dirList.push({"type":"dir","name":file})
-									}
-								});
-
-								res.end(`
-								<!DOCTYPE html>
-								<html lang="zh-cn">
-								<head>
-									<meta charset="UTF-8">
-									<meta name="viewport" content="width=device-width, initial-scale=1.0">
-									<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-									<title>Virtual Directory</title>
-									<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-									<script src="https://unpkg.com/element-ui/lib/index.js"></script>
-								</head>
-								<body>
-									<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
-										<div v-if="needLogin==false">
-											<div class="title">
-												Virtual Directory
-											</div>
-											<div class="head" :style="{width:tableWidth+'px'}">
-												当前路径：<br/>{{getPath()}}
-											</div>
-											<table :style="{width:tableWidth+'px'}">
-												<tr v-if="isRoot()==false" class="backFolder_style" @click="backFolder">
-													<td><i class="el-icon-folder mainIcon"></i></td>
-													<td>../</td>
-													<td style="text-align: right;">上一层</td>
-												</tr>
-												<tr v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
-													<td width="30px">
-														<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
-														<i class="el-icon-tickets mainIcon" v-else></i>
-													</td>
-													<td>
-														{{ item.name }}
-													</td>
-													<td v-if="item.type=='file'" width="100px" style="text-align: right;">
-														{{ shownSize(item.size) }}
-													</td>
-												</tr>
-											</table>
-										</div>
-										<div class="login" v-else>
-											<div class="loginTitle">需要登录</div>
-											<input type="text" v-model="inputName" placeholder="用户名">
-											<input type="password" v-model="inputPass" placeholder="密码" style="margin-top: 10px;">
-											<div class="loginButton" @click="login">登录</div>
-											<div class="tip" v-show="errorPass">账号或密码错误</div>
-										</div>
-										<div class=blank></div>
-									</div>
-								</body>
-								
-								<script>
-									var app = new Vue({
-										el: '#app',
-										data: {
-											tableWidth:340,
-											flexContent:true,
-											list: ${JSON.stringify(dirList)},
-											needLogin: ${needLogin},
-											username: "${username}",
-											password: "${password}",
-											inputName: "",
-											inputPass: "",
-											errorPass: false
+										getPath() {
+											return decodeURIComponent(window.location.pathname);
 										},
-										methods: {
-											login(){
-												if(this.username==this.inputName && this.password==this.inputPass){
-													this.needLogin=false;
-													localStorage.setItem("username",this.username);
-													localStorage.setItem("password",this.password);
-												}else{
-													this.inputPass="";
-													this.inputName="";
-													this.errorPass=true;
-												}
-											},
-											getPath() {
-												return decodeURIComponent(window.location.pathname);
-											},
-											backFolder() {
-												const currentURL = window.location.href;
-												const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
-												window.location.href = parentURL;
-											},
-											isRoot() {
-												if (window.location.origin == window.location.href) {
-													return true;
-												} else if (window.location.origin + '/' == window.location.href) {
-													return true;
-												}
-												return false;
-											},
-											linkTO(item) {
-												if (this.isRoot()) {
-													var url = window.location.origin + '/';
-													url += item.name;
-													window.location.href = url;
-													return;
-												}
-												var nowURL = window.location.href;
-												nowURL += "/"
-												nowURL += item.name;
-												window.location.href = nowURL;
-											},
-											shownSize(size) {
-												if (size / 1024 > 1) {
-													size = size / 1024;
-												} else {
-													return size.toFixed(2) + " B"
-												}
-												if (size / 1024 > 1) {
-													size = size / 1024;
-												} else {
-													return size.toFixed(2) + " KB"
-												}
-												if (size / 1024 > 1) {
-													size = size / 1024;
-												} else {
-													return size.toFixed(2) + " MB"
-												}
-												if (size / 1024 > 1) {
-													size = size / 1024;
-												} else {
-													return size.toFixed(2) + " GB"
-												}
+										backFolder() {
+											const currentURL = window.location.href;
+											const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+											window.location.href = parentURL;
+										},
+										isRoot() {
+											if (window.location.origin == window.location.href) {
+												return true;
+											} else if (window.location.origin + '/' == window.location.href) {
+												return true;
+											}
+											return false;
+										},
+										linkTO(item) {
+											if (this.isRoot()) {
+												var url = window.location.origin + '/';
+												url += item.name;
+												window.location.href = url;
+												return;
+											}
+											var nowURL = window.location.href;
+											nowURL += "/"
+											nowURL += item.name;
+											window.location.href = nowURL;
+										},
+										shownSize(size) {
+											if (size / 1024 > 1) {
+												size = size / 1024;
+											} else {
+												return size.toFixed(2) + " B"
+											}
+											if (size / 1024 > 1) {
+												size = size / 1024;
+											} else {
+												return size.toFixed(2) + " KB"
+											}
+											if (size / 1024 > 1) {
+												size = size / 1024;
+											} else {
+												return size.toFixed(2) + " MB"
+											}
+											if (size / 1024 > 1) {
+												size = size / 1024;
+											} else {
 												return size.toFixed(2) + " GB"
 											}
-										},
-										created() {
+											return size.toFixed(2) + " GB"
+										}
+									},
+									created() {
+										if(window.innerWidth<380){
+											this.flexContent=false;
+											this.tableWidth=340;
+										}else if(window.innerWidth<740){
+											this.tableWidth=window.innerWidth-40;
+											this.flexContent=false;
+										}else{
+											this.tableWidth=700;
+											this.flexContent=true;
+										}
+										if(localStorage.getItem("username")==this.username && localStorage.getItem("password")==this.password){
+											this.needLogin=false;
+										}else{
+											localStorage.clear();
+										}
+									},
+									mounted() {
+										window.onresize=()=>{
 											if(window.innerWidth<380){
 												this.flexContent=false;
 												this.tableWidth=340;
@@ -363,127 +380,108 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												this.tableWidth=700;
 												this.flexContent=true;
 											}
-											if(localStorage.getItem("username")==this.username && localStorage.getItem("password")==this.password){
-												this.needLogin=false;
-											}else{
-												localStorage.clear();
-											}
-										},
-										mounted() {
-											window.onresize=()=>{
-												if(window.innerWidth<380){
-													this.flexContent=false;
-													this.tableWidth=340;
-												}else if(window.innerWidth<740){
-													this.tableWidth=window.innerWidth-40;
-													this.flexContent=false;
-												}else{
-													this.tableWidth=700;
-													this.flexContent=true;
-												}
-											}
-										},
-									})
-								</script>
-								
-								<style>
-									.login{
-										width: 200px;
-										display: flex;
-										flex-direction: column;
-										align-items: center;
-									}
-									.tip{
-										margin-top: 10px;
-										color: red;
-									}
-									.loginButton:hover{
-										background-color: rgb(255, 132, 0);
-										cursor: pointer;
-									}
-									.loginButton{
-										text-align: center;
-										margin-top: 10px;
-										background-color: orange;
-										color: white;
-										width: 50px;
-										padding: 5px 5px 5px 5px;
-										border-radius: 5px;
-										display: flex;
-										justify-content: center;
-										align-items: center;
-										transition: all ease-in-out .2s;
-									}
-									input{
-										height: 30px;
-										font-size: 16px;
-										width: 200px;
-									}
-									.loginTitle{
-										text-align: left;
-										align-self:flex-start;
-										padding-bottom: 10px;
-										padding-top: 30px;
-										font-size: 18px;
-									}
-									.blank{
-										width: 100%;
-										height: 20px;
-									}
-									.title{
-										padding-top:20px;
-									}
-									table{
-										transition: all ease-in-out .2s;
-									}
-									body {
-										margin: 0;
-									}
-									.head {
-										text-align: left;
-										font-size: 26px;
-										word-wrap: break-word;
-										margin-bottom: 10px;
-									}
-									.backFolder_style:hover {
-										color: rgb(255, 132, 0);
-										cursor: pointer;
-									}
-									.backFolder_style {
-										color: rgb(165, 165, 165);
-										transition: all ease-in-out .2s;
-									}
-									tr {
-										transition: all ease-in-out .2s;
-									}
-									tr:hover {
-										color: rgb(255, 132, 0);
-										cursor: pointer;
-									}
-									.mainIcon {
-										font-size: 18px;
-									}
-									td {
-										padding: 5px 5px 5px 5px;
-									}
-									#app {
-										padding-left: 20px;
-										padding-right: 20px;
-										user-select: none;
-										font-family: Avenir, Helvetica, Arial, sans-serif;
-										-webkit-font-smoothing: antialiased;
-										-moz-osx-font-smoothing: grayscale;
-										color: #2c3e50;
-										min-height: 100vh;
-										margin: 0;
-									}
-								</style>
-								</html>
-								`);
-							}
-						});
-						return;
+										}
+									},
+								})
+							</script>
+							
+							<style>
+								.login{
+									width: 200px;
+									display: flex;
+									flex-direction: column;
+									align-items: center;
+								}
+								.tip{
+									margin-top: 10px;
+									color: red;
+								}
+								.loginButton:hover{
+									background-color: rgb(255, 132, 0);
+									cursor: pointer;
+								}
+								.loginButton{
+									text-align: center;
+									margin-top: 10px;
+									background-color: orange;
+									color: white;
+									width: 50px;
+									padding: 5px 5px 5px 5px;
+									border-radius: 5px;
+									display: flex;
+									justify-content: center;
+									align-items: center;
+									transition: all ease-in-out .2s;
+								}
+								input{
+									height: 30px;
+									font-size: 16px;
+									width: 200px;
+								}
+								.loginTitle{
+									text-align: left;
+									align-self:flex-start;
+									padding-bottom: 10px;
+									padding-top: 30px;
+									font-size: 18px;
+								}
+								.blank{
+									width: 100%;
+									height: 20px;
+								}
+								.title{
+									padding-top:20px;
+								}
+								table{
+									transition: all ease-in-out .2s;
+								}
+								body {
+									margin: 0;
+								}
+								.head {
+									text-align: left;
+									font-size: 26px;
+									word-wrap: break-word;
+									margin-bottom: 10px;
+								}
+								.backFolder_style:hover {
+									color: rgb(255, 132, 0);
+									cursor: pointer;
+								}
+								.backFolder_style {
+									color: rgb(165, 165, 165);
+									transition: all ease-in-out .2s;
+								}
+								tr {
+									transition: all ease-in-out .2s;
+								}
+								tr:hover {
+									color: rgb(255, 132, 0);
+									cursor: pointer;
+								}
+								.mainIcon {
+									font-size: 18px;
+								}
+								td {
+									padding: 5px 5px 5px 5px;
+								}
+								#app {
+									padding-left: 20px;
+									padding-right: 20px;
+									user-select: none;
+									font-family: Avenir, Helvetica, Arial, sans-serif;
+									-webkit-font-smoothing: antialiased;
+									-moz-osx-font-smoothing: grayscale;
+									color: #2c3e50;
+									min-height: 100vh;
+									margin: 0;
+								}
+							</style>
+							</html>
+							`);
+						}
 					});
+					return;
 				} else {
 					const extension = path.extname(reqPath).toLowerCase();
 					const contentType = getContentType(extension);

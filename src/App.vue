@@ -10,10 +10,19 @@ import { ipcRenderer } from 'electron';
 export default {
 	methods: {
 		serverOn(){
-			ipcRenderer.send('serverOn', "/Users/zhoucheng/Desktop",4040,"zhouc","123123");
+			ipcRenderer.send('serverOn', "/Users/zhoucheng/Downloads",4040,"zhouc","123123");
 		},
 		serverOff(){
 			ipcRenderer.send('serverOff');
+		}
+	},
+	data() {
+		return {
+			inputName:"",
+			inputPass:"",
+			inputPort:8081,
+			inputPath:"",
+			status:false,
 		}
 	},
 }

@@ -2,12 +2,87 @@ import { BrowserWindow, app, ipcMain, protocol, dialog } from 'electron'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const { Menu } = require('electron');  // 引入 Menu 模块
 
 protocol.registerSchemesAsPrivileged([
 	{ scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
 let win;
+
+function createMenu() {
+	const template = [
+		{
+			label: 'File',
+			submenu: [
+				{
+					label:"关于",
+					role: "about"
+				},
+				{
+					label:"隐藏",
+					role:"hide"
+				},
+				{
+					label: '退出',
+					accelerator: 'CmdOrCtrl+Q',
+					click() {
+						app.quit();
+					}
+				}
+			]
+		},
+		{
+			label: '编辑',
+			submenu: [
+				{ type: 'separator' },
+				{
+					label: "全选",
+					role: 'selectAll'
+				},
+				{
+					label: "重做",
+					role: 'redo'
+				},
+				{ type: 'separator' },
+				{
+					label: "剪切",
+					role: 'cut'
+				},
+				{
+					label: "复制",
+					role: 'copy'
+				},
+				{
+					label: "粘贴",
+					role: 'paste'
+				}
+			]
+		},
+		{
+			label: "窗口",
+			submenu: [
+				{
+					label:"最小化",
+					role:"minimize"
+				},
+				{
+					label:"缩放",
+					role:"zoom",
+				}
+			]
+		}
+	];
+
+	const isMac = process.platform === 'darwin';
+	const menu = Menu.buildFromTemplate(template);
+	if (isMac) {
+		Menu.setApplicationMenu(menu);
+	} else {
+		Menu.setApplicationMenu(null);
+	}
+}
+
 
 async function createWindow() {
 	win = new BrowserWindow({
@@ -20,6 +95,7 @@ async function createWindow() {
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
 		}
 	})
+	win.setTitle("Virtual Directory")
 
 	if (process.env.WEBPACK_DEV_SERVER_URL) {
 		await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -41,15 +117,8 @@ app.on('activate', () => {
 })
 
 app.on('ready', async () => {
-	if (isDevelopment && !process.env.IS_TEST) {
-		// Install Vue Devtools
-		try {
-			await installExtension(VUEJS_DEVTOOLS)
-		} catch (e) {
-			console.error('Vue Devtools failed to install:', e.toString())
-		}
-	}
-	createWindow()
+	createWindow();
+	createMenu();
 })
 
 if (isDevelopment) {

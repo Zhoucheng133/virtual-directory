@@ -51,11 +51,11 @@ IPv6|支持|不支持
    ```
 4. 接着输入命令来运行(`serve`)或生成(`build`)：
    ```bash
-   npm run serve
-   npm run build
+   npm run electron:serve
+   npm run electron:build
    ```
    或者`yarn`：
    ```bash
-   yarn run serve
-   yarn run build
+   yarn run electron:serve
+   yarn run electron:build
    ```

@@ -79,9 +79,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 	const fs = require('fs');
 	const path = require('path');
 
-	var needLogin=false;
-	if(username==""&&password==""){
-		needLogin=true;
+	var needLogin=true;
+	if(username=="" && password==""){
+		needLogin=false;
 	}
 
 	server = http.createServer((req, res) => {
@@ -236,7 +236,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								</head>
 								<body>
 									<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
-										<div>
+										<div v-if="needLogin==false">
 											<div class="title">
 												Virtual Directory
 											</div>
@@ -263,6 +263,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												</tr>
 											</table>
 										</div>
+										<div class="login" v-else>
+											<div class="loginTitle">需要登录</div>
+											<input type="text" v-model="inputName" placeholder="用户名">
+											<input type="password" v-model="inputPass" placeholder="密码" style="margin-top: 10px;">
+											<div class="loginButton" @click="login">登录</div>
+											<div class="tip" v-show="errorPass">账号或密码错误</div>
+										</div>
 										<div class=blank></div>
 									</div>
 								</body>
@@ -273,9 +280,26 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										data: {
 											tableWidth:340,
 											flexContent:true,
-											list: ${JSON.stringify(dirList)}
+											list: ${JSON.stringify(dirList)},
+											needLogin: ${needLogin},
+											username: "${username}",
+											password: "${password}",
+											inputName: "",
+											inputPass: "",
+											errorPass: false
 										},
 										methods: {
+											login(){
+												if(this.username==this.inputName && this.password==this.inputPass){
+													this.needLogin=false;
+													localStorage.setItem("username",this.username);
+													localStorage.setItem("password",this.password);
+												}else{
+													this.inputPass="";
+													this.inputName="";
+													this.errorPass=true;
+												}
+											},
 											getPath() {
 												return decodeURIComponent(window.location.pathname);
 											},
@@ -339,6 +363,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												this.tableWidth=700;
 												this.flexContent=true;
 											}
+											if(localStorage.getItem("username")==this.username && localStorage.getItem("password")==this.password){
+												this.needLogin=false;
+											}else{
+												localStorage.clear();
+											}
 										},
 										mounted() {
 											window.onresize=()=>{
@@ -358,6 +387,45 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								</script>
 								
 								<style>
+									.login{
+										width: 200px;
+										display: flex;
+										flex-direction: column;
+										align-items: center;
+									}
+									.tip{
+										margin-top: 10px;
+										color: red;
+									}
+									.loginButton:hover{
+										background-color: rgb(255, 132, 0);
+										cursor: pointer;
+									}
+									.loginButton{
+										text-align: center;
+										margin-top: 10px;
+										background-color: orange;
+										color: white;
+										width: 50px;
+										padding: 5px 5px 5px 5px;
+										border-radius: 5px;
+										display: flex;
+										justify-content: center;
+										align-items: center;
+										transition: all ease-in-out .2s;
+									}
+									input{
+										height: 30px;
+										font-size: 16px;
+										width: 200px;
+									}
+									.loginTitle{
+										text-align: left;
+										align-self:flex-start;
+										padding-bottom: 10px;
+										padding-top: 30px;
+										font-size: 18px;
+									}
 									.blank{
 										width: 100%;
 										height: 20px;

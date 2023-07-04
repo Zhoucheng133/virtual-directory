@@ -78,6 +78,7 @@
 
 <script>
 import { ipcRenderer } from 'electron';
+import Clipboard from "clipboard";
 export default {
 	data() {
 		return {
@@ -92,6 +93,12 @@ export default {
 		}
 	},
 	methods: {
+		copyIPv6(){
+
+		},
+		copyIPv4(){
+
+		},
 		serverButton(){
 			if(this.status==false){
 				if(this.inputPath==""){

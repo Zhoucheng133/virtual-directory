@@ -15,10 +15,10 @@
 	"dependencies": {
 		"ant-design-vue": "1.7.8",
 		"base-64": "^1.0.0",
-		"clipboard": "^2.0.11",
 		"core-js": "^3.8.3",
 		"mime-types": "^2.1.35",
-		"vue": "^2.6.14"
+		"vue": "^2.6.14",
+		"vue-clipboard2": "^0.3.3"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.16",

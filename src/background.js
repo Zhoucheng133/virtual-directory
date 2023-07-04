@@ -69,6 +69,24 @@ function getContentType(extension) {
   return contentType || 'application/octet-stream';
 }
 
+async function isAuthorized(authorizationHeader, username, password) {
+	const base64 = require('base-64');
+	if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+		return false;
+	}
+
+	const credentials = base64.decode(authorizationHeader.substring('Basic '.length));
+	const [requestUsername, requestPassword] = credentials.toString('utf-8').split(':');
+	const storedUsername = username;
+	const storedPassword = password;
+
+	console.log(requestUsername+"#"+storedUsername);
+	console.log(requestPassword+"#"+storedPassword);
+	console.log(requestUsername === storedUsername && requestPassword === storedPassword);
+
+	return requestUsername === storedUsername && requestPassword === storedPassword;
+}
+
 let server;
 var sockets = [];
 
@@ -84,8 +102,18 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 		needLogin=false;
 	}
 
-	server = http.createServer((req, res) => {
+	server = http.createServer(async (req, res) => {
 		const reqPath = path.join(sharePath, decodeURIComponent(req.url));
+
+		if(needLogin){
+			const authHeader = req.headers.authorization;
+	
+			if (await isAuthorized(authHeader,username,password) === false) {
+				res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Restricted Area"' });
+				res.end('Unauthorized');
+				return;
+			}
+		}
 
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {

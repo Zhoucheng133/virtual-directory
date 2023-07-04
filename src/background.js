@@ -97,10 +97,6 @@ async function isAuthorized(authorizationHeader, username, password) {
 	const storedUsername = username;
 	const storedPassword = password;
 
-	console.log(requestUsername+"#"+storedUsername);
-	console.log(requestPassword+"#"+storedPassword);
-	console.log(requestUsername === storedUsername && requestPassword === storedPassword);
-
 	return requestUsername === storedUsername && requestPassword === storedPassword;
 }
 

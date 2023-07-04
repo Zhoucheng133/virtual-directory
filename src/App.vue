@@ -70,7 +70,10 @@
 						<a-button :type="status==false?'primary':'danger'" block @click="serverButton">{{ status==false?'启动服务':'关闭服务' }}</a-button>
 					</div>
 				</div>
-				<!-- <a-button @click="getIP">测试按钮</a-button> -->
+				<div class="end">
+					<div>v1.0</div>
+					<div class="toGit" @click="openGitee">Virtual Directory on Gitee</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -93,6 +96,9 @@ export default {
 		}
 	},
 	methods: {
+		openGitee(){
+			shell.openExternal("https://gitee.com/Ryan-zhou/virtual-directory");
+		},
 		openLink(){
 			shell.openExternal("http://"+this.IPv4+":"+this.inputPort);
 		},
@@ -219,6 +225,18 @@ export default {
 </style>
 
 <style scoped>
+.toGit:hover{
+	color: #1890ff;
+	cursor: pointer;
+}
+.toGit{
+	transition: all ease-in-out .3s;
+}
+.end{
+	font-size: 13px;
+	padding-top: 40px;
+	color: gray;
+}
 .row3{
 	padding-bottom: 5px;
 	display: grid;

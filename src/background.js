@@ -499,3 +499,30 @@ ipcMain.on("serverOff", async (event) => {
 	}
 	event.reply('serverOffResponse', 'success');
 });
+
+const os = require('os');
+
+// 获取IP地址函数
+ipcMain.on("getIP",async (event) => {
+	const networkInterfaces = os.networkInterfaces();
+	const ipv4Addresses = [];
+	Object.keys(networkInterfaces).forEach(interfaceName => {
+		const addresses = networkInterfaces[interfaceName];
+		addresses.forEach(address => {
+			if (address.family === 'IPv4' && !address.internal) {
+				ipv4Addresses.push(address.address);
+			}
+		});
+	});
+	console.log('IPv4 Addresses:', ipv4Addresses);
+	const ipv6Addresses = [];
+	Object.keys(networkInterfaces).forEach(interfaceName => {
+	  const addresses = networkInterfaces[interfaceName];
+	  addresses.forEach(address => {
+		if (address.family === 'IPv6' && !address.internal) {
+		  ipv6Addresses.push(address.address);
+		}
+	  });
+	});
+	console.log('IPv6 Addresses:', ipv6Addresses);
+});

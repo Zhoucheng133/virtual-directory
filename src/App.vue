@@ -13,7 +13,7 @@
 					<div class="cell">
 						<a-input disabled v-model="inputPath"></a-input>
 					</div>
-					<div class="cell">
+					<div class="cell" style="padding-left: 10px;">
 						<a-button @click="pickDir" :disabled="status">选取目录</a-button>
 					</div>
 				</div>
@@ -38,10 +38,10 @@
 					<div class="cell">用户设置</div>
 				</div>
 				<div class="row1">
-					<div class="cell">
+					<div class="cell" style="padding-right: 5px;">
 						<a-input v-model="inputName" placeholder="用户名" :disabled="secure=='all'||status"></a-input>
 					</div>
-					<div class="cell">
+					<div class="cell" style="padding-left: 5px;">
 						<a-input-password v-model="inputPass" placeholder="密码" :disabled="secure=='all'||status"></a-input-password>
 					</div>
 				</div>
@@ -50,10 +50,10 @@
 				</div>
 				<div class="row3">
 					<div class="cell">
-						<a-button-group block>
-							<a-button type="primary" :disabled="!status">打开</a-button>
-							<a-button :disabled="!status">复制IPv4链接</a-button>
-							<a-button :disabled="!status">复制IPv6链接</a-button>
+						<a-button-group>
+							<a-button type="primary" :disabled="!status" style="width: 70px;">打开</a-button>
+							<a-button :disabled="!status" style="width: 115px;">复制IPv4链接</a-button>
+							<a-button :disabled="!status" style="width: 115px;">复制IPv6链接</a-button>
 						</a-button-group>
 					</div>
 				</div>
@@ -64,12 +64,13 @@
 				</div>
 				<div class="row1">
 					<div class="cell">
-						<a-input-number v-model="inputPort" :disabled="status"></a-input-number>
+						<a-input-number v-model="inputPort" :disabled="status" style="width: 145px;"></a-input-number>
 					</div>
-					<div class="cell">
+					<div class="cell" style="padding-left: 5px;">
 						<a-button :type="status==false?'primary':'danger'" block @click="serverButton">{{ status==false?'启动服务':'关闭服务' }}</a-button>
 					</div>
 				</div>
+				<!-- <a-button @click="getIP">测试按钮</a-button> -->
 			</div>
 		</div>
 	</div>
@@ -141,6 +142,9 @@ export default {
 		getDir(event,val){
 			this.inputPath=val;
 		},
+		getIP(){
+			ipcRenderer.send('getIP');
+		},
 		pickDir(){
 			ipcRenderer.send("selectDir");
 		},
@@ -177,7 +181,6 @@ export default {
 }
 .cell{
 	display: flex;
-	padding-left: 10px;
 	align-items: center;
 }
 .row1{

@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
-		<div class="dragArea">
+		<div class="titleBar">
+			<div class="dragArea" style="width: 100%;"></div>
 			<div class="min" @click="winMin" v-if="sys=='Windows'"><a-icon type="minus" /></div>
 			<div class="close" @click="winClose" v-if="sys=='Windows'"><a-icon type="close" /></div>
 		</div>
@@ -313,6 +314,10 @@ export default {
 	font-size: 17px;
 }
 .dragArea{
+	-webkit-app-region: drag;
+	height: 30px;
+}
+.titleBar{
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
@@ -321,7 +326,5 @@ export default {
     left: 0;
     height: 30px;
     width: 100%;
-    -webkit-app-region: drag;
-	/* background-color: grey; */
 }
 </style>

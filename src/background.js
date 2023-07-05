@@ -1,5 +1,4 @@
 import { BrowserWindow, app, ipcMain, protocol, dialog } from 'electron'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const { Menu } = require('electron');  // 引入 Menu 模块
@@ -85,6 +84,7 @@ function createMenu() {
 
 
 async function createWindow() {
+	const path = require('path');
 	win = new BrowserWindow({
 		width: 400,
 		height: 500,
@@ -92,6 +92,7 @@ async function createWindow() {
 		titleBarStyle: 'hiddenInset',
 		frame: false,
 		title: "Virtual Directory",
+		icon: path.join(__dirname, 'build/icon.png'),
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION

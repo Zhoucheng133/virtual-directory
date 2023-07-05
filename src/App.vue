@@ -189,6 +189,11 @@ export default {
 		serverOnResponse(event,val){
 			if(val=="success"){
 				this.status=true;
+			}else{
+				this.$error({
+					title: '启动服务失败',
+					content: '可能是端口占用，你可以尝试修改其它端口号',
+				});
 			}
 		},
 		getSysResponse(event,val){

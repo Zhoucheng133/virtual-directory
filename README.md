@@ -15,13 +15,8 @@
 IPv6|支持|不支持
 
 ## 效果图
-在macOS系统上的效果图：
 
 ![在macOS上的效果图](_demo/shotcut_macOS.png)
-
-在Windows系统上的效果图：
-
-![在Windows上的效果图](_demo/shotcut_Windows.png)
 
 ## 目前最新版本
 v1.0.1 (2023/7/5)

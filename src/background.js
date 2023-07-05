@@ -9,6 +9,7 @@ protocol.registerSchemesAsPrivileged([
 
 let win;
 
+// 创建菜单函数（仅macOS系统）
 function createMenu() {
 	const template = [
 		{
@@ -138,6 +139,7 @@ if (isDevelopment) {
 	}
 }
 
+// 选择目录函数，返回路径
 ipcMain.on("selectDir", async (event) => {
 	dialog.showOpenDialog(win, {
 		properties: ['openDirectory'],
@@ -158,6 +160,7 @@ function getContentType(extension) {
   return contentType || 'application/octet-stream';
 }
 
+// 验证身份函数
 async function isAuthorized(authorizationHeader, username, password) {
 	const base64 = require('base-64');
 	if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
@@ -594,6 +597,7 @@ ipcMain.on("getIP",async (event) => {
 	event.reply('getIpResponse', ipv4Addresses, ipv6Addresses);
 });
 
+// 获取系统类别函数
 ipcMain.on("getSys",async(event)=>{
 	if(process.platform == 'darwin'){
 		event.reply('getSysResponse', 'macOS');
@@ -604,10 +608,12 @@ ipcMain.on("getSys",async(event)=>{
 	}
 });
 
+// 最小化窗口函数
 ipcMain.on("winMin",async(event)=>{
 	win.minimize();
 }),
 
+// 关闭窗口函数
 ipcMain.on("winClose",async(event)=>{
 	win.close();
 })

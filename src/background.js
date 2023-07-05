@@ -539,7 +539,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 					const extension = path.extname(reqPath).toLowerCase();
 					const contentType = getContentType(extension);
 					const stream = fs.createReadStream(reqPath);
-					// res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(path.basename(reqPath))}"`);
 					res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(reqPath))}`);
 					res.setHeader('Content-Type', contentType);
 					stream.pipe(res);

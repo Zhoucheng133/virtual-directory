@@ -568,7 +568,7 @@ ipcMain.on("serverOff", async (event) => {
 	if (server) {
 		server.close();
 	} else {
-		event.reply('serverOffResponse', 'Error');
+		event.reply('serverOffResponse', 'error');
 	}
 	event.reply('serverOffResponse', 'success');
 });

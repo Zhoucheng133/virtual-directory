@@ -184,6 +184,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 	const http = require('http');
 	const fs = require('fs');
 	const path = require('path');
+	const querystring = require('querystring');
 
 	var needLogin=true;
 	if(username=="" && password==""){
@@ -538,7 +539,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 					const extension = path.extname(reqPath).toLowerCase();
 					const contentType = getContentType(extension);
 					const stream = fs.createReadStream(reqPath);
-					res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(path.basename(reqPath))}"`);
+					// res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(path.basename(reqPath))}"`);
+					res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(reqPath))}`);
 					res.setHeader('Content-Type', contentType);
 					stream.pipe(res);
 				}

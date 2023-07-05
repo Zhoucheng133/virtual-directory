@@ -90,6 +90,7 @@ async function createWindow() {
 		height: 500,
 		resizable: false,
 		titleBarStyle: 'hiddenInset',
+		frame: 'false',
 		title: "Virtual Directory",
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -591,3 +592,21 @@ ipcMain.on("getIP",async (event) => {
 	});
 	event.reply('getIpResponse', ipv4Addresses, ipv6Addresses);
 });
+
+ipcMain.on("getSys",async(event)=>{
+	if(process.platform == 'darwin'){
+		event.reply('getSysResponse', 'macOS');
+	}else if(process.platform=='win32' ){
+		event.reply('getSysResponse', 'Windows');
+	}else{
+		event.reply('getSysResponse', 'Linux');
+	}
+});
+
+ipcMain.on("winMin",async(event)=>{
+	win.minimize();
+}),
+
+ipcMain.on("winClose",async(event)=>{
+	win.close();
+})

@@ -1,6 +1,9 @@
 <template>
 	<div id="app">
-		<div class="dragArea"></div>
+		<div class="dragArea">
+			<div class="min" @click="winMin" v-if="sys=='Windows'"><a-icon type="minus" /></div>
+			<div class="close" @click="winClose" v-if="sys=='Windows'"><a-icon type="close" /></div>
+		</div>
 		<div class="main">
 			<div class="title">Virtual Directory</div>
 			<div class="container">
@@ -92,10 +95,17 @@ export default {
 			inputPath:"",
 			status:false,
 			IPv4:"",
-			IPv6:""
+			IPv6:"",
+			sys:"",
 		}
 	},
 	methods: {
+		winClose(){
+			ipcRenderer.send('winClose');
+		},
+		winMin(){
+			ipcRenderer.send('winMin');
+		},
 		openGitee(){
 			shell.openExternal("https://gitee.com/Ryan-zhou/virtual-directory");
 		},
@@ -180,6 +190,9 @@ export default {
 				this.status=true;
 			}
 		},
+		getSysResponse(event,val){
+			this.sys=val;
+		},
 		getIpResponse(event,val1,val2){
 			this.IPv4=val1[0];
 			if(val2!=[]){
@@ -208,8 +221,10 @@ export default {
 		ipcRenderer.on('serverOnResponse',this.serverOnResponse)
 		ipcRenderer.on('getDir', this.getDir);
 		ipcRenderer.on('getIpResponse', this.getIpResponse);
+		ipcRenderer.on("getSysResponse",this.getSysResponse)
 
 		ipcRenderer.send('getIP');
+		ipcRenderer.send("getSys");
 		document.title="Virtual Directory";
 	},
 }
@@ -268,12 +283,45 @@ export default {
 	user-select: none;
 	padding-top: 30px;
 }
+.close:hover{
+	background-color: rgb(200, 0, 0);
+	color: white;
+	cursor: pointer;
+}
+.min:hover{
+	background-color: rgb(202, 202, 202);
+	cursor: pointer;
+}
+.min{
+	font-size: 17px;
+	transition: all ease-in-out .2s;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	width: 40px;
+	align-items: center;
+}
+.close{
+	background-color: red;
+	color: white;
+	transition: all ease-in-out .2s;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 40px;
+	font-size: 17px;
+}
 .dragArea{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     height: 30px;
     width: 100%;
     -webkit-app-region: drag;
+	/* background-color: grey; */
 }
 </style>

@@ -90,7 +90,7 @@ async function createWindow() {
 		height: 500,
 		resizable: false,
 		titleBarStyle: 'hiddenInset',
-		frame: 'false',
+		frame: false,
 		title: "Virtual Directory",
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,

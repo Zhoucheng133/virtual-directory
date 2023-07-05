@@ -553,7 +553,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			socket.once("close", function () {
 				sockets.splice(sockets.indexOf(socket), 1);
 			});
-		});	  
+		});
 
 		server.listen(sharePort, () => {
 			event.reply('serverOnResponse', 'success');

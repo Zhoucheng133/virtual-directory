@@ -13,6 +13,7 @@
 框架|Electron|Flutter
 文件体积|较大|较小
 IPv6|支持|不支持
+支持系统|Windows<br/>macOS<br/>Linux|macOS<br/>Windows（未经过测试）<br>Linux（未经过测试）
 
 ## 效果图
 

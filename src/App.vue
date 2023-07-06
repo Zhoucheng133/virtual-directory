@@ -176,6 +176,23 @@ export default {
 				this.serverOff();
 			}
 		},
+		getValue(){
+			if(localStorage.getItem("path")!=null){
+				this.inputPath=localStorage.getItem("path");
+			}
+			if(localStorage.getItem("secureMode")!=null){
+				this.secure=localStorage.getItem("secureMode");
+			}
+			if(localStorage.getItem("username")!=null){
+				this.inputName=localStorage.getItem("username");
+			}
+			if(localStorage.getItem("password")!=null){
+				this.inputPass=localStorage.getItem("password");
+			}
+			if(localStorage.getItem("port")!=null){
+				this.inputPort=localStorage.getItem("port");
+			}
+		},
 		serverOffResponse(event,val){
 			if(val=="success"){
 				this.status=false;
@@ -189,6 +206,11 @@ export default {
 		serverOnResponse(event,val){
 			if(val=="success"){
 				this.status=true;
+				localStorage.setItem("path",this.inputPath);
+				localStorage.setItem("secureMode",this.secure);
+				localStorage.setItem("username",this.inputName);
+				localStorage.setItem("password",this.inputPass);
+				localStorage.setItem("port",this.inputPort);
 			}else{
 				this.$error({
 					title: '启动服务失败',
@@ -231,6 +253,8 @@ export default {
 
 		ipcRenderer.send('getIP');
 		ipcRenderer.send("getSys");
+
+		this.getValue();
 		document.title="Virtual Directory";
 	},
 }

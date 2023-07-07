@@ -165,6 +165,16 @@ export default {
 					});
 					return;
 				}
+				if(this.sys=="Windows"){
+					const regex = /^[A-Z]:\/$/;
+					if (regex.test(path)) {
+						this.$error({
+							title: '启动失败',
+							content: 'Windows系统不能选择磁盘根目录',
+						});
+						return;
+					}
+				}
 				var tmpName="";
 				var tmpPass="";
 				if(this.secure=="userOnly"){

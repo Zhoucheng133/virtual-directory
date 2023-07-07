@@ -452,7 +452,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											this.tableWidth=700;
 											this.flexContent=true;
 										}
-										console.log(this.tableWidth);
 									},
 									mounted() {
 										window.onresize=()=>{

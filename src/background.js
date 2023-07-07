@@ -549,11 +549,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 	});
 
 	server.on('error', (error) => {
-		if (error.code === 'EADDRINUSE') {
-			event.reply('serverOnResponse', 'error');
-		} else {
-			event.reply('serverOnResponse', 'error');
-		}
+		event.reply('serverOnResponse', 'error');
+		return;
 	});
 
 	server.on("connection", function (socket) {

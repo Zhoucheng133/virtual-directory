@@ -87,6 +87,10 @@
 import { ipcRenderer } from 'electron';
 const {shell} = require('electron')
 export default {
+	beforeDestroy(){
+      // 在组件销毁前设置标志位为 true
+      this.isDestroyed = true
+    },
 	data() {
 		return {
 			inputName:"",
@@ -98,6 +102,8 @@ export default {
 			IPv4:"",
 			IPv6:"",
 			sys:"",
+
+			isDestroyed: false,
 		}
 	},
 	methods: {
@@ -231,6 +237,8 @@ export default {
 			}
 		},
 		serverOnResponse(event,val){
+			if(this.isDestroyed)
+				return;
 			if(val=="success"){
 				this.status=true;
 				localStorage.setItem("path",this.inputPath);

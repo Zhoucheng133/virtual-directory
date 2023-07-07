@@ -174,6 +174,15 @@ export default {
 						});
 						return;
 					}
+					if(this.inputPath.startsWith("C:\\")){
+						if(!this.inputPath.startsWith("C:\\Users")){
+							this.$error({
+								title: '启动失败',
+								content: '不允许访问的目录',
+							});
+							return;
+						}
+					}
 				}
 				var tmpName="";
 				var tmpPass="";

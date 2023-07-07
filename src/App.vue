@@ -167,7 +167,7 @@ export default {
 				}
 				if(this.sys=="Windows"){
 					const regex = /^[A-Z]:\/$/;
-					if (regex.test(path)) {
+					if (regex.test(this.inputPath)) {
 						this.$error({
 							title: '启动失败',
 							content: 'Windows系统不能选择磁盘根目录',

@@ -166,7 +166,7 @@ export default {
 					return;
 				}
 				if(this.sys=="Windows"){
-					const regex = /^[A-Z]:\/$/;
+					const regex = /^[A-Z]:\\$/;
 					if (regex.test(this.inputPath)) {
 						this.$error({
 							title: '启动失败',

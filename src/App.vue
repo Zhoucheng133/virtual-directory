@@ -183,6 +183,14 @@ export default {
 							return;
 						}
 					}
+				}else{
+					if(this.inputPath=="/"){
+						this.$error({
+							title: '启动失败',
+							content: '不允许访问的目录',
+						});
+						return;
+					}
 				}
 				var tmpName="";
 				var tmpPass="";

@@ -150,7 +150,7 @@ export default {
 		},
 		serverButton(){
 			if(this.status==false){
-				if(this.inputPath==""){
+				if(this.inputPath=="" || this.inputPath==undefined || this.inputPath=="undefined"){
 					this.$error({
 						title: '启动失败',
 						content: '没有选取目录',
@@ -164,7 +164,7 @@ export default {
 					});
 					return;
 				}
-				if(this.inputPort==null || this.inputPort<=1024){
+				if(this.inputPort==null || this.inputPort<=1024 || this.inputPort=="" || this.inputPort==undefined || this.inputPort=="undefined"){
 					this.$error({
 						title: '启动失败',
 						content: '端口号不合法，输入大于1024的端口号',

@@ -75,7 +75,7 @@
 					</div>
 				</div>
 				<div class="end">
-					<div>v1.0.3</div>
+					<div>v1.0.4</div>
 					<div class="toGit" @click="openGitee">Virtual Directory on Gitee</div>
 				</div>
 			</div>

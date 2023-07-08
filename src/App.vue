@@ -107,18 +107,23 @@ export default {
 		}
 	},
 	methods: {
+		// 关闭窗口
 		winClose(){
 			ipcRenderer.send('winClose');
 		},
+		// 最小化窗口
 		winMin(){
 			ipcRenderer.send('winMin');
 		},
+		// 在Gitee中打开
 		openGitee(){
 			shell.openExternal("https://gitee.com/Ryan-zhou/virtual-directory");
 		},
+		// 打开链接
 		openLink(){
 			shell.openExternal("http://"+this.IPv4+":"+this.inputPort);
 		},
+		// 复制IPv6地址
 		copyIPv6(){
 			if(this.IPv6!=""&&this.IPv6!=undefined){
 				this.doCopy("http://["+this.IPv6+"]:"+this.inputPort);
@@ -129,6 +134,7 @@ export default {
 				});
 			}
 		},
+		// 复制IPv4地址
 		copyIPv4(){
 			if(this.IPv4!=""&&this.IPv4!=undefined){
 				this.doCopy("http://"+this.IPv4+":"+this.inputPort);
@@ -139,6 +145,7 @@ export default {
 				});
 			}
 		},
+		// 复制
 		doCopy(val) {
 			this.$copyText(val).then(function () {
 			}, function () {
@@ -148,6 +155,7 @@ export default {
 				});
 			})
 		},
+		// 按下启动/关闭服务按钮
 		serverButton(){
 			if(this.status==false){
 				if(this.inputPath=="" || this.inputPath==undefined || this.inputPath=="undefined"){
@@ -209,6 +217,7 @@ export default {
 				this.serverOff();
 			}
 		},
+		// 初始化（如果存在）变量
 		getValue(){
 			if(localStorage.getItem("path")!=null){
 				this.inputPath=localStorage.getItem("path");
@@ -226,6 +235,7 @@ export default {
 				this.inputPort=localStorage.getItem("port");
 			}
 		},
+		// 关闭服务反馈
 		serverOffResponse(event,val){
 			if(val=="success"){
 				this.status=false;
@@ -236,6 +246,7 @@ export default {
 				});
 			}
 		},
+		// 开启服务反馈
 		serverOnResponse(event,val){
 			if(this.isDestroyed)
 				return;
@@ -253,9 +264,11 @@ export default {
 				});
 			}
 		},
+		// 获取系统信息
 		getSysResponse(event,val){
 			this.sys=val;
 		},
+		// 获取IP地址反馈
 		getIpResponse(event,val1,val2){
 			this.IPv4=val1[0];
 			if(val2!=[]){
@@ -263,18 +276,23 @@ export default {
 				this.IPv6=filteredArray[0];
 			}
 		},
+		// 获取地址反馈
 		getDir(event,val){
 			this.inputPath=val;
 		},
+		// 获取IP地址反馈
 		getIP(){
 			ipcRenderer.send('getIP');
 		},
+		// 请求选择目录
 		pickDir(){
 			ipcRenderer.send("selectDir");
 		},
+		// 请求启动服务
 		serverOn(path,port,username,password){
 			ipcRenderer.send('serverOn', path,port,username,password);
 		},
+		// 请求关闭服务
 		serverOff(){
 			ipcRenderer.send('serverOff');
 		}

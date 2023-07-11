@@ -366,102 +366,91 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												<div class="cell">
 													<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
 													<i class="bi bi-file-earmark-image mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.jpg' || 
-														item.name.substring(item.name.length-4)=='.JPG' || 
-														item.name.substring(item.name.length-4)=='.JPEG' ||
-														item.name.substring(item.name.length-4)=='.png' || 
-														item.name.substring(item.name.length-5)=='.jpeg' ||
-														item.name.substring(item.name.length-5)=='.tiff' ||
-														item.name.substring(item.name.length-4)=='.psd' ||
-														item.name.substring(item.name.length-4)=='.gif' ||
-														item.name.substring(item.name.length-4)=='.tif' ||
-														item.name.substring(item.name.length-3)=='.ai' ||
-														item.name.substring(item.name.length-4)=='.svg' ||
-														item.name.substring(item.name.length-4)=='.dng') && item.type!='dir'">
+														(comp(item.name,'jpg') || 
+														comp(item.name,'jpeg') ||
+														comp(item.name,'png') || 
+														comp(item.name,'tiff') ||
+														comp(item.name,'psd') ||
+														comp(item.name,'gif') ||
+														comp(item.name,'tif') ||
+														comp(item.name,'ai') ||
+														comp(item.name,'svg') ||
+														comp(item.name,'dng')) && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-play mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.mp4' || 
-														item.name.substring(item.name.length-4)=='.mov' || 
-														item.name.substring(item.name.length-4)=='.mkv' ||
-														item.name.substring(item.name.length-4)=='.avi' ||
-														item.name.substring(item.name.length-5)=='.rmvb') && item.type!='dir'">
+														(comp(item.name,'mp4') || 
+														comp(item.name,'mov') || 
+														comp(item.name,'mkv') ||
+														comp(item.name,'avi') ||
+														comp(item.name,'rmvb')) && item.type!='dir'">
 							
 													</i>
 													<i class="bi bi-file-earmark-music mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.mp3' || 
-														item.name.substring(item.name.length-4)=='.acc' || 
-														item.name.substring(item.name.length-5)=='.flac' ||
-														item.name.substring(item.name.length-4)=='.avi' ||
-														item.name.substring(item.name.length-4)=='.rmvb' ||
-														item.name.substring(item.name.length-4)=='.m4p' ||
-														item.name.substring(item.name.length-4)=='.wav' ||
-														item.name.substring(item.name.length-4)=='.mid' ||
-														item.name.substring(item.name.length-4)=='.midi') && item.type!='dir'">
+														(comp(item.name,'mp3') || 
+														comp(item.name,'acc') || 
+														comp(item.name,'flac') ||
+														comp(item.name,'m4p') ||
+														comp(item.name,'wav') ||
+														comp(item.name,'mid') ||
+														comp(item.name,'midi')) && item.type!='dir'">
 							
 													</i>
 													<i class="bi bi-file-text mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.txt' || 
-														item.name.substring(item.name.length-4)=='.doc' || 
-														item.name.substring(item.name.length-5)=='.docx' ||
-														item.name.substring(item.name.length-3)=='.md' ||
-														item.name.substring(item.name.length-4)=='.rtf') && item.type!='dir'">
-													</i>
-													<i class="bi bi-file-text mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.txt' || 
-														item.name.substring(item.name.length-4)=='.doc' || 
-														item.name.substring(item.name.length-5)=='.docx' ||
-														item.name.substring(item.name.length-3)=='.md' ||
-														item.name.substring(item.name.length-4)=='.rtf') && item.type!='dir'">
+														(comp(item.name,'txt') || 
+														comp(item.name,'doc') || 
+														comp(item.name,'docx') ||
+														comp(item.name,'md') ||
+														comp(item.name,'rtf')) && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-earmark-slides mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.ppt' || 
-														item.name.substring(item.name.length-4)=='.key' || 
-														item.name.substring(item.name.length-5)=='.pptx') && item.type!='dir'">
+														(comp(item.name,'ppt') || 
+														comp(item.name,'key') || 
+														comp(item.name,'pptx')) && item.type!='dir'">
 													</i>
 													<i class="bi-file-earmark-bar-graph mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.xls' || 
-														item.name.substring(item.name.length-5)=='.xlsx' || 
-														item.name.substring(item.name.length-8)=='.numbers') && item.type!='dir'">
+														(comp(item.name,'xls') || 
+														comp(item.name,'xlsx') || 
+														comp(item.name,'numbers')) && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-earmark-code mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.cpp' || 
-														item.name.substring(item.name.length-2)=='.c' || 
-														item.name.substring(item.name.length-3)=='.py' ||
-														item.name.substring(item.name.length-3)=='.cs' ||
-														item.name.substring(item.name.length-6)=='.swift' ||
-														item.name.substring(item.name.length-3)=='.js' ||
-														item.name.substring(item.name.length-5)=='.java' ||
-														item.name.substring(item.name.length-5)=='.json' ||
-														item.name.substring(item.name.length-4)=='.vue' ||
-														item.name.substring(item.name.length-4)=='.css' ||
-														item.name.substring(item.name.length-3)=='.go' ||
-														item.name.substring(item.name.length-4)=='.sql' ||
-														item.name.substring(item.name.length-3)=='.vb' ||
-														item.name.substring(item.name.length-3)=='.rs' ||
-														item.name.substring(item.name.length-4)=='.xml' ||
-														item.name.substring(item.name.length-3)=='.kt' ||
-														item.name.substring(item.name.length-5)=='.yaml' ||
-														item.name.substring(item.name.length-3)=='.ts' || 
-														item.name.substring(item.name.length-5)=='.html' ||
-														item.name.substring(item.name.length-4)=='.csv' ||
-														item.name.substring(item.name.length-3)=='.sh' ||
-														item.name.substring(item.name.length-5)=='.sass' ||
-														item.name.substring(item.name.length-5)=='.scss' ||
-														item.name.substring(item.name.length-4)=='.yml') && item.type!='dir'">
+														(comp(item.name,'cpp') || 
+														comp(item.name,'c') || 
+														comp(item.name,'py') ||
+														comp(item.name,'cs') ||
+														comp(item.name,'swfit') ||
+														comp(item.name,'js') ||
+														comp(item.name,'java') ||
+														comp(item.name,'json') ||
+														comp(item.name,'vue') ||
+														comp(item.name,'css') ||
+														comp(item.name,'go') ||
+														comp(item.name,'sql') ||
+														comp(item.name,'vb') ||
+														comp(item.name,'rs') ||
+														comp(item.name,'xml') ||
+														comp(item.name,'kt') ||
+														comp(item.name,'yaml') ||
+														comp(item.name,'ts') || 
+														comp(item.name,'html') ||
+														comp(item.name,'csv') ||
+														comp(item.name,'sh') ||
+														comp(item.name,'sass') ||
+														comp(item.name,'scss') ||
+														comp(item.name,'yml')) && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-earmark-pdf mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.pdf') && item.type!='dir'">
+														comp(item.name,'pdf') && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-zip mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.zip' || 
-														item.name.substring(item.name.length-4)=='.rar' || 
-														item.name.substring(item.name.length-3)=='.7z' ||
-														item.name.substring(item.name.length-4)=='.tar' ||
-														item.name.substring(item.name.length-4)=='.iso' ||
-														item.name.substring(item.name.length-4)=='.dmg') && item.type!='dir'">
+														(comp(item.name,'zip') || 
+														comp(item.name,'rar') || 
+														comp(item.name,'7z') ||
+														comp(item.name,'tar') ||
+														comp(item.name,'iso') ||
+														comp(item.name,'dmg')) && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-earmark-post mainIcon" v-else-if="
-														(item.name.substring(item.name.length-4)=='.exe') && item.type!='dir'">
+														comp(item.name,'exe') && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-earmark mainIcon" v-else></i>
 												</div>
@@ -485,6 +474,18 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
+										comp(str,extensionName){
+											str=String(str).toLowerCase();
+											extensionLength=extensionName.length;
+											if(str[str.length-extensionLength-1]!="."){
+												return false;
+											}
+											if(str.substring(str.length-extensionLength)==extensionName){
+												return true;
+											}else{
+												return false;
+											}
+										},
 										getPath() {
 											return decodeURIComponent(window.location.pathname);
 										},

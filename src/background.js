@@ -382,7 +382,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								var app = new Vue({
 									el: '#app',
 									data: {
-										tableWidth:340,
+										tableWidth:320,
 										flexContent:true,
 										list: ${JSON.stringify(dirList)},
 									},
@@ -440,9 +440,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										}
 									},
 									created() {
-										if(window.innerWidth<380){
+										if(window.innerWidth<340){
 											this.flexContent=false;
-											this.tableWidth=340;
+											this.tableWidth=320;
 										}else if(window.innerWidth<740){
 											this.tableWidth=window.innerWidth-40;
 											this.flexContent=false;
@@ -453,9 +453,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									},
 									mounted() {
 										window.onresize=()=>{
-											if(window.innerWidth<380){
+											if(window.innerWidth<340){
 												this.flexContent=false;
-												this.tableWidth=340;
+												this.tableWidth=320;
 											}else if(window.innerWidth<740){
 												this.tableWidth=window.innerWidth-40;
 												this.flexContent=false;
@@ -473,10 +473,15 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									display: grid;
 									/* grid-template-columns: 30px auto 100px; */
 								}
+								.row:hover{
+									background-color: rgb(245, 245, 245);
+								}
 								.row {
 									display: grid;
 									grid-template-columns: 30px auto 100px;
 									transition: all ease-in-out .2s;
+									padding: 2px 2px 2px 2px;
+									border-radius: 10px;
 								}
 								.cell {
 									padding: 5px;
@@ -524,6 +529,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									color: #2c3e50;
 									min-height: 100vh;
 									margin: 0;
+									word-wrap: break-word;
+									word-break: break-all;
 								}
 							</style>
 							</html>

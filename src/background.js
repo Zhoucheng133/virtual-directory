@@ -345,7 +345,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 								<title>Virtual Directory</title>
 								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-								<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+								<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 							</head>
 							<body>
 								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
@@ -358,17 +358,112 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
-												<div class="cell"><i class="el-icon-folder mainIcon"></i></div>
+												<div class="cell"><i class="bi bi-folder mainIcon"></i></div>
 												<div class="cell">../</div>
-												<div class="cell" style="text-align: right">上一层</div>
+												<div class="cell cell_end">上一层</div>
 											</div>
 											<div class="row" v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
 												<div class="cell">
-													<i class="el-icon-folder mainIcon" v-if="item.type=='dir'"></i>
-													<i class="el-icon-tickets mainIcon" v-else></i>
+													<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
+													<i class="bi bi-file-earmark-image mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.jpg' || 
+														item.name.substring(item.name.length-4)=='.JPG' || 
+														item.name.substring(item.name.length-4)=='.JPEG' ||
+														item.name.substring(item.name.length-4)=='.png' || 
+														item.name.substring(item.name.length-5)=='.jpeg' ||
+														item.name.substring(item.name.length-5)=='.tiff' ||
+														item.name.substring(item.name.length-4)=='.psd' ||
+														item.name.substring(item.name.length-4)=='.gif' ||
+														item.name.substring(item.name.length-4)=='.tif' ||
+														item.name.substring(item.name.length-3)=='.ai' ||
+														item.name.substring(item.name.length-4)=='.svg') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-play mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.mp4' || 
+														item.name.substring(item.name.length-4)=='.mov' || 
+														item.name.substring(item.name.length-4)=='.mkv' ||
+														item.name.substring(item.name.length-4)=='.avi' ||
+														item.name.substring(item.name.length-5)=='.rmvb') && item.type!='dir'">
+							
+													</i>
+													<i class="bi bi-file-earmark-music mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.mp3' || 
+														item.name.substring(item.name.length-4)=='.acc' || 
+														item.name.substring(item.name.length-5)=='.flac' ||
+														item.name.substring(item.name.length-4)=='.avi' ||
+														item.name.substring(item.name.length-4)=='.rmvb' ||
+														item.name.substring(item.name.length-4)=='.m4p' ||
+														item.name.substring(item.name.length-4)=='.wav') && item.type!='dir'">
+							
+													</i>
+													<i class="bi bi-file-text mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.txt' || 
+														item.name.substring(item.name.length-4)=='.doc' || 
+														item.name.substring(item.name.length-5)=='.docx' ||
+														item.name.substring(item.name.length-3)=='.md' ||
+														item.name.substring(item.name.length-4)=='.rtf') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-text mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.txt' || 
+														item.name.substring(item.name.length-4)=='.doc' || 
+														item.name.substring(item.name.length-5)=='.docx' ||
+														item.name.substring(item.name.length-3)=='.md' ||
+														item.name.substring(item.name.length-4)=='.rtf') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-earmark-slides mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.ppt' || 
+														item.name.substring(item.name.length-4)=='.key' || 
+														item.name.substring(item.name.length-5)=='.pptx') && item.type!='dir'">
+													</i>
+													<i class="bi-file-earmark-bar-graph mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.xls' || 
+														item.name.substring(item.name.length-5)=='.xlsx' || 
+														item.name.substring(item.name.length-8)=='.numbers') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-earmark-code mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.cpp' || 
+														item.name.substring(item.name.length-2)=='.c' || 
+														item.name.substring(item.name.length-3)=='.py' ||
+														item.name.substring(item.name.length-3)=='.cs' ||
+														item.name.substring(item.name.length-6)=='.swift' ||
+														item.name.substring(item.name.length-3)=='.js' ||
+														item.name.substring(item.name.length-5)=='.java' ||
+														item.name.substring(item.name.length-5)=='.json' ||
+														item.name.substring(item.name.length-4)=='.vue' ||
+														item.name.substring(item.name.length-4)=='.css' ||
+														item.name.substring(item.name.length-3)=='.go' ||
+														item.name.substring(item.name.length-4)=='.sql' ||
+														item.name.substring(item.name.length-3)=='.vb' ||
+														item.name.substring(item.name.length-3)=='.rs' ||
+														item.name.substring(item.name.length-4)=='.xml' ||
+														item.name.substring(item.name.length-3)=='.kt' ||
+														item.name.substring(item.name.length-5)=='.yaml' ||
+														item.name.substring(item.name.length-3)=='.ts' || 
+														item.name.substring(item.name.length-5)=='.html' ||
+														item.name.substring(item.name.length-4)=='.csv' ||
+														item.name.substring(item.name.length-3)=='.sh' ||
+														item.name.substring(item.name.length-5)=='.sass' ||
+														item.name.substring(item.name.length-5)=='.scss' ||
+														item.name.substring(item.name.length-4)=='.yml') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-earmark-pdf mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.pdf') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-zip mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.zip' || 
+														item.name.substring(item.name.length-4)=='.rar' || 
+														item.name.substring(item.name.length-3)=='.7z' ||
+														item.name.substring(item.name.length-4)=='.tar' ||
+														item.name.substring(item.name.length-4)=='.iso' ||
+														item.name.substring(item.name.length-4)=='.dmg') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-earmark-post mainIcon" v-else-if="
+														(item.name.substring(item.name.length-4)=='.exe') && item.type!='dir'">
+													</i>
+													<i class="bi bi-file-earmark mainIcon" v-else></i>
 												</div>
 												<div class="cell">{{ item.name }}</div>
-												<div class="cell" v-if="item.type=='file'" style="text-align: right">
+												<div class="cell cell_end" v-if="item.type=='file'" style="text-align: right">
 													{{ shownSize(item.size) }}
 												</div>
 											</div>
@@ -482,11 +577,17 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									transition: all ease-in-out .2s;
 									padding: 2px 2px 2px 2px;
 									border-radius: 10px;
+									
+								}
+								.cell_end{
+									justify-content: flex-end;
 								}
 								.cell {
 									padding: 5px;
 									word-wrap: break-word;
 									word-break: break-all;
+									display: flex;
+									align-items: center;
 								}
 								.blank{
 									width: 100%;

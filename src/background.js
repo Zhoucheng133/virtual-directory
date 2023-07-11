@@ -376,7 +376,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														item.name.substring(item.name.length-4)=='.gif' ||
 														item.name.substring(item.name.length-4)=='.tif' ||
 														item.name.substring(item.name.length-3)=='.ai' ||
-														item.name.substring(item.name.length-4)=='.svg') && item.type!='dir'">
+														item.name.substring(item.name.length-4)=='.svg' ||
+														item.name.substring(item.name.length-4)=='.dng') && item.type!='dir'">
 													</i>
 													<i class="bi bi-file-play mainIcon" v-else-if="
 														(item.name.substring(item.name.length-4)=='.mp4' || 
@@ -393,7 +394,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														item.name.substring(item.name.length-4)=='.avi' ||
 														item.name.substring(item.name.length-4)=='.rmvb' ||
 														item.name.substring(item.name.length-4)=='.m4p' ||
-														item.name.substring(item.name.length-4)=='.wav') && item.type!='dir'">
+														item.name.substring(item.name.length-4)=='.wav' ||
+														item.name.substring(item.name.length-4)=='.mid' ||
+														item.name.substring(item.name.length-4)=='.midi') && item.type!='dir'">
 							
 													</i>
 													<i class="bi bi-file-text mainIcon" v-else-if="

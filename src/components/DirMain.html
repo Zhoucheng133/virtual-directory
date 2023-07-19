@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>Virtual Directory</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
+        <div>
+            <div class="title">
+                Virtual Directory
+            </div>
+            <div class="head" :style="{width:tableWidth+'px'}">
+                当前路径：<br/>{{getPath()}}
+            </div>
+            <div class="container" :style="{width:tableWidth+'px'}">
+                <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
+                    <div class="cell"><i class="bi bi-folder mainIcon"></i></div>
+                    <div class="cell">../</div>
+                    <div class="cell cell_end">上一层</div>
+                </div>
+                <div class="row" v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)" @contextmenu.prevent.stop="onContextmenu(item)">
+                    <div class="cell">
+                        <i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
+                        <i class="bi bi-file-earmark-image mainIcon" v-else-if="
+                            (comp(item.name,'jpg') || 
+                            comp(item.name,'jpeg') ||
+                            comp(item.name,'png') || 
+                            comp(item.name,'tiff') ||
+                            comp(item.name,'psd') ||
+                            comp(item.name,'gif') ||
+                            comp(item.name,'tif') ||
+                            comp(item.name,'ai') ||
+                            comp(item.name,'svg') ||
+                            comp(item.name,'dng')) && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-play mainIcon" v-else-if="
+                            (comp(item.name,'mp4') || 
+                            comp(item.name,'mov') || 
+                            comp(item.name,'mkv') ||
+                            comp(item.name,'avi') ||
+                            comp(item.name,'rmvb')) && item.type!='dir'">
+
+                        </i>
+                        <i class="bi bi-file-earmark-music mainIcon" v-else-if="
+                            (comp(item.name,'mp3') || 
+                            comp(item.name,'acc') || 
+                            comp(item.name,'flac') ||
+                            comp(item.name,'m4p') ||
+                            comp(item.name,'wav') ||
+                            comp(item.name,'mid') ||
+                            comp(item.name,'midi')) && item.type!='dir'">
+
+                        </i>
+                        <i class="bi bi-file-text mainIcon" v-else-if="
+                            (comp(item.name,'txt') || 
+                            comp(item.name,'doc') || 
+                            comp(item.name,'docx') ||
+                            comp(item.name,'md') ||
+                            comp(item.name,'rtf')) && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-earmark-slides mainIcon" v-else-if="
+                            (comp(item.name,'ppt') || 
+                            comp(item.name,'key') || 
+                            comp(item.name,'pptx')) && item.type!='dir'">
+                        </i>
+                        <i class="bi-file-earmark-bar-graph mainIcon" v-else-if="
+                            (comp(item.name,'xls') || 
+                            comp(item.name,'xlsx') || 
+                            comp(item.name,'numbers')) && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-earmark-code mainIcon" v-else-if="
+                            (comp(item.name,'cpp') || 
+                            comp(item.name,'c') || 
+                            comp(item.name,'py') ||
+                            comp(item.name,'cs') ||
+                            comp(item.name,'swfit') ||
+                            comp(item.name,'js') ||
+                            comp(item.name,'java') ||
+                            comp(item.name,'json') ||
+                            comp(item.name,'vue') ||
+                            comp(item.name,'css') ||
+                            comp(item.name,'go') ||
+                            comp(item.name,'sql') ||
+                            comp(item.name,'vb') ||
+                            comp(item.name,'rs') ||
+                            comp(item.name,'xml') ||
+                            comp(item.name,'kt') ||
+                            comp(item.name,'yaml') ||
+                            comp(item.name,'ts') || 
+                            comp(item.name,'html') ||
+                            comp(item.name,'csv') ||
+                            comp(item.name,'sh') ||
+                            comp(item.name,'sass') ||
+                            comp(item.name,'scss') ||
+                            comp(item.name,'yml')) && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-earmark-pdf mainIcon" v-else-if="
+                            comp(item.name,'pdf') && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-zip mainIcon" v-else-if="
+                            (comp(item.name,'zip') || 
+                            comp(item.name,'rar') || 
+                            comp(item.name,'7z') ||
+                            comp(item.name,'tar') ||
+                            comp(item.name,'iso') ||
+                            comp(item.name,'dmg')) && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-earmark-post mainIcon" v-else-if="
+                            comp(item.name,'exe') && item.type!='dir'">
+                        </i>
+                        <i class="bi bi-file-earmark mainIcon" v-else></i>
+                    </div>
+                    <div class="cell">{{ item.name }}</div>
+                    <div class="cell cell_end" v-if="item.type=='file'" style="text-align: right">
+                        {{ shownSize(item.size) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=blank></div>
+    </div>
+</body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            tableWidth:320,
+            flexContent:true,
+            list: [
+                {
+                    "type": "file",
+                    "name": ".DS_Store",
+                    "size": 20484
+                },
+                {
+                    "type": "file",
+                    "name": ".localized",
+                    "size": 0
+                },
+                {
+                    "type": "dir",
+                    "name": "Ai文件"
+                },
+                {
+                    "type": "dir",
+                    "name": "ApplicationList"
+                },
+                {
+                    "type": "dir",
+                    "name": "Drawing"
+                },
+                {
+                    "type": "dir",
+                    "name": "FlutterPrj"
+                },
+                {
+                    "type": "file",
+                    "name": "Tomcat",
+                    "size": 776
+                },
+                {
+                    "type": "dir",
+                    "name": "VuePrj"
+                },
+                {
+                    "type": "dir",
+                    "name": "Wallpaper"
+                },
+                {
+                    "type": "dir",
+                    "name": "ukt_player"
+                },
+                {
+                    "type": "dir",
+                    "name": "virtual_dir"
+                },
+                {
+                    "type": "dir",
+                    "name": "图片"
+                },
+                {
+                    "type": "dir",
+                    "name": "学习用"
+                },
+                {
+                    "type": "dir",
+                    "name": "导出"
+                },
+                {
+                    "type": "dir",
+                    "name": "我的创作工具"
+                },
+                {
+                    "type": "dir",
+                    "name": "照片"
+                },
+                {
+                    "type": "file",
+                    "name": "缓存",
+                    "size": 828
+                },
+                {
+                    "type": "dir",
+                    "name": "编程指南"
+                },
+                {
+                    "type": "dir",
+                    "name": "视频素材"
+                }
+            ],
+        },
+        methods: {
+            onContextmenu(item){
+                this.$contextmenu({
+                    items: [
+                        {
+                            label: "打开",
+                            icon: "bi-file-arrow-down",
+                            disabled: item==''?true:false,
+                            onClick: () => {
+                                linkTO(item)
+                            }
+                        },
+                        {
+                            label: "刷新",
+                            icon: "bi-arrow-clockwise",
+                            onClick: ()=>{
+                                location.reload();
+                            }
+                        }
+                    ],
+                    event,
+                    customClass: "custom-class",
+                    zIndex: 3,
+                    minWidth: 150
+                });
+                return false;
+            },
+            comp(str,extensionName){
+                str=String(str).toLowerCase();
+                extensionLength=extensionName.length;
+                if(str[str.length-extensionLength-1]!="."){
+                    return false;
+                }
+                if(str.substring(str.length-extensionLength)==extensionName){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            getPath() {
+                return decodeURIComponent(window.location.pathname);
+            },
+            backFolder() {
+                const currentURL = window.location.href;
+                const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+                window.location.href = parentURL;
+            },
+            isRoot() {
+                if (window.location.origin == window.location.href) {
+                    return true;
+                } else if (window.location.origin + '/' == window.location.href) {
+                    return true;
+                }
+                return false;
+            },
+            linkTO(item) {
+                if (this.isRoot()) {
+                    var url = window.location.origin + '/';
+                    url += item.name;
+                    window.location.href = url;
+                    return;
+                }
+                var nowURL = window.location.href;
+                nowURL += "/"
+                nowURL += item.name;
+                window.location.href = nowURL;
+            },
+            shownSize(size) {
+                if (size / 1024 > 1) {
+                    size = size / 1024;
+                } else {
+                    return size.toFixed(2) + " B"
+                }
+                if (size / 1024 > 1) {
+                    size = size / 1024;
+                } else {
+                    return size.toFixed(2) + " KB"
+                }
+                if (size / 1024 > 1) {
+                    size = size / 1024;
+                } else {
+                    return size.toFixed(2) + " MB"
+                }
+                if (size / 1024 > 1) {
+                    size = size / 1024;
+                } else {
+                    return size.toFixed(2) + " GB"
+                }
+                return size.toFixed(2) + " GB"
+            }
+        },
+        created() {
+            if(window.innerWidth<340){
+                this.flexContent=false;
+                this.tableWidth=320;
+            }else if(window.innerWidth<740){
+                this.tableWidth=window.innerWidth-40;
+                this.flexContent=false;
+            }else{
+                this.tableWidth=700;
+                this.flexContent=true;
+            }
+        },
+        mounted() {
+            window.onresize=()=>{
+                if(window.innerWidth<340){
+                    this.flexContent=false;
+                    this.tableWidth=320;
+                }else if(window.innerWidth<740){
+                    this.tableWidth=window.innerWidth-40;
+                    this.flexContent=false;
+                }else{
+                    this.tableWidth=700;
+                    this.flexContent=true;
+                }
+            }
+        },
+    })
+</script>
+
+<style>
+    .custom-class .menu_item__available:hover
+    .custom-class .menu_item_expand {
+        background: #ffecf2 !important;
+        color: #ff4050 !important;
+    }
+    .container {
+        display: grid;
+        /* grid-template-columns: 30px auto 100px; */
+    }
+    .row:hover{
+        background-color: rgb(245, 245, 245);
+    }
+    .row {
+        display: grid;
+        grid-template-columns: 30px auto 100px;
+        transition: all ease-in-out .2s;
+        padding: 2px 2px 2px 2px;
+        border-radius: 10px;
+        
+    }
+    .cell_end{
+        justify-content: flex-end;
+    }
+    .cell {
+        padding: 5px;
+        word-wrap: break-word;
+        word-break: break-all;
+        display: flex;
+        align-items: center;
+    }
+    .blank{
+        width: 100%;
+        height: 20px;
+    }
+    .title{
+        padding-top:20px;
+    }
+    body {
+        margin: 0;
+    }
+    .head {
+        text-align: left;
+        font-size: 26px;
+        word-wrap: break-word;
+        margin-bottom: 10px;
+    }
+    .row:hover{
+        color: rgb(255, 132, 0);
+        cursor: pointer;
+    }
+    .backFolder_style:hover {
+        color: rgb(255, 132, 0);
+        cursor: pointer;
+    }
+    .backFolder_style {
+        color: rgb(165, 165, 165);
+        transition: all ease-in-out .2s;
+    }
+    .mainIcon {
+        font-size: 18px;
+    }
+    #app {
+        padding-left: 20px;
+        padding-right: 20px;
+        user-select: none;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+        min-height: 100vh;
+        margin: 0;
+        word-wrap: break-word;
+        word-break: break-all;
+    }
+</style>
+</html>

@@ -23,12 +23,12 @@
                 <div class="delButton">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
-                <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
+                <div class="backFolder_style row" v-if="isRoot()==false" @dblclick="backFolder">
                     <div class="cell"><i class="bi bi-folder mainIcon"></i></div>
                     <div class="cell">../</div>
                     <div class="cell cell_end">上一层</div>
                 </div>
-                <div class="row" v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)" @contextmenu.prevent.stop="onContextmenu(item)">
+                <div class="row" v-for="item in list" v-if="item.name[0]!='.'" @dblclick="linkTO(item)" @contextmenu.prevent.stop="onContextmenu(item)">
                     <div class="cell">
                         <i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
                         <i class="bi bi-file-earmark-image mainIcon" v-else-if="

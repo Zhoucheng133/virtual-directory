@@ -221,7 +221,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 				// 文件上传成功，可以通过req.file来访问上传的文件信息
 				if (req.file) {
-					console.log('File uploaded:', req.file);
+					// console.log('File uploaded:', req.file);
 					return;
 				}
 

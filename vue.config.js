@@ -1,5 +1,4 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
+module.exports = {
 	transpileDependencies: true,
 	pluginOptions: {
 		electronBuilder: {
@@ -15,10 +14,10 @@ module.exports = defineConfig({
 			},
 		},
 	},
-	configureWebpack:{
-		externals: {
-			"fs": 'require("fs")',
-			"path": 'require("path")',
-		},
-	}
-})
+	// configureWebpack:{
+	// 	externals: {
+	// 		"fs": 'require("fs")',
+	// 		"path": 'require("path")',
+	// 	},
+	// }
+}

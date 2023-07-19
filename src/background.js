@@ -95,8 +95,10 @@ async function createWindow() {
 		title: "Virtual Directory",
 		icon: path.join(__dirname, 'build/icon.png'),
 		webPreferences: {
-			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+			nodeIntegration:true,
+			contextIsolation:false,
+			// nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+			// contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
 		}
 	})
 	win.setTitle("Virtual Directory")
@@ -203,25 +205,29 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 		// 测试代码，从这里开始
 		if(req.url.startsWith('/.submitRequest') && req.method=='POST'){
-			// const formidable=require("formidable");
-			// const form = new formidable.IncomingForm();
-			// form.parse(req, (err, fields, files) => {
-			// 	if (err) {
-			// 		return res.end('File upload failed.');
-			// 	}
+			const multer = require('multer');
+			const storage = multer.diskStorage({
+				destination: '/Users/zhoucheng/Downloads/',
+				filename: function (req, file, cb) {
+					// 设置保存的文件名称为原始文件名
+					cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
+				}
+			});
+			const upload = multer({ storage: storage });
+			upload.single('file')(req, res, (err) => {
+				if (err) {
+					return res.end('Error uploading file.');
+				}
 
-			// 	const uploadedFile = files.file;
-			// 	if (!uploadedFile) {
-			// 		return res.end('No file uploaded.');
-			// 	}
+				// 文件上传成功，可以通过req.file来访问上传的文件信息
+				if (req.file) {
+					console.log('File uploaded:', req.file);
+					return;
+				}
 
-			// 	// 这里可以处理上传的文件，比如将文件移动到本地目录
-			// 	const destinationPath = path.join(__dirname, '/Users/zhoucheng/Desktop', uploadedFile.name);
-			// 	fs.renameSync(uploadedFile.path, destinationPath);
-
-			// 	// 返回响应
-			// 	// res.end('File uploaded successfully.');
-			// });
+				// 在这里可以继续处理其他请求逻辑
+				res.end('File uploaded successfully!');
+			});
 
 		}
 

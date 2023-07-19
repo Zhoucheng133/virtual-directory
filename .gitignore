@@ -28,4 +28,4 @@ pnpm-debug.log*
 # 测试用的文件
 # src/components/DirMain.html
 # src/components/Error404.html
-# src/components/变量测试.txt
+src/components/变量测试.txt

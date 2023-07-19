@@ -4,17 +4,6 @@
 -  macOS 13.4
 -  Windows 11
 
-## 注意区分和另一个库`File Sharer`的区别
-
-
-||Virtual Directory|File Sharer|
-|-|-|-|
-语言|JavaScript和Vue|Dart
-框架|Electron|Flutter
-文件体积|较大|较小
-IPv6|支持|不支持
-支持系统|Windows<br/>macOS<br/>Linux（未经过测试）|macOS<br/>Windows（未经过测试）<br>Linux（未经过测试）
-
 ## 效果图
 
 ![在macOS上的效果图](_demo/shotcut_macOS.png)

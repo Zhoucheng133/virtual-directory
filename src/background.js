@@ -200,13 +200,32 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				return;
 			}
 		}
-		// if(req.url.startsWith('/.submitRequest' && req.method.toLowerCase() === 'post')){
-		if(req.url.startsWith('/.submitRequest')){
-			console.log(1212);
 
-			res.end('Tested!')
-			return;
+		// 测试代码，从这里开始
+		if(req.url.startsWith('/.submitRequest') && req.method=='POST'){
+
+			// const form = new formidable.IncomingForm();
+			// form.parse(req, (err, fields, files) => {
+			// 	if (err) {
+			// 		return res.end('File upload failed.');
+			// 	}
+
+			// 	const uploadedFile = files.file;
+			// 	if (!uploadedFile) {
+			// 		return res.end('No file uploaded.');
+			// 	}
+
+			// 	// 这里可以处理上传的文件，比如将文件移动到本地目录
+			// 	const destinationPath = path.join(__dirname, '/Users/zhoucheng/Desktop', uploadedFile.name);
+			// 	fs.renameSync(uploadedFile.path, destinationPath);
+
+			// 	// 返回响应
+			// 	// res.end('File uploaded successfully.');
+			// });
+
 		}
+
+		// 测试代码这里结束
 
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
@@ -352,10 +371,12 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 								<title>Virtual Directory</title>
 								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+								<script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
+								<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 								<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 							</head>
 							<body>
-								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}">
+								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
 									<div>
 										<div class="title">
 											Virtual Directory
@@ -363,13 +384,21 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										<div class="head" :style="{width:tableWidth+'px'}">
 											当前路径：<br/>{{getPath()}}
 										</div>
+										<div class="toolBar">
+											<form method="post" enctype="multipart/form-data" @change="handleFileChange">
+												<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
+												<div class="uploadButton" @click="uploadFile">上传</div>
+											</form>
+											<div :class="selectedItem.length==1?'renameButton':'noSelection'">重命名</div>
+											<div :class="selectedItem.length==0?'noSelection':'delButton'">删除</div>
+										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
 												<div class="cell"><i class="bi bi-folder mainIcon"></i></div>
 												<div class="cell">../</div>
 												<div class="cell cell_end">上一层</div>
 											</div>
-											<div class="row" v-for="item in list" v-if="item.name[0]!='.'" @click="linkTO(item)">
+											<div :class="isSelected(item)?'selected':'row'" v-for="item in list" v-if="item.name[0]!='.'" @dblclick="linkTO(item)" @click="selectItem(item)" @contextmenu.prevent.stop="onContextmenu(item)">
 												<div class="cell">
 													<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
 													<i class="bi bi-file-earmark-image mainIcon" v-else-if="
@@ -390,7 +419,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														comp(item.name,'mkv') ||
 														comp(item.name,'avi') ||
 														comp(item.name,'rmvb')) && item.type!='dir'">
-							
+
 													</i>
 													<i class="bi bi-file-earmark-music mainIcon" v-else-if="
 														(comp(item.name,'mp3') || 
@@ -400,7 +429,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														comp(item.name,'wav') ||
 														comp(item.name,'mid') ||
 														comp(item.name,'midi')) && item.type!='dir'">
-							
+
 													</i>
 													<i class="bi bi-file-text mainIcon" v-else-if="
 														(comp(item.name,'txt') || 
@@ -471,16 +500,82 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									<div class=blank></div>
 								</div>
 							</body>
-							
+
 							<script>
 								var app = new Vue({
 									el: '#app',
 									data: {
 										tableWidth:320,
 										flexContent:true,
+										selectedItem:[],
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
+										async handleFileChange(event) {
+											const files = event.target.files;
+											if (files.length > 0) {
+												const file = files[0];
+												const formData = new FormData();
+												const fileName = file.name;
+												formData.append('file', file);
+
+												try {
+													const response = await axios.post('/.submitRequest', formData, {
+														headers: {
+															'Content-Type': 'multipart/form-data'
+														}
+													});
+
+													// 处理上传成功的响应
+													console.log(response.data);
+												} catch (error) {
+													// 处理上传失败的响应
+													console.error(error);
+												}
+											}
+										},
+										uploadFile(){
+											this.$refs.fileInput.click();
+										},
+										isSelected(item){
+											return (this.selectedItem.includes(item));
+										},
+										selectItem(item){
+											if(this.selectedItem.includes(item)){
+												this.selectedItem.splice(this.selectedItem.indexOf(item), 1)
+											}else{
+												this.selectedItem.push(item)
+											}
+										},
+										onContextmenu(item){
+											this.$contextmenu({
+												items: [
+													{
+														label: "打开",
+														icon: "bi-file-arrow-down",
+														disabled: item==''?true:false,
+														onClick: () => {
+															linkTO(item)
+														}
+													},
+													{
+														label: "刷新",
+														icon: "bi-arrow-clockwise",
+														onClick: ()=>{
+															location.reload();
+														}
+													},
+													{
+
+													}
+												],
+												event,
+												customClass: "custom-class",
+												zIndex: 3,
+												minWidth: 150
+											});
+											return false;
+										},
 										comp(str,extensionName){
 											str=String(str).toLowerCase();
 											extensionLength=extensionName.length;
@@ -573,13 +668,80 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									},
 								})
 							</script>
-							
+
 							<style>
+								.selected:hover{
+									color: rgb(255, 132, 0);
+									cursor: pointer;
+								}
+								.selected{
+									background-color: rgb(235, 235, 235);
+									display: grid;
+									grid-template-columns: 30px auto 100px;
+									padding: 2px 2px 2px 2px;
+									border-radius: 10px;
+									transition: all ease-in-out .2s;
+								}
+								.noSelection:hover{
+									cursor: not-allowed;;
+								}
+								.noSelection{
+									margin-left: 15px;
+									color: grey;
+									transition: all ease-in-out .2s;
+								}
+								.renameButton:hover{
+									color: rgb(193, 100, 0);
+									cursor: pointer;
+								}
+								.renameButton{
+									margin-left: 15px;
+									color: rgb(255, 132, 0);
+									transition: all ease-in-out .2s;
+								}
+								.delButton:hover{
+									color: darkred;
+									cursor: pointer;
+								}
+								.delButton{
+									margin-left: 15px;
+									color: red;
+									transition: all ease-in-out .2s;
+								}
+								.uploadButton:hover{
+									background-color: rgb(193, 100, 0);
+									cursor: pointer;
+								}
+								.uploadButton{
+									background-color: rgb(255, 132, 0);
+									padding: 5px;
+									padding-left: 10px;
+									padding-right: 10px;
+									color: white;
+									border-radius: 5px;
+									transition: all ease-in-out .2s;
+								}
+								.toolBar{
+									display: flex;
+									align-items: center;
+									/* padding-left: 10px; */
+									height: 50px;
+									width: 100%;
+									/* background-color: red; */
+									padding-top: 5px;
+									padding-bottom: 10px;
+								}
+								.menu_item__available:hover{
+									background-color: rgb(255, 238, 220) !important;
+									color: rgb(255, 132, 0) !important;
+								}
 								.container {
 									display: grid;
 									/* grid-template-columns: 30px auto 100px; */
 								}
 								.row:hover{
+									color: rgb(255, 132, 0);
+									cursor: pointer;
 									background-color: rgb(245, 245, 245);
 								}
 								.row {
@@ -615,10 +777,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									font-size: 26px;
 									word-wrap: break-word;
 									margin-bottom: 10px;
-								}
-								.row:hover{
-									color: rgb(255, 132, 0);
-									cursor: pointer;
 								}
 								.backFolder_style:hover {
 									color: rgb(255, 132, 0);

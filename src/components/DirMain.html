@@ -7,6 +7,7 @@
     <title>Virtual Directory</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 <body>
@@ -19,7 +20,10 @@
                 当前路径：<br/>{{getPath()}}
             </div>
             <div class="toolBar">
-                <div class="uploadButton">上传</div>
+                <form method="post" enctype="multipart/form-data" @change="handleFileChange">
+                    <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
+                    <div class="uploadButton" @click="uploadFile">上传</div>
+                </form>
                 <div :class="selectedItem.length==1?'renameButton':'noSelection'">重命名</div>
                 <div :class="selectedItem.length==0?'noSelection':'delButton'">删除</div>
             </div>
@@ -223,6 +227,32 @@
             ],
         },
         methods: {
+            async handleFileChange(event) {
+                const files = event.target.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    const formData = new FormData();
+                    const fileName = file.name;
+                    formData.append('file', file);
+
+                    try {
+                        const response = await axios.post('/.submitRequest?fileName='+fileName, formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        });
+
+                        // 处理上传成功的响应
+                        console.log(response.data);
+                    } catch (error) {
+                        // 处理上传失败的响应
+                        console.error(error);
+                    }
+                }
+            },
+            uploadFile(){
+                this.$refs.fileInput.click();
+            },
             isSelected(item){
                 return (this.selectedItem.includes(item));
             },

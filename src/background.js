@@ -200,6 +200,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				return;
 			}
 		}
+		// if(req.url.startsWith('/.submitRequest' && req.method.toLowerCase() === 'post')){
+		if(req.url.startsWith('/.submitRequest')){
+			console.log(1212);
+
+			res.end('Tested!')
+			return;
+		}
 
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {

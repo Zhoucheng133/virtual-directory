@@ -20,15 +20,16 @@
             </div>
             <div class="toolBar">
                 <div class="uploadButton">上传</div>
-                <div class="delButton">删除</div>
+                <div :class="selectedItem.length==1?'renameButton':'noSelection'">重命名</div>
+                <div :class="selectedItem.length==0?'noSelection':'delButton'">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
-                <div class="backFolder_style row" v-if="isRoot()==false" @dblclick="backFolder">
+                <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
                     <div class="cell"><i class="bi bi-folder mainIcon"></i></div>
                     <div class="cell">../</div>
                     <div class="cell cell_end">上一层</div>
                 </div>
-                <div class="row" v-for="item in list" v-if="item.name[0]!='.'" @dblclick="linkTO(item)" @contextmenu.prevent.stop="onContextmenu(item)">
+                <div :class="isSelected(item)?'selected':'row'" v-for="item in list" v-if="item.name[0]!='.'" @dblclick="linkTO(item)" @click="selectItem(item)" @contextmenu.prevent.stop="onContextmenu(item)">
                     <div class="cell">
                         <i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
                         <i class="bi bi-file-earmark-image mainIcon" v-else-if="
@@ -137,6 +138,7 @@
         data: {
             tableWidth:320,
             flexContent:true,
+            selectedItem:[],
             list: [
                 {
                     "type": "file",
@@ -221,6 +223,16 @@
             ],
         },
         methods: {
+            isSelected(item){
+                return (this.selectedItem.includes(item));
+            },
+            selectItem(item){
+                if(this.selectedItem.includes(item)){
+                    this.selectedItem.splice(this.selectedItem.indexOf(item), 1)
+                }else{
+                    this.selectedItem.push(item)
+                }
+            },
             onContextmenu(item){
                 this.$contextmenu({
                     items: [
@@ -344,8 +356,31 @@
 </script>
 
 <style>
+    .selected:hover{
+        color: rgb(255, 132, 0);
+        cursor: pointer;
+    }
+    .selected{
+        background-color: rgb(235, 235, 235);
+        display: grid;
+        grid-template-columns: 30px auto 100px;
+        padding: 2px 2px 2px 2px;
+        border-radius: 10px;
+        transition: all ease-in-out .2s;
+    }
     .noSelection{
+        margin-left: 15px;
         color: grey;
+        transition: all ease-in-out .2s;
+    }
+    .renameButton:hover{
+        color: rgb(193, 100, 0);
+        cursor: pointer;
+    }
+    .renameButton{
+        margin-left: 15px;
+        color: rgb(255, 132, 0);
+        transition: all ease-in-out .2s;
     }
     .delButton:hover{
         color: darkred;
@@ -372,7 +407,7 @@
     .toolBar{
         display: flex;
         align-items: center;
-        padding-left: 10px;
+        /* padding-left: 10px; */
         height: 50px;
         width: 100%;
         /* background-color: red; */
@@ -388,6 +423,8 @@
         /* grid-template-columns: 30px auto 100px; */
     }
     .row:hover{
+        color: rgb(255, 132, 0);
+        cursor: pointer;
         background-color: rgb(245, 245, 245);
     }
     .row {
@@ -423,10 +460,6 @@
         font-size: 26px;
         word-wrap: break-word;
         margin-bottom: 10px;
-    }
-    .row:hover{
-        color: rgb(255, 132, 0);
-        cursor: pointer;
     }
     .backFolder_style:hover {
         color: rgb(255, 132, 0);

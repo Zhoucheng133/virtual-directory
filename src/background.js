@@ -203,8 +203,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 		// 测试代码，从这里开始
 		if(req.url.startsWith('/.submitRequest') && req.method=='POST'){
-
-			// const form = new formidable.IncomingForm();
+			const formidable=require("formidable");
+			const form = new formidable.IncomingForm();
 			// form.parse(req, (err, fields, files) => {
 			// 	if (err) {
 			// 		return res.end('File upload failed.');

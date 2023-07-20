@@ -204,29 +204,36 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 		}
 
 		// 测试代码，从这里开始
-		if(req.url.startsWith('/.submitRequest') && req.method=='POST'){
+		if(req.url.startsWith('/.submitRequest')){
+			const url = new URL("http://localhost:1234"+req.url);
+			const paramsStr = url.search.slice(1);
+			const params = new URLSearchParams(paramsStr);
+			var pathSave="";
+			if(sharePath.slice(-1,)=='/'){
+				pathSave=sharePath.slice(0,-1)+params.get('path');
+			}else{
+				pathSave=sharePath+params.get('path');
+			}
+
 			const multer = require('multer');
 			const storage = multer.diskStorage({
-				destination: '/Users/zhoucheng/Downloads/',
+				destination: pathSave,
 				filename: function (req, file, cb) {
-					// 设置保存的文件名称为原始文件名
 					cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
 				}
 			});
 			const upload = multer({ storage: storage });
 			upload.single('file')(req, res, (err) => {
 				if (err) {
-					return res.end('Error uploading file.');
+					res.writeHead(404);
+					// return res.end('Error uploading file.');
 				}
 
-				// 文件上传成功，可以通过req.file来访问上传的文件信息
 				if (req.file) {
 					// console.log('File uploaded:', req.file);
-					return;
+					res.writeHead(200);
+					// return;
 				}
-
-				// 在这里可以继续处理其他请求逻辑
-				res.end('File uploaded successfully!');
 			});
 
 		}
@@ -425,7 +432,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														comp(item.name,'mkv') ||
 														comp(item.name,'avi') ||
 														comp(item.name,'rmvb')) && item.type!='dir'">
-
+							
 													</i>
 													<i class="bi bi-file-earmark-music mainIcon" v-else-if="
 														(comp(item.name,'mp3') || 
@@ -435,7 +442,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														comp(item.name,'wav') ||
 														comp(item.name,'mid') ||
 														comp(item.name,'midi')) && item.type!='dir'">
-
+							
 													</i>
 													<i class="bi bi-file-text mainIcon" v-else-if="
 														(comp(item.name,'txt') || 
@@ -506,7 +513,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									<div class=blank></div>
 								</div>
 							</body>
-
+							
 							<script>
 								var app = new Vue({
 									el: '#app',
@@ -524,18 +531,21 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												const formData = new FormData();
 												const fileName = file.name;
 												formData.append('file', file);
-
+							
 												try {
-													const response = await axios.post('/.submitRequest', formData, {
+													const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
 														headers: {
 															'Content-Type': 'multipart/form-data'
 														}
 													});
-
-													// 处理上传成功的响应
-													console.log(response.data);
+													// console.log(response.status);
+													if(response.status==200){
+														location.reload();
+														// console.log("成功");
+													}else{
+														// console.log("失败");
+													}
 												} catch (error) {
-													// 处理上传失败的响应
 													console.error(error);
 												}
 											}
@@ -572,7 +582,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														}
 													},
 													{
-
+							
 													}
 												],
 												event,
@@ -674,7 +684,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									},
 								})
 							</script>
-
+							
 							<style>
 								.selected:hover{
 									color: rgb(255, 132, 0);

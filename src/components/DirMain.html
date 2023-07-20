@@ -236,16 +236,19 @@
                     formData.append('file', file);
 
                     try {
-                        const response = await axios.post('/.submitRequest?fileName='+fileName, formData, {
+                        const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
-
-                        // 处理上传成功的响应
-                        console.log(response.data);
+                        // console.log(response.status);
+                        if(response.status==200){
+                            // console.log("成功");
+                            location.reload();
+                        }else{
+                            // console.log("失败");
+                        }
                     } catch (error) {
-                        // 处理上传失败的响应
                         console.error(error);
                     }
                 }

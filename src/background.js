@@ -387,6 +387,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								<script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
 								<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 								<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+								<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 							</head>
 							<body>
 								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
@@ -402,17 +404,22 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
 												<div class="uploadButton" @click="uploadFile">上传</div>
 											</form>
-											<div :class="selectedItem.length==1?'renameButton':'noSelection'">重命名</div>
-											<div :class="selectedItem.length==0?'noSelection':'delButton'">删除</div>
+											<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
+											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(item.name)">重命名</div>
+											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(item.name)">删除</div>
 										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
+												<div class="cell"></div>
 												<div class="cell"><i class="bi bi-folder mainIcon"></i></div>
 												<div class="cell">../</div>
 												<div class="cell cell_end">上一层</div>
 											</div>
-											<div :class="isSelected(item)?'selected':'row'" v-for="item in list" v-if="item.name[0]!='.'" @dblclick="linkTO(item)" @click="selectItem(item)" @contextmenu.prevent.stop="onContextmenu(item)">
-												<div class="cell">
+											<div :class="isSelected(item)?'selected row':'row'" v-for="item in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
+												<div class="checkBox cell">
+													<el-checkbox @change="selectItem(item)"></el-checkbox>
+												</div>
+												<div class="cell"  @click="linkTO(item)">
 													<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
 													<i class="bi bi-file-earmark-image mainIcon" v-else-if="
 														(comp(item.name,'jpg') || 
@@ -503,8 +510,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													</i>
 													<i class="bi bi-file-earmark mainIcon" v-else></i>
 												</div>
-												<div class="cell">{{ item.name }}</div>
-												<div class="cell cell_end" v-if="item.type=='file'" style="text-align: right">
+												<div class="cell"  @click="linkTO(item)">{{ item.name }}</div>
+												<div class="cell cell_end" v-if="item.type=='file'" style="text-align: right"  @click="linkTO(item)">
 													{{ shownSize(item.size) }}
 												</div>
 											</div>
@@ -524,8 +531,57 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
+										async handleDel(fileName){
+											try {
+												const response = await axios.post('/.delRequest?path='+this.getPath()+fileName);
+												// console.log(response.status);
+												if(response.status==200){
+													// console.log("成功");
+													location.reload();
+												}else{
+													// console.log("失败");
+												}
+											} catch (error) {
+												console.error(error);
+											}
+										},
+										async handleRename(fileName){
+											try {
+												const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName);
+												// console.log(response.status);
+												if(response.status==200){
+													// console.log("成功");
+													location.reload();
+												}else{
+													// console.log("失败");
+												}
+											} catch (error) {
+												console.error(error);
+											}
+										},
+										async handleNewFolder(){
+											try {
+												const response = await axios.post('/.newfolderRequest?path='+this.getPath());
+												// console.log(response.status);
+												if(response.status==200){
+													// console.log("成功");
+													location.reload();
+												}else{
+													// console.log("失败");
+												}
+											} catch (error) {
+												console.error(error);
+											}
+										},
 										async handleFileChange(event) {
 											const files = event.target.files;
+											const loading = this.$loading({
+												lock: true,
+												text: '正在上传中',
+												spinner: 'el-icon-loading',
+												background: 'rgba(255, 255, 255, 0.7)'
+											});
+							
 											if (files.length > 0) {
 												const file = files[0];
 												const formData = new FormData();
@@ -540,8 +596,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													});
 													// console.log(response.status);
 													if(response.status==200){
+														loading.close();
 														location.reload();
-														// console.log("成功");
 													}else{
 														// console.log("失败");
 													}
@@ -571,7 +627,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														icon: "bi-file-arrow-down",
 														disabled: item==''?true:false,
 														onClick: () => {
-															linkTO(item)
+															this.linkTO(item)
 														}
 													},
 													{
@@ -686,6 +742,31 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							</script>
 							
 							<style>
+								.el-loading-spinner i{
+									color: rgb(255, 132, 0);
+								}
+								.el-loading-spinner .el-loading-text{
+									color: rgb(255, 132, 0);
+								}
+								.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+									border-color: rgb(255, 132, 0);
+									background-color: rgb(255, 132, 0);
+								}
+								.el-checkbox__inner:hover{
+									border-color: rgb(255, 132, 0);
+								}
+								.el-checkbox__input.is-focus .el-checkbox__inner{
+									border-color: rgb(255, 132, 0);
+								}
+								.folderButton:hover{
+									color: rgb(193, 100, 0);
+									cursor: pointer;
+								}
+								.folderButton{
+									margin-left: 15px;
+									color: rgb(255, 132, 0);
+									transition: all ease-in-out .2s;
+								}
 								.selected:hover{
 									color: rgb(255, 132, 0);
 									cursor: pointer;
@@ -762,7 +843,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								}
 								.row {
 									display: grid;
-									grid-template-columns: 30px auto 100px;
+									grid-template-columns: 30px 30px auto 100px;
 									transition: all ease-in-out .2s;
 									padding: 2px 2px 2px 2px;
 									border-radius: 10px;

@@ -280,9 +280,9 @@
                 const files = event.target.files;
                 const loading = this.$loading({
                     lock: true,
-                    text: 'Loading',
+                    text: '正在上传中',
                     spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
+                    background: 'rgba(255, 255, 255, 0.7)'
                 });
 
                 if (files.length > 0) {
@@ -445,6 +445,12 @@
 </script>
 
 <style>
+    .el-loading-spinner i{
+        color: rgb(255, 132, 0);
+    }
+    .el-loading-spinner .el-loading-text{
+        color: rgb(255, 132, 0);
+    }
     .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
         border-color: rgb(255, 132, 0);
         background-color: rgb(255, 132, 0);

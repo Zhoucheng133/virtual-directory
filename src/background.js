@@ -266,17 +266,27 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 					var i=0
 					for(i=0;i<delArray.length;i++){
 						if(delArray[i].type=='file'){
+							var isErr=false;
 							fs.unlink(pathDel+"/"+delArray[i].name, (err) => {
 								if (err) {
 									res.writeHead(404);
+									isErr=true;
 								}
 							});
+							if(isErr==true){
+								break;
+							}
 						}else{
+							var isErr=false;
 							fs.rmdir(pathDel+"/"+delArray[i].name, { recursive: true }, (err) => {
 								if (err) {
 									res.writeHead(404);
+									isErr=true;
 								}
 							});
+							if(isErr==true){
+								break;
+							}
 						}
 					}
 					if(i==delArray.length){
@@ -463,7 +473,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							<html lang="zh-cn">
 							<head>
 								<meta charset="UTF-8">
-								<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+								<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> 
 								<meta name="apple-mobile-web-app-capable" content="yes"> 
 								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 								<title>Virtual Directory</title>
@@ -490,7 +500,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											</form>
 											<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
 											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
-											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel">删除</div>
+											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
 										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
@@ -615,8 +625,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
-										async handleDel() {
+										async handleDel(item) {
 											try {
+												var delItem=[]
+												if(item!=''){
+													delItem=[item];
+												}else{
+													delItem=this.selectedItem;
+												}
 												await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
 													confirmButtonText: '确定',
 													cancelButtonText: '取消',
@@ -624,7 +640,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												}).then(() => {
 												})
 												const response = await axios.post('/.delRequest?path='+this.getPath(),{
-													delFile: this.selectedItem,
+													delFile: delItem,
 												});
 												if(response.status==200){
 													// console.log("成功");
@@ -756,10 +772,30 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														icon: "bi-arrow-clockwise",
 														onClick: ()=>{
 															location.reload();
+														},
+														divided: true
+													},
+													{
+														label: "新建文件夹",
+														icon: "bi-folder-plus",
+														onClick: ()=>{
+															this.handleNewFolder();
 														}
 													},
 													{
-							
+														label: "重命名",
+														disabled: item==''?true:false,
+														onClick: ()=>{
+															this.handleRename(item.name);
+														}
+													},
+													{
+														label: "删除",
+														icon: "bi-trash3",
+														disabled: item==''?true:false,
+														onClick: ()=>{
+															this.handleDel(item);
+														}
 													}
 												],
 												event,

@@ -26,9 +26,9 @@
                     <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
                     <div class="uploadButton" @click="uploadFile">上传</div>
                 </form>
-                <div class="folderButton">新建文件夹</div>
-                <div :class="selectedItem.length==1?'renameButton':'noSelection'">重命名</div>
-                <div :class="selectedItem.length==0?'noSelection':'delButton'">删除</div>
+                <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
+                <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(item.name)">重命名</div>
+                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(item.name)">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
                 <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
@@ -234,8 +234,57 @@
             ],
         },
         methods: {
+            async handleDel(fileName){
+                try {
+                    const response = await axios.post('/.delRequest?path='+this.getPath()+fileName);
+                    // console.log(response.status);
+                    if(response.status==200){
+                        // console.log("成功");
+                        location.reload();
+                    }else{
+                        // console.log("失败");
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+            async handleRename(fileName){
+                try {
+                    const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName);
+                    // console.log(response.status);
+                    if(response.status==200){
+                        // console.log("成功");
+                        location.reload();
+                    }else{
+                        // console.log("失败");
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+            async handleNewFolder(){
+                try {
+                    const response = await axios.post('/.newfolderRequest?path='+this.getPath());
+                    // console.log(response.status);
+                    if(response.status==200){
+                        // console.log("成功");
+                        location.reload();
+                    }else{
+                        // console.log("失败");
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            },
             async handleFileChange(event) {
                 const files = event.target.files;
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+
                 if (files.length > 0) {
                     const file = files[0];
                     const formData = new FormData();
@@ -250,7 +299,7 @@
                         });
                         // console.log(response.status);
                         if(response.status==200){
-                            // console.log("成功");
+                            loading.close();
                             location.reload();
                         }else{
                             // console.log("失败");

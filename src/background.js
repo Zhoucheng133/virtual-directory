@@ -463,7 +463,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							<html lang="zh-cn">
 							<head>
 								<meta charset="UTF-8">
-								<meta name="viewport" content="width=device-width, initial-scale=1.0">
+								<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+								<meta name="apple-mobile-web-app-capable" content="yes"> 
 								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 								<title>Virtual Directory</title>
 								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>

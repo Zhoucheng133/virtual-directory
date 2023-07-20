@@ -233,8 +233,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathReName=sharePath+params.get('path');
 			}
-			console.log("重命名文件:"+pathReName+"=>"+params.get('newName'));
-			res.writeHead(200);
+
+			fs.rename(pathReName+"/"+params.get('oldName'), pathReName+"/"+params.get('newName'), (err) => {
+				if (err) {
+					res.writeHead(404);
+				} else {
+					res.writeHead(200);
+				}
+			});
 		}
 
 		if(req.url.startsWith('/.delRequest')){
@@ -259,11 +265,19 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 					const delArray = data.delFile;
 					var i=0
 					for(i=0;i<delArray.length;i++){
-						fs.rm(pathDel+delArray[i].name, { recursive: true }, (err) => {
-							if (err) {
-								res.writeHead(404);
-							}
-						});
+						if(delArray[i].type=='file'){
+							fs.unlink(pathDel+"/"+delArray[i].name, (err) => {
+								if (err) {
+									res.writeHead(404);
+								}
+							});
+						}else{
+							fs.rmdir(pathDel+"/"+delArray[i].name, { recursive: true }, (err) => {
+								if (err) {
+									res.writeHead(404);
+								}
+							});
+						}
 					}
 					if(i==delArray.length){
 						res.writeHead(200);
@@ -635,7 +649,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													this.$message.error("不合法的名称")
 												}else if(newName!=""&&newName!=null){
 													if(!fileList.includes(newName)){
-														const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
+														const response = await axios.post('/.renameRequest?path=' + this.getPath() +"&oldName="+fileName + "&newName=" + newName);
 														if (response.status === 200) {
 															location.reload();
 														} else {

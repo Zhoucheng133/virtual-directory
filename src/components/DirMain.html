@@ -269,7 +269,7 @@
                         this.$message.error("不合法的名称")
                     }else if(newName!=""&&newName!=null){
                         if(!fileList.includes(newName)){
-                            const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
+                            const response = await axios.post('/.renameRequest?path=' + this.getPath() +"&oldName="+fileName + "&newName=" + newName);
                             if (response.status === 200) {
                                 location.reload();
                             } else {

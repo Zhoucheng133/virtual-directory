@@ -249,8 +249,9 @@
                 }
             },
             async handleRename(fileName){
+                var newName="testNewName";
                 try {
-                    const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName);
+                    const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName+"&newName="+newName);
                     // console.log(response.status);
                     if(response.status==200){
                         // console.log("成功");

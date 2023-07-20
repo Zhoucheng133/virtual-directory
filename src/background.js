@@ -227,7 +227,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathReName=sharePath+params.get('path');
 			}
-			console.log("重命名文件:"+pathReName);
+			console.log("重命名文件:"+pathReName+"=>"+params.get('newName'));
 			res.writeHead(200);
 		}
 
@@ -585,8 +585,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											}
 										},
 										async handleRename(fileName){
+											var newName="testNewName";
 											try {
-												const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName);
+												const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName+"&newName="+newName);
 												// console.log(response.status);
 												if(response.status==200){
 													// console.log("成功");

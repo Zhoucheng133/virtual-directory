@@ -203,7 +203,48 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}
 		}
 
-		// 测试代码，从这里开始
+		if(req.url.startsWith('/.newfolderRequest')){
+			const url = new URL("http://localhost:1234"+req.url);
+			const paramsStr = url.search.slice(1);
+			const params = new URLSearchParams(paramsStr);
+			var pathNew="";
+			if(sharePath.slice(-1,)=='/'){
+				pathNew=sharePath.slice(0,-1)+params.get('path');
+			}else{
+				pathNew=sharePath+params.get('path');
+			}
+			console.log("在"+pathNew+"创建新文件夹");
+			res.writeHead(200);
+		}
+
+		if(req.url.startsWith('/.renameRequest')){
+			const url = new URL("http://localhost:1234"+req.url);
+			const paramsStr = url.search.slice(1);
+			const params = new URLSearchParams(paramsStr);
+			var pathReName="";
+			if(sharePath.slice(-1,)=='/'){
+				pathReName=sharePath.slice(0,-1)+params.get('path');
+			}else{
+				pathReName=sharePath+params.get('path');
+			}
+			console.log("重命名文件:"+pathReName);
+			res.writeHead(200);
+		}
+
+		if(req.url.startsWith('/.delRequest')){
+			const url = new URL("http://localhost:1234"+req.url);
+			const paramsStr = url.search.slice(1);
+			const params = new URLSearchParams(paramsStr);
+			var pathDel="";
+			if(sharePath.slice(-1,)=='/'){
+				pathDel=sharePath.slice(0,-1)+params.get('path');
+			}else{
+				pathDel=sharePath+params.get('path');
+			}
+			console.log("删除文件:"+pathDel);
+			res.writeHead(200);
+		}
+
 		if(req.url.startsWith('/.submitRequest')){
 			const url = new URL("http://localhost:1234"+req.url);
 			const paramsStr = url.search.slice(1);
@@ -237,8 +278,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			});
 
 		}
-
-		// 测试代码这里结束
 
 		fs.stat(reqPath, (err, stats) => {
 			if (err) {
@@ -405,8 +444,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												<div class="uploadButton" @click="uploadFile">上传</div>
 											</form>
 											<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
-											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(item.name)">重命名</div>
-											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(item.name)">删除</div>
+											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
+											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(selectedItem[0].name)">删除</div>
 										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">

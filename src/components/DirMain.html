@@ -27,8 +27,8 @@
                     <div class="uploadButton" @click="uploadFile">上传</div>
                 </form>
                 <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
-                <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(item.name)">重命名</div>
-                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(item.name)">删除</div>
+                <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
+                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(selectedItem[0].name)">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
                 <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">

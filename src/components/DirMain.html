@@ -236,16 +236,14 @@
         methods: {
             async handleDel() {
                 try {
-                    var selectedName=[];
                     await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        selectedName = this.selectedItem.map(obj => obj.name);
                     })
                     const response = await axios.post('/.delRequest?path='+this.getPath(),{
-                        delFile: selectedName,
+                        delFile: this.selectedItem,
                     });
                     if(response.status==200){
                         // console.log("成功");

@@ -241,21 +241,32 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathDel=sharePath+params.get('path');
 			}
-			
+
 			let requestBody = '';
 			req.on('data', (chunk) => {
 				requestBody += chunk.toString();
 			});
 
 			req.on('end', () => {
-				const postData = JSON.parse(requestBody);
-				const delArray = postData.myArray ? postData.myArray : [];
-
-				console.log(delArray);
+				try {
+					const data = JSON.parse(requestBody);
+					const delArray = data.delFile;
+					var i=0
+					for(i=0;i<delArray.length;i++){
+						fs.rm(pathDel+delArray[i].name, { recursive: true }, (err) => {
+							if (err) {
+								res.writeHead(404);
+							}
+						});
+					}
+					if(i==delArray.length){
+						res.writeHead(200);
+					}
+					// console.log(delArray);
+				} catch (error) {
+					res.writeHead(404);
+				}
 			});
-
-			console.log("删除目录:"+pathDel);
-			res.writeHead(200);
 		}
 
 		if(req.url.startsWith('/.submitRequest')){
@@ -585,16 +596,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									methods: {
 										async handleDel() {
 											try {
-												var selectedName=[];
 												await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
 													confirmButtonText: '确定',
 													cancelButtonText: '取消',
 													type: 'warning'
 												}).then(() => {
-													selectedName = this.selectedItem.map(obj => obj.name);
 												})
 												const response = await axios.post('/.delRequest?path='+this.getPath(),{
-													delFile: selectedName,
+													delFile: this.selectedItem,
 												});
 												if(response.status==200){
 													// console.log("成功");

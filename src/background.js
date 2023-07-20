@@ -862,6 +862,23 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							</script>
 							
 							<style>
+								@media screen and (max-width: 500px) {
+									.el-message-box{
+										width: 300px !important;
+									}
+									.el-dialog__wrapper .el-dialog {
+										width: 300px !important;
+										.el-dialog__body{
+											padding: 10px 20px!important;
+											.el-form-item__label{
+											width: 68px!important;
+											}
+											.el-select,.el-input{
+											width: 180px!important;
+											}
+										}
+									}
+								}
 								.el-button:hover{
 									color: rgb(255, 132, 0);
 									background-color: rgb(255, 219, 180);

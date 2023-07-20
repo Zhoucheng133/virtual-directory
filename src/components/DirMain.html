@@ -251,7 +251,6 @@
             },
             async handleRename(fileName) {
                 var newName = "";
-
                 try {
                     await this.$prompt('在下面输入新的文件/文件夹名称', '输入新名称', {
                         confirmButtonText: '确定',
@@ -263,11 +262,15 @@
                     });
 
                     // 如果没有触发自定义异常，则执行下面的axios部分
-                    const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
-                    if (response.status === 200) {
-                        location.reload();
-                    } else {
-                        // 处理其他状态码
+                    if(newName!=""&&newName!=null){
+                        const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
+                        if (response.status === 200) {
+                            location.reload();
+                        } else {
+                            // 处理其他状态码
+                        }
+                    }else{
+                        this.$message.error("名称不能为空")
                     }
                 } catch (error) {
                 }

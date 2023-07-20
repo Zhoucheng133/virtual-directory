@@ -213,7 +213,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathNew=sharePath+params.get('path');
 			}
-			console.log("在"+pathNew+"创建新文件夹");
+			console.log("在"+pathNew+"创建新文件夹"+"=>"+params.get('name'));
 			res.writeHead(200);
 		}
 
@@ -241,7 +241,20 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathDel=sharePath+params.get('path');
 			}
-			console.log("删除文件:"+pathDel);
+			
+			let requestBody = '';
+			req.on('data', (chunk) => {
+				requestBody += chunk.toString();
+			});
+
+			req.on('end', () => {
+				const postData = JSON.parse(requestBody);
+				const delArray = postData.myArray ? postData.myArray : [];
+
+				console.log(delArray);
+			});
+
+			console.log("删除目录:"+pathDel);
 			res.writeHead(200);
 		}
 
@@ -445,7 +458,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											</form>
 											<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
 											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
-											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(selectedItem[0].name)">删除</div>
+											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel">删除</div>
 										</div>
 										<div class="container" :style="{width:tableWidth+'px'}">
 											<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
@@ -570,10 +583,19 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
-										async handleDel(fileName){
+										async handleDel() {
 											try {
-												const response = await axios.post('/.delRequest?path='+this.getPath()+fileName);
-												// console.log(response.status);
+												var selectedName=[];
+												await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+													confirmButtonText: '确定',
+													cancelButtonText: '取消',
+													type: 'warning'
+												}).then(() => {
+													selectedName = this.selectedItem.map(obj => obj.name);
+												})
+												const response = await axios.post('/.delRequest?path='+this.getPath(),{
+													delFile: selectedName,
+												});
 												if(response.status==200){
 													// console.log("成功");
 													location.reload();
@@ -581,36 +603,65 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													// console.log("失败");
 												}
 											} catch (error) {
-												console.error(error);
 											}
+							
 										},
-										async handleRename(fileName){
-											var newName="testNewName";
+										async handleRename(fileName) {
 											try {
-												const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName+"&newName="+newName);
-												// console.log(response.status);
-												if(response.status==200){
-													// console.log("成功");
-													location.reload();
+												var fileList=[];
+												var newName = "";
+												await this.$prompt('在下面输入新的文件/文件夹名称', '输入新名称', {
+													confirmButtonText: '确定',
+												}).then(({ value }) => {
+													newName = value;
+													fileList=this.list.map(obj => obj.name);
+												});
+												if(newName.slice(0,1)=='.'){
+													this.$message.error("不合法的名称")
+												}else if(newName!=""&&newName!=null){
+													if(!fileList.includes(newName)){
+														const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
+														if (response.status === 200) {
+															location.reload();
+														} else {
+															// 处理其他状态码
+														}
+													}else{
+														this.$message.error("目录中已有同名文件/文件夹")
+													}
 												}else{
-													// console.log("失败");
+													this.$message.error("名称不能为空")
 												}
 											} catch (error) {
-												console.error(error);
 											}
 										},
 										async handleNewFolder(){
 											try {
-												const response = await axios.post('/.newfolderRequest?path='+this.getPath());
-												// console.log(response.status);
-												if(response.status==200){
-													// console.log("成功");
-													location.reload();
+												var fileList=[];
+												var newName = "";
+												await this.$prompt('在下面输入新建文件夹名称', '输入新名称', {
+													confirmButtonText: '确定',
+												}).then(({ value }) => {
+													newName = value;
+													fileList=this.list.map(obj => obj.name);
+												});
+												if(newName.slice(0,1)=='.'){
+													this.$message.error("不合法的名称")
+												}else if(newName!=""&&newName!=null){
+													if(!fileList.includes(newName)){
+														const response = await axios.post('/.newfolderRequest?path='+this.getPath()+"&name="+newName);
+														if (response.status === 200) {
+															location.reload();
+														} else {
+															// 处理其他状态码
+														}
+													}else{
+														this.$message.error("目录中已有同名文件/文件夹")
+													}
 												}else{
-													// console.log("失败");
+													this.$message.error("名称不能为空")
 												}
 											} catch (error) {
-												console.error(error);
 											}
 										},
 										async handleFileChange(event) {
@@ -782,6 +833,26 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 							</script>
 							
 							<style>
+								.el-button:hover{
+									color: rgb(255, 132, 0);
+									background-color: rgb(255, 219, 180);
+									border-color: rgb(255, 180, 100);
+								}
+								.el-button--primary:hover{
+									color: white !important;
+									background-color: rgb(193, 100, 0) !important;
+									border-color:rgb(193, 100, 0) !important;
+								}
+								.el-button{
+									transition: all ease-in-out .2s !important;
+								}
+								.el-button--primary{
+									background-color: rgb(255, 132, 0) !important;
+									border-color:rgb(255, 132, 0) !important;
+								}
+								.el-input.is-active .el-input__inner, .el-input__inner:focus{
+									border-color:rgb(255, 132, 0) !important;
+								}
 								.el-loading-spinner i{
 									color: rgb(255, 132, 0);
 								}

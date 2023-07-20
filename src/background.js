@@ -213,8 +213,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathNew=sharePath+params.get('path');
 			}
-			console.log("在"+pathNew+"创建新文件夹"+"=>"+params.get('name'));
-			res.writeHead(200);
+
+			fs.mkdir(pathNew+"/"+params.get('name'), { recursive: true }, (err) => {
+				if (err) {
+					res.writeHead(404);
+				} else {
+					res.writeHead(200)
+				}
+			});
 		}
 
 		if(req.url.startsWith('/.renameRequest')){

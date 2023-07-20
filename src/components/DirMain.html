@@ -28,7 +28,7 @@
                 </form>
                 <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
                 <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
-                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel(selectedItem[0].name)">删除</div>
+                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
                 <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
@@ -234,7 +234,8 @@
             ],
         },
         methods: {
-            async handleDel(fileName){
+            async handleDel(){
+
                 try {
                     const response = await axios.post('/.delRequest?path='+this.getPath()+fileName);
                     // console.log(response.status);
@@ -248,19 +249,27 @@
                     console.error(error);
                 }
             },
-            async handleRename(fileName){
-                var newName="testNewName";
+            async handleRename(fileName) {
+                var newName = "";
+
                 try {
-                    const response = await axios.post('/.renameRequest?path='+this.getPath()+fileName+"&newName="+newName);
-                    // console.log(response.status);
-                    if(response.status==200){
-                        // console.log("成功");
+                    await this.$prompt('在下面输入新的文件/文件夹名称', '输入新名称', {
+                        confirmButtonText: '确定',
+                        showCancelButton: false,
+                        inputPattern: /^(?!\.)[^]*$/,
+                        inputErrorMessage: '不合法的名称！'
+                    }).then(({ value }) => {
+                        newName = value;
+                    });
+
+                    // 如果没有触发自定义异常，则执行下面的axios部分
+                    const response = await axios.post('/.renameRequest?path=' + this.getPath() + fileName + "&newName=" + newName);
+                    if (response.status === 200) {
                         location.reload();
-                    }else{
-                        // console.log("失败");
+                    } else {
+                        // 处理其他状态码
                     }
                 } catch (error) {
-                    console.error(error);
                 }
             },
             async handleNewFolder(){
@@ -446,6 +455,18 @@
 </script>
 
 <style>
+    .el-button:focus, .el-button:hover{
+        color: white !important;
+        background-color: rgb(193, 100, 0) !important;
+        border-color:rgb(193, 100, 0) !important;
+    }
+    .el-button--primary{
+        background-color: rgb(255, 132, 0) !important;
+        border-color:rgb(255, 132, 0) !important;
+    }
+    .el-input.is-active .el-input__inner, .el-input__inner:focus{
+        border-color:rgb(255, 132, 0) !important;
+    }
     .el-loading-spinner i{
         color: rgb(255, 132, 0);
     }

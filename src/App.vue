@@ -2,8 +2,8 @@
 	<div id="app">
 		<div class="titleBar">
 			<div class="dragArea" style="width: 100%;"></div>
-			<div class="min" @click="winMin" v-if="sys=='Windows'"><a-icon type="minus" /></div>
-			<div class="close" @click="winClose" v-if="sys=='Windows'"><a-icon type="close" /></div>
+			<div class="min" @click="winMin" v-if="sys!='macOS'"><a-icon type="minus" /></div>
+			<div class="close" @click="winClose" v-if="sys!='macOS'"><a-icon type="close" /></div>
 		</div>
 		<div class="main">
 			<div class="title">Virtual Directory</div>

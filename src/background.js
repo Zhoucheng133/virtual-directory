@@ -179,16 +179,18 @@ let server;
 var sockets = [];
 
 async function delFile(path) {
-	const fs = require('fs');
-
+	const fs = require('fs').promises;
 	try {
+		// 执行删除操作
 		await fs.rm(path, { recursive: true });
+		// console.log("删除成功");
 		return true;
 	} catch (err) {
+		// console.log("删除出错:", err);
 		return false;
 	}
-}  
-
+}
+  
 // 打开服务器函数
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
 	// 获取依赖
@@ -270,25 +272,41 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				requestBody += chunk.toString();
 			});
 
-			req.on('end', async () => {
-				const data = JSON.parse(requestBody);
-				const delArray = data.delFile;
-				console.log(pathDel);
-				console.log(delArray);
-				console.log("---分割线---");
-				for (const item of delArray) {
-					const path=pathDel+"/"+item.name;
-					console.log(path);
-					delFile(path)
-					.then((result) => {
-						if(result==false){
-							res.writeHead(404);
-							return;
-						}
-					})
-				}
+
+			// var error;
+			var result=await new Promise((resolve)=>{
+				req.on('end', async () => {
+					const data = JSON.parse(requestBody);
+					const delArray = data.delFile;
+					console.log(pathDel);
+					console.log(delArray);
+					console.log("---分割线---");
+					for (const item of delArray) {
+						const path=pathDel+"/"+item.name;
+						console.log(path);
+						await delFile(path)
+						.then((result) => {
+							console.log("内部代码");
+							if(result==false){
+								resolve(false);
+								return;
+							}
+						})
+					}
+					resolve(true);
+					return;
+				})
+			})
+
+			if(result==true){
 				res.writeHead(200);
-			});			  
+				res.end();
+				return;
+			}else{
+				res.writeHead(404);
+				res.end();
+				return;
+			}
 		}
 
 		if(req.url.startsWith('/.submitRequest')){

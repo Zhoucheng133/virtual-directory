@@ -253,10 +253,9 @@
                         delFile: delItem,
                     });
                     if(response.status==200){
-                        // console.log("成功");
                         location.reload();
                     }else{
-                        // console.log("失败");
+                        this.$message.error("删除出错！");
                     }
                 } catch (error) {
                 }

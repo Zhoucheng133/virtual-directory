@@ -278,15 +278,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				req.on('end', async () => {
 					const data = JSON.parse(requestBody);
 					const delArray = data.delFile;
-					console.log(pathDel);
-					console.log(delArray);
-					console.log("---分割线---");
 					for (const item of delArray) {
 						const path=pathDel+"/"+item.name;
-						console.log(path);
 						await delFile(path)
 						.then((result) => {
-							console.log("内部代码");
 							if(result==false){
 								resolve(false);
 								return;
@@ -653,10 +648,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													delFile: delItem,
 												});
 												if(response.status==200){
-													console.log("成功");
-													// location.reload();
+													location.reload();
 												}else{
-													console.log("失败");
+													this.$message.error("删除出错！");
 												}
 											} catch (error) {
 											}
@@ -679,10 +673,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														const response = await axios.post('/.renameRequest?path=' + this.getPath() +"&oldName="+fileName + "&newName=" + newName);
 														if (response.status === 200) {
 															location.reload();
-															// console.log("200");
 														} else {
 															// 处理其他状态码
-															// console.log("404");
 														}
 													}else{
 														this.$message.error("目录中已有同名文件/文件夹")

@@ -295,12 +295,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 			if(result==true){
 				res.writeHead(200);
-				res.end();
-				return;
 			}else{
-				res.writeHead(404);
-				res.end();
-				return;
+				res.writeHead(201);
 			}
 		}
 

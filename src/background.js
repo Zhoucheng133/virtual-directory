@@ -178,6 +178,17 @@ async function isAuthorized(authorizationHeader, username, password) {
 let server;
 var sockets = [];
 
+async function delFile(path) {
+	const fs = require('fs');
+
+	try {
+		await fs.rm(path, { recursive: true });
+		return true;
+	} catch (err) {
+		return false;
+	}
+}  
+
 // 打开服务器函数
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
 	// 获取依赖
@@ -259,44 +270,25 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				requestBody += chunk.toString();
 			});
 
-			req.on('end', () => {
-				try {
-					const data = JSON.parse(requestBody);
-					const delArray = data.delFile;
-					var i=0
-					for(i=0;i<delArray.length;i++){
-						if(delArray[i].type=='file'){
-							var isErr=false;
-							fs.unlink(pathDel+"/"+delArray[i].name, (err) => {
-								if (err) {
-									res.writeHead(404);
-									isErr=true;
-								}
-							});
-							if(isErr==true){
-								break;
-							}
-						}else{
-							var isErr=false;
-							fs.rmdir(pathDel+"/"+delArray[i].name, { recursive: true }, (err) => {
-								if (err) {
-									res.writeHead(404);
-									isErr=true;
-								}
-							});
-							if(isErr==true){
-								break;
-							}
+			req.on('end', async () => {
+				const data = JSON.parse(requestBody);
+				const delArray = data.delFile;
+				console.log(pathDel);
+				console.log(delArray);
+				console.log("---分割线---");
+				for (const item of delArray) {
+					const path=pathDel+"/"+item.name;
+					console.log(path);
+					delFile(path)
+					.then((result) => {
+						if(result==false){
+							res.writeHead(404);
+							return;
 						}
-					}
-					if(i==delArray.length){
-						res.writeHead(200);
-					}
-					// console.log(delArray);
-				} catch (error) {
-					res.writeHead(404);
+					})
 				}
-			});
+				res.writeHead(200);
+			});			  
 		}
 
 		if(req.url.startsWith('/.submitRequest')){
@@ -643,10 +635,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													delFile: delItem,
 												});
 												if(response.status==200){
-													// console.log("成功");
-													location.reload();
+													console.log("成功");
+													// location.reload();
 												}else{
-													// console.log("失败");
+													console.log("失败");
 												}
 											} catch (error) {
 											}
@@ -669,8 +661,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														const response = await axios.post('/.renameRequest?path=' + this.getPath() +"&oldName="+fileName + "&newName=" + newName);
 														if (response.status === 200) {
 															location.reload();
+															// console.log("200");
 														} else {
 															// 处理其他状态码
+															// console.log("404");
 														}
 													}else{
 														this.$message.error("目录中已有同名文件/文件夹")

@@ -628,11 +628,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 									methods: {
 										async handleDel(item) {
 											try {
-												var delItem=[]
-												if(item!=''){
-													delItem=[item];
-												}else{
-													delItem=this.selectedItem;
+												var delItem = [];
+												if (item != '') {
+													delItem = [item];
+												} else {
+													delItem = this.selectedItem;
 												}
 												await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
 													confirmButtonText: '确定',
@@ -640,17 +640,24 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 													type: 'warning'
 												}).then(() => {
 												})
-												const response = await axios.post('/.delRequest?path='+this.getPath(),{
+												const loading = this.$loading({
+													lock: true,
+													text: '正在删除',
+													spinner: 'el-icon-loading',
+													background: 'rgba(255, 255, 255, 0.7)'
+												});
+												const response = await axios.post('/.delRequest?path=' + this.getPath(), {
 													delFile: delItem,
 												});
-												if(response.status==200){
+												if (response.status == 200) {
+													loading.close();
 													location.reload();
-												}else{
+												} else {
+													loading.close();
 													this.$message.error("删除出错！");
 												}
 											} catch (error) {
 											}
-							
 										},
 										async handleRename(fileName) {
 											try {
@@ -700,8 +707,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 														if (response.status === 200) {
 															location.reload();
 														} else {
-															// 处理其他状态码
 															this.$message.error("新建文件夹出错");
+															// 处理其他状态码
 														}
 													}else{
 														this.$message.error("目录中已有同名文件/文件夹")

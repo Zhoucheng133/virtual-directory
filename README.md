@@ -46,12 +46,14 @@ v1.0.5 (2023/7/12)
   - 增加重命名文件/文件夹功能
   - 修改样式表的一些bug
   - 添加右键菜单
+  - 弹窗适配移动端
 
 ## 关于代码
 使用Electron 13和Vue 2开发，使用到的库：
 
 - Ant design (UI库)
-- Bootstrap (UI库)
+- Bootstrap (图标库)
+- Element (UI库)
 - base-64 (登录授权加密)
 
 ## 一些注意事项

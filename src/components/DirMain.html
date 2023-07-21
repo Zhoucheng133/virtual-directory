@@ -280,6 +280,7 @@
                                 location.reload();
                             } else {
                                 // 处理其他状态码
+                                this.$message.error("重命名出错！");
                             }
                         }else{
                             this.$message.error("目录中已有同名文件/文件夹")
@@ -308,6 +309,7 @@
                             if (response.status === 200) {
                                 location.reload();
                             } else {
+                                this.$message.error("新建文件夹出错");
                                 // 处理其他状态码
                             }
                         }else{

@@ -229,7 +229,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 			fs.mkdir(pathNew+"/"+params.get('name'), { recursive: true }, (err) => {
 				if (err) {
-					res.writeHead(404);
+					res.writeHead(201);
 				} else {
 					res.writeHead(200)
 				}
@@ -249,7 +249,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
 			fs.rename(pathReName+"/"+params.get('oldName'), pathReName+"/"+params.get('newName'), (err) => {
 				if (err) {
-					res.writeHead(404);
+					res.writeHead(201);
 				} else {
 					res.writeHead(200);
 				}
@@ -671,6 +671,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 															location.reload();
 														} else {
 															// 处理其他状态码
+															this.$message.error("重命名出错！");
 														}
 													}else{
 														this.$message.error("目录中已有同名文件/文件夹")
@@ -700,6 +701,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 															location.reload();
 														} else {
 															// 处理其他状态码
+															this.$message.error("新建文件夹出错");
 														}
 													}else{
 														this.$message.error("目录中已有同名文件/文件夹")

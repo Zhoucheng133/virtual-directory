@@ -27,6 +27,7 @@
                     <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
                     <div class="uploadButton" @click="uploadFile">上传</div>
                 </form>
+                <div class="folderButton" @click="handleSelectAll" class="selectAll">全选</div>
                 <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
                 <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
                 <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
@@ -38,9 +39,9 @@
                     <div class="cell">../</div>
                     <div class="cell cell_end">上一层</div>
                 </div>
-                <div :class="isSelected(item)?'selected row':'row'" v-for="item in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
+                <div :class="isSelected(item)?'selected row':'row'" v-for="(item,index) in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
                     <div class="checkBox cell">
-                        <el-checkbox @change="selectItem(item)"></el-checkbox>
+                        <el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
                     </div>
                     <div class="cell"  @click="linkTO(item)">
                         <i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
@@ -155,86 +156,119 @@
                 {
                     "type": "file",
                     "name": ".DS_Store",
-                    "size": 20484
+                    "size": 20484,
+                    "selected": false
                 },
                 {
                     "type": "file",
                     "name": ".localized",
-                    "size": 0
+                    "size": 0,
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "Ai文件"
+                    "name": "Ai文件",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "ApplicationList"
+                    "name": "ApplicationList",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "Drawing"
+                    "name": "Drawing",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "FlutterPrj"
+                    "name": "FlutterPrj",
+                    "selected": false
                 },
                 {
                     "type": "file",
                     "name": "Tomcat",
-                    "size": 776
+                    "size": 776,
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "VuePrj"
+                    "name": "VuePrj",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "Wallpaper"
+                    "name": "Wallpaper",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "ukt_player"
+                    "name": "ukt_player",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "virtual_dir"
+                    "name": "virtual_dir",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "图片"
+                    "name": "图片",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "学习用"
+                    "name": "学习用",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "导出"
+                    "name": "导出",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "我的创作工具"
+                    "name": "我的创作工具",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "照片"
+                    "name": "照片",
+                    "selected": false
                 },
                 {
                     "type": "file",
                     "name": "缓存",
-                    "size": 828
+                    "size": 828,
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "编程指南"
+                    "name": "编程指南",
+                    "selected": false
                 },
                 {
                     "type": "dir",
-                    "name": "视频素材"
+                    "name": "视频素材",
+                    "selected": false
                 }
             ],
         },
         methods: {
+            handleSelectAll(){
+                if(this.selectedItem.length<this.list.length){
+                    this.selectedItem=[];
+                    for(item of this.list){
+                        item.selected=true;
+                        this.selectedItem.push(item);
+                    }
+                }else{
+                    this.selectedItem=[];
+                    for(item of this.list){
+                        item.selected=false;
+                    }
+                }
+            },
             async handleDel(item) {
                 try {
                     var delItem = [];

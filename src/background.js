@@ -463,9 +463,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								const filePath = path.join(reqPath, file);
 								const stats = fs.statSync(filePath);
 								if (stats.isFile()) {
-									dirList.push({"type":"file","name":file,"size":stats.size});
+									dirList.push({"type":"file","name":file,"size":stats.size,"selected":false});
 								} else if (stats.isDirectory()) {
-									dirList.push({"type":"dir","name":file})
+									dirList.push({"type":"dir","name":file,"selected":false});
 								}
 							});
 
@@ -477,7 +477,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> 
 								<meta name="apple-mobile-web-app-capable" content="yes"> 
 								<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-								<title>Virtual Directory</title>
+								<title>虚拟目录</title>
 								<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 								<script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
 								<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -489,7 +489,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 								<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
 									<div>
 										<div class="title">
-											Virtual Directory
+											虚拟目录
 										</div>
 										<div class="head" :style="{width:tableWidth+'px'}">
 											当前路径：<br/>{{getPath()}}
@@ -499,6 +499,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
 												<div class="uploadButton" @click="uploadFile">上传</div>
 											</form>
+											<div class="folderButton" @click="handleSelectAll" class="selectAll">全选</div>
 											<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
 											<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
 											<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
@@ -510,9 +511,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 												<div class="cell">../</div>
 												<div class="cell cell_end">上一层</div>
 											</div>
-											<div :class="isSelected(item)?'selected row':'row'" v-for="item in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
+											<div :class="isSelected(item)?'selected row':'row'" v-for="(item,index) in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
 												<div class="checkBox cell">
-													<el-checkbox @change="selectItem(item)"></el-checkbox>
+													<el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
 												</div>
 												<div class="cell"  @click="linkTO(item)">
 													<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
@@ -626,6 +627,20 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										list: ${JSON.stringify(dirList)},
 									},
 									methods: {
+										handleSelectAll(){
+											if(this.selectedItem.length<this.list.length){
+												this.selectedItem=[];
+												for(item of this.list){
+													item.selected=true;
+													this.selectedItem.push(item);
+												}
+											}else{
+												this.selectedItem=[];
+												for(item of this.list){
+													item.selected=false;
+												}
+											}
+										},
 										async handleDel(item) {
 											try {
 												var delItem = [];

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> 
     <meta name="apple-mobile-web-app-capable" content="yes"> 
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <title>Virtual Directory</title>
+    <title>虚拟目录</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -17,7 +17,7 @@
     <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
         <div>
             <div class="title">
-                Virtual Directory
+                虚拟目录
             </div>
             <div class="head" :style="{width:tableWidth+'px'}">
                 当前路径：<br/>{{getPath()}}

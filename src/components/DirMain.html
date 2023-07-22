@@ -24,7 +24,7 @@
             </div>
             <div class="toolBar">
                 <form method="post" enctype="multipart/form-data" @change="handleFileChange">
-                    <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
+                    <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;" multiple>
                     <div class="uploadButton" @click="uploadFile">上传</div>
                 </form>
                 <div class="folderButton" @click="handleSelectAll" class="selectAll">全选</div>
@@ -374,8 +374,9 @@
                 if (files.length > 0) {
                     const file = files[0];
                     const formData = new FormData();
-                    const fileName = file.name;
-                    formData.append('file', file);
+                    for (let i = 0; i < files.length; i++) {
+                        formData.append('files', files[i]);
+                    }
 
                     try {
                         const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
@@ -388,6 +389,7 @@
                             loading.close();
                             location.reload();
                         }else{
+                            this.$message.error("上传失败！");
                             // console.log("失败");
                         }
                     } catch (error) {

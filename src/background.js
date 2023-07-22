@@ -310,6 +310,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			}else{
 				pathSave=sharePath+params.get('path');
 			}
+			// 上面是获取保存路径
 
 			const multer = require('multer');
 			const storage = multer.diskStorage({
@@ -318,10 +319,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 					cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
 				}
 			});
-			const upload = multer({ storage: storage });
-			upload.single('file')(req, res, (err) => {
+			const upload = multer({ storage: storage }).array('files');
+			upload(req, res, (err) => {
 				if (err) {
-					res.writeHead(404);
+					res.writeHead(201);
 					// return res.end('Error uploading file.');
 				}
 
@@ -496,7 +497,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 										</div>
 										<div class="toolBar">
 											<form method="post" enctype="multipart/form-data" @change="handleFileChange">
-												<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;">
+												<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;" multiple>
 												<div class="uploadButton" @click="uploadFile">上传</div>
 											</form>
 											<div class="folderButton" @click="handleSelectAll" class="selectAll">全选</div>
@@ -746,8 +747,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											if (files.length > 0) {
 												const file = files[0];
 												const formData = new FormData();
-												const fileName = file.name;
-												formData.append('file', file);
+												for (let i = 0; i < files.length; i++) {
+													formData.append('files', files[i]);
+												}
 							
 												try {
 													const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {

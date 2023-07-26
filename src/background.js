@@ -860,16 +860,23 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 											return false;
 										},
 										linkTO(item) {
+											var dest="";
 											if (this.isRoot()) {
 												var url = window.location.origin + '/';
 												url += item.name;
-												window.location.href = url;
-												return;
+												dest = url;
+											}else{
+												var nowURL = window.location.href;
+												nowURL += "/"
+												nowURL += item.name;
+												dest = nowURL;
 											}
-											var nowURL = window.location.href;
-											nowURL += "/"
-											nowURL += item.name;
-											window.location.href = nowURL;
+							
+											if(item.type=="file"){
+												window.open(dest, '_blank');
+											}else{
+												window.location.href=dest;
+											}
 										},
 										shownSize(size) {
 											if (size / 1024 > 1) {

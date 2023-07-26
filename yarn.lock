@@ -4294,6 +4294,13 @@ ejs@^3.1.6:
   dependencies:
     jake "^10.8.5"
 
+ejs@^3.1.9:
+  version "3.1.9"
+  resolved "https://mirrors.cloud.tencent.com/npm/ejs/-/ejs-3.1.9.tgz#03c9e8777fe12686a9effcef22303ca3d8eeb361"
+  integrity sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==
+  dependencies:
+    jake "^10.8.5"
+
 electron-builder@^22.2.0:
   version "22.14.13"
   resolved "https://registry.npmmirror.com/electron-builder/-/electron-builder-22.14.13.tgz#fd40564685cf5422a8f8d667940af3d3776f4fb8"

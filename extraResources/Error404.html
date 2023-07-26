@@ -17,13 +17,16 @@
     var app = new Vue({
         el: '#app',
         data: {
-            
+            // test: JSON.parse('<%- JSON.stringify(data) %>')
         },
         methods: {
             backToHome(){
                 window.location.href=window.location.origin;
             }
         },
+        // created() {
+        //     console.log(this.test);
+        // },
     })
 </script>
 

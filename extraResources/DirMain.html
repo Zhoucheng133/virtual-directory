@@ -20,12 +20,10 @@
                 虚拟目录
             </div>
             <div class="head" :style="{width:tableWidth+'px'}">
-                <div>当前目录:</div>
                 <div class="pathDisplay">
-                    <div class="outsidePath" v-for="(item, index) in headPath()" :key="index">
-                        <div class="line" v-if="index!=0">/</div>
-                        <div class="pathItem" :ref="'ref'+index" @click="pathRoute(headPath(),index)">{{ item }}</div>
-                    </div>
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item v-for="(item, index) in headPath()" class="pathItem"><a :href="pathRoute(headPath(),index)">{{ shownName(item) }}</a></el-breadcrumb-item>
+                    </el-breadcrumb>
                 </div>
             </div>
             <div class="toolBar">
@@ -291,15 +289,14 @@
             },
             pathRoute(arr,index){
                 if(index==0){
-                    window.location.href="/";
-                    return;
+                    return "/";
                 }
                 var linkURL="";
                 for(var i=1;i<=index;i++){
                     linkURL+="/";
                     linkURL+=arr[i];
                 }
-                window.location.href=linkURL;
+                return linkURL;
             },
             handleSelectAll(){
                 if(this.selectedItem.length<this.list.length){
@@ -593,6 +590,12 @@
                 }
                 return size.toFixed(2) + " GB"
             },
+            shownName(val){
+                if(val.length>15){
+                    return (val.slice(0,14))+"…";
+                }
+                return val;
+            },
             windowController(){
                 if(window.innerWidth<340){
                     this.flexContent=false;
@@ -631,6 +634,15 @@
 </script>
 
 <style>
+    .el-breadcrumb{
+        font-size: 16px;
+    }
+    .el-breadcrumb__inner a:hover, .el-breadcrumb__inner.is-link:hover{
+        color: rgb(255, 175, 90) !important;
+    }
+    .el-breadcrumb{
+        line-height: 1.5;
+    }
     .blockSelected{
         background-color: rgb(235, 235, 235);
     }
@@ -688,29 +700,10 @@
         padding: 2px 2px 2px 2px;
     }
     .pathDisplay{
+        margin-top: 5px;
         display: flex;
         align-items: center;
         overflow: hidden;
-    }
-    .line{
-        font-size: 16px;
-    }
-    .pathItem:hover{
-        color: rgb(255, 132, 0);
-        cursor: pointer;
-    }
-    .pathItem{
-        font-size: 16px;
-        margin-right: 2px;
-        transition: all ease-in-out .2s;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 200px;
-    }
-    .outsidePath{
-        display: flex;
-        white-space: nowrap;
-        align-items: center;
     }
     @media screen and (max-width: 500px) {
         .el-message-box{

@@ -166,7 +166,7 @@
                             <i class="bi bi-folder blockFolder" :style="{'font-size':lineItem*10+20+'px'}" style="color: rgb(255, 214, 170);"></i>
                             <div class="blockText">返回上一层</div>
                     </div>
-                    <div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list" v-if="item.name[0]!='.'">
+                    <div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
                         <div class="blockSelection">
                             <el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
                         </div>

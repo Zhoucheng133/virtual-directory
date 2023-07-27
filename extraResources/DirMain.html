@@ -37,8 +37,12 @@
                 <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
                 <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
                 <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
+                <div class="changeDisp">
+                    <div @click="changeDisplay" v-if="blockDisplay==false"><i class="bi bi-list-columns-reverse" style="margin-right: 5px;"></i>列表</div>
+                    <div @click="changeDisplay" v-else><i class="bi bi-grid-3x3" style="margin-right: 5px;"></i>网格</div>
+                </div>
             </div>
-            <div class="container" :style="{width:tableWidth+'px'}">
+            <div class="container" :style="{width:tableWidth+'px'}" v-if="blockDisplay==false">
                 <div class="topbar">
                     <div class="cell"><div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div></div>
                     <div class="cell">文件名</div>
@@ -151,6 +155,18 @@
                     </div>
                 </div>
             </div>
+            <div class="blockContainer" v-else :style="{width:tableWidth+'px'}">
+                <div class="topbar">
+                    <div class="cell"><div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div></div>
+                    <div class="cell"></div>
+                    <div class="cell cell_end"></div>
+                </div>
+                <div class="blockMain" :style="{'grid-template-columns':'repeat('+lineItem+', 1fr)'}">
+                    <div class="blockItem" v-for="(item,index) in list" v-if="item.name[0]!='.'">
+                        {{item.name}}
+                    </div>
+                </div>
+            </div>
         </div>
         <div class=blank></div>
     </div>
@@ -164,8 +180,13 @@
             flexContent:true,
             selectedItem:[],
             list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
+            blockDisplay:true,
+            lineItem:5,
         },
         methods: {
+            changeDisplay(){
+                this.blockDisplay=!this.blockDisplay
+            },
             pathRoute(arr,index){
                 if(index==0){
                     window.location.href="/";
@@ -502,6 +523,27 @@
 </script>
 
 <style>
+    .blockMain{
+        display: grid;
+        width: 100%;
+        /* grid-template-columns: repeat(3, 1fr); */
+        grid-gap: 10px;
+    }
+    .blockItem{
+        background-color: red;
+        color: white;
+        height: 120px;
+    }
+    .changeDisp:hover{
+        color: rgb(255, 132, 0);
+        cursor: pointer;
+    }
+    .changeDisp{
+        color: grey;
+        margin-left: auto;
+        padding-right: 2px;
+        transition: all ease-in-out .2s;
+    }
     .topbar{
         display: grid;
         grid-template-columns: 60px auto 100px;

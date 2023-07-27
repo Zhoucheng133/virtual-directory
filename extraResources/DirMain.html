@@ -371,6 +371,22 @@
                     return false;
                 }
             },
+            headPath(){
+                var PATH=decodeURIComponent(window.location.pathname);
+                var pathArr=['根目录'];
+                if(PATH=="/"){
+                    return pathArr;
+                }
+                let match;
+                const regex = /\/([^/]+)|\/([^/]+)$/g;
+                while ((match = regex.exec(PATH)) !== null) {
+                    const content = match[1] || match[2];
+                    if (content) {
+                        pathArr.push(content);
+                    }
+                }
+                return pathArr;
+            },
             getPath() {
                 return decodeURIComponent(window.location.pathname);
             },

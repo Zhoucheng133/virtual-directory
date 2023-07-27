@@ -163,10 +163,8 @@
                 </div>
                 <div class="blockMain" :style="{'grid-template-columns':'repeat('+lineItem+', 1fr)'}">
                     <div class="blockItem" v-if="isRoot()==false" @click="backFolder">
-                        <div>
                             <i class="bi bi-folder blockFolder" :style="{'font-size':lineItem*10+20+'px'}" style="color: rgb(255, 214, 170);"></i>
                             <div class="blockText">返回上一层</div>
-                        </div>
                     </div>
                     <div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list" v-if="item.name[0]!='.'">
                         <div class="blockSelection">
@@ -174,13 +172,22 @@
                         </div>
                         <div @click="linkTO(item)">
                             <i class="bi bi-folder blockFolder" v-if="item.type=='dir'" :style="{'font-size':lineItem*10+20+'px'}"></i>
-                            <img :src="getLink(item)" style="margin-top: 18.75px;margin-bottom: 18.75px;" :height="(lineItem*10+20)*3/4+'px'" :width="lineItem*10+20+'px'" v-else-if="
+                            <!-- <img :src="getLink(item)" style="margin-top: 18.75px;margin-bottom: 18.75px;" :height="(lineItem*10+20)*3/4+'px'" :width="lineItem*10+20+'px'" v-else-if=" -->
+                            <!-- <img :src="getLink(item)" :style="{'max-width':lineItem*10+20+'px','max-height': '96px'}" v-else-if="
                                 (comp(item.name,'jpg') || 
                                 comp(item.name,'jpeg') ||
                                 comp(item.name,'png') || 
                                 comp(item.name,'gif') ||
                                 comp(item.name,'svg')) && item.type!='dir'">
-                            </img>
+                            </img> -->
+                            <div :style="{height: lineItem*10+20+'px','margin-top': (lineItem*10+20)/5-1+'px','margin-bottom': (lineItem*10+20)/5-1+'px'}" v-else-if="
+                                (comp(item.name,'jpg') || 
+                                comp(item.name,'jpeg') ||
+                                comp(item.name,'png') || 
+                                comp(item.name,'gif') ||
+                                comp(item.name,'svg')) && item.type!='dir'">
+                                <img :src="getLink(item)" :style="{'max-height': lineItem*10+20+'px'}">
+                            </div>
                             <i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'tiff') ||
                                 comp(item.name,'psd') ||

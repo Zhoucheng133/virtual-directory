@@ -280,12 +280,13 @@
             flexContent:true,
             selectedItem:[],
             list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
-            blockDisplay:true,
+            blockDisplay:false,
             lineItem:5,
         },
         methods: {
             changeDisplay(){
                 this.blockDisplay=!this.blockDisplay
+                localStorage.setItem("blockDisplay",this.blockDisplay)
             },
             pathRoute(arr,index){
                 if(index==0){
@@ -591,22 +592,8 @@
                     return size.toFixed(2) + " GB"
                 }
                 return size.toFixed(2) + " GB"
-            }
-        },
-        created() {
-            if(window.innerWidth<340){
-                this.flexContent=false;
-                this.tableWidth=320;
-            }else if(window.innerWidth<740){
-                this.tableWidth=window.innerWidth-40;
-                this.flexContent=false;
-            }else{
-                this.tableWidth=700;
-                this.flexContent=true;
-            }
-        },
-        mounted() {
-            window.onresize=()=>{
+            },
+            windowController(){
                 if(window.innerWidth<340){
                     this.flexContent=false;
                     this.tableWidth=320;
@@ -617,6 +604,27 @@
                     this.tableWidth=700;
                     this.flexContent=true;
                 }
+
+                if(window.innerWidth>630){
+                    this.lineItem=5;
+                }else if(window.innerWidth>400){
+                    this.lineItem=4;
+                }else if(window.innerWidth>380){
+                    this.lineItem=3;
+                }
+            }
+        },
+        created() {
+            if(localStorage.getItem("blockDisplay")!=undefined && localStorage.getItem("blockDisplay")!=null){
+                this.blockDisplay=localStorage.getItem("blockDisplay")=='true'?true:false;
+                console.log(this.blockDisplay);
+            }
+            
+            this.windowController();
+        },
+        mounted() {
+            window.onresize=()=>{
+                this.windowController();
             }
         },
     })
@@ -627,7 +635,7 @@
         background-color: rgb(235, 235, 235);
     }
     .blockSelection{
-        position: fixed;
+        position: absolute;
         align-self: flex-start;
         margin-top: 10px;
         margin-left: 10px;

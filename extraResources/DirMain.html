@@ -34,12 +34,16 @@
                     <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;" multiple>
                     <div class="uploadButton" @click="uploadFile">上传</div>
                 </form>
-                <div class="folderButton" @click="handleSelectAll" class="selectAll">全选</div>
                 <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
                 <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
                 <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
             </div>
             <div class="container" :style="{width:tableWidth+'px'}">
+                <div class="topbar">
+                    <div class="cell"><div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div></div>
+                    <div class="cell">文件名</div>
+                    <div class="cell cell_end">大小</div>
+                </div>
                 <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
                     <div class="cell"></div>
                     <div class="cell"><i class="bi bi-folder mainIcon"></i></div>
@@ -498,6 +502,11 @@
 </script>
 
 <style>
+    .topbar{
+        display: grid;
+        grid-template-columns: 60px auto 100px;
+        padding: 2px 2px 2px 2px;
+    }
     .pathDisplay{
         display: flex;
         align-items: center;
@@ -640,7 +649,7 @@
         display: flex;
         align-items: center;
         /* padding-left: 10px; */
-        height: 50px;
+        height: 30px;
         width: 100%;
         /* background-color: red; */
         padding-top: 5px;
@@ -665,7 +674,6 @@
         transition: all ease-in-out .2s;
         padding: 2px 2px 2px 2px;
         border-radius: 10px;
-        
     }
     .cell_end{
         justify-content: flex-end;

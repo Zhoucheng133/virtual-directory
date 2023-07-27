@@ -162,97 +162,108 @@
                     <div class="cell cell_end"></div>
                 </div>
                 <div class="blockMain" :style="{'grid-template-columns':'repeat('+lineItem+', 1fr)'}">
-                    <div class="blockItem" v-for="(item,index) in list" v-if="item.name[0]!='.'">
-                        <i class="bi bi-folder-fill blockFolder" v-if="item.type=='dir'" :style="{'font-size':lineItem*10+20+'px'}"></i>
-                        <i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'jpg') || 
-                            comp(item.name,'jpeg') ||
-                            comp(item.name,'png') || 
-                            comp(item.name,'tiff') ||
-                            comp(item.name,'psd') ||
-                            comp(item.name,'gif') ||
-                            comp(item.name,'tif') ||
-                            comp(item.name,'ai') ||
-                            comp(item.name,'svg') ||
-                            comp(item.name,'dng')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-play blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'mp4') || 
-                            comp(item.name,'mov') || 
-                            comp(item.name,'mkv') ||
-                            comp(item.name,'avi') ||
-                            comp(item.name,'rmvb')) && item.type!='dir'">
+                    <div class="blockItem" v-if="isRoot()==false" @click="backFolder">
+                        <div>
+                            <i class="bi bi-folder blockFolder" :style="{'font-size':lineItem*10+20+'px'}" style="color: rgb(255, 214, 170);"></i>
+                            <div class="blockText">返回上一层</div>
+                        </div>
+                    </div>
+                    <div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list" v-if="item.name[0]!='.'">
+                        <div class="blockSelection">
+                            <el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
+                        </div>
+                        <div @click="linkTO(item)">
+                            <i class="bi bi-folder blockFolder" v-if="item.type=='dir'" :style="{'font-size':lineItem*10+20+'px'}"></i>
+                            <i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'jpg') || 
+                                comp(item.name,'jpeg') ||
+                                comp(item.name,'png') || 
+                                comp(item.name,'tiff') ||
+                                comp(item.name,'psd') ||
+                                comp(item.name,'gif') ||
+                                comp(item.name,'tif') ||
+                                comp(item.name,'ai') ||
+                                comp(item.name,'svg') ||
+                                comp(item.name,'dng')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-play blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'mp4') || 
+                                comp(item.name,'mov') || 
+                                comp(item.name,'mkv') ||
+                                comp(item.name,'avi') ||
+                                comp(item.name,'rmvb')) && item.type!='dir'">
 
-                        </i>
-                        <i class="bi bi-file-earmark-music blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'mp3') || 
-                            comp(item.name,'acc') || 
-                            comp(item.name,'flac') ||
-                            comp(item.name,'m4p') ||
-                            comp(item.name,'wav') ||
-                            comp(item.name,'mid') ||
-                            comp(item.name,'midi')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark-music blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'mp3') || 
+                                comp(item.name,'acc') || 
+                                comp(item.name,'flac') ||
+                                comp(item.name,'m4p') ||
+                                comp(item.name,'wav') ||
+                                comp(item.name,'mid') ||
+                                comp(item.name,'midi')) && item.type!='dir'">
 
-                        </i>
-                        <i class="bi bi-file-text blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'txt') || 
-                            comp(item.name,'doc') || 
-                            comp(item.name,'docx') ||
-                            comp(item.name,'md') ||
-                            comp(item.name,'rtf')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-slides blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'ppt') || 
-                            comp(item.name,'key') || 
-                            comp(item.name,'pptx')) && item.type!='dir'">
-                        </i>
-                        <i class="bi-file-earmark-bar-graph blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'xls') || 
-                            comp(item.name,'xlsx') || 
-                            comp(item.name,'numbers')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-code blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'cpp') || 
-                            comp(item.name,'c') || 
-                            comp(item.name,'py') ||
-                            comp(item.name,'cs') ||
-                            comp(item.name,'swfit') ||
-                            comp(item.name,'js') ||
-                            comp(item.name,'java') ||
-                            comp(item.name,'json') ||
-                            comp(item.name,'vue') ||
-                            comp(item.name,'css') ||
-                            comp(item.name,'go') ||
-                            comp(item.name,'sql') ||
-                            comp(item.name,'vb') ||
-                            comp(item.name,'rs') ||
-                            comp(item.name,'xml') ||
-                            comp(item.name,'kt') ||
-                            comp(item.name,'yaml') ||
-                            comp(item.name,'ts') || 
-                            comp(item.name,'html') ||
-                            comp(item.name,'csv') ||
-                            comp(item.name,'sh') ||
-                            comp(item.name,'sass') ||
-                            comp(item.name,'scss') ||
-                            comp(item.name,'yml')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-pdf blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            comp(item.name,'pdf') && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-zip blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            (comp(item.name,'zip') || 
-                            comp(item.name,'rar') || 
-                            comp(item.name,'7z') ||
-                            comp(item.name,'tar') ||
-                            comp(item.name,'iso') ||
-                            comp(item.name,'dmg')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-post blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
-                            comp(item.name,'exe') && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else></i>
-                        <div class="blockText">{{item.name}}</div>
+                            </i>
+                            <i class="bi bi-file-text blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'txt') || 
+                                comp(item.name,'doc') || 
+                                comp(item.name,'docx') ||
+                                comp(item.name,'md') ||
+                                comp(item.name,'rtf')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark-slides blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'ppt') || 
+                                comp(item.name,'key') || 
+                                comp(item.name,'pptx')) && item.type!='dir'">
+                            </i>
+                            <i class="bi-file-earmark-bar-graph blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'xls') || 
+                                comp(item.name,'xlsx') || 
+                                comp(item.name,'numbers')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark-code blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'cpp') || 
+                                comp(item.name,'c') || 
+                                comp(item.name,'py') ||
+                                comp(item.name,'cs') ||
+                                comp(item.name,'swfit') ||
+                                comp(item.name,'js') ||
+                                comp(item.name,'java') ||
+                                comp(item.name,'json') ||
+                                comp(item.name,'vue') ||
+                                comp(item.name,'css') ||
+                                comp(item.name,'go') ||
+                                comp(item.name,'sql') ||
+                                comp(item.name,'vb') ||
+                                comp(item.name,'rs') ||
+                                comp(item.name,'xml') ||
+                                comp(item.name,'kt') ||
+                                comp(item.name,'yaml') ||
+                                comp(item.name,'ts') || 
+                                comp(item.name,'html') ||
+                                comp(item.name,'csv') ||
+                                comp(item.name,'sh') ||
+                                comp(item.name,'sass') ||
+                                comp(item.name,'scss') ||
+                                comp(item.name,'yml')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark-pdf blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                comp(item.name,'pdf') && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-zip blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                (comp(item.name,'zip') || 
+                                comp(item.name,'rar') || 
+                                comp(item.name,'7z') ||
+                                comp(item.name,'tar') ||
+                                comp(item.name,'iso') ||
+                                comp(item.name,'dmg')) && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark-post blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+                                comp(item.name,'exe') && item.type!='dir'">
+                            </i>
+                            <i class="bi bi-file-earmark blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else></i>
+                        </div>
+                        <div class="blockText" @click="linkTO(item)">{{item.name}}</div>
                     </div>
                 </div>
             </div>
@@ -612,6 +623,16 @@
 </script>
 
 <style>
+    .blockSelected{
+        background-color: rgb(235, 235, 235);
+    }
+    .blockSelection{
+        position: fixed;
+        align-self: flex-start;
+        margin-top: 10px;
+        margin-left: 10px;
+        transform: scale(1.5);
+    }
     .blockText{
         width: 100%;
         white-space: nowrap;
@@ -620,7 +641,7 @@
         text-align: center;
     }
     .blockFolder{
-        color: rgb(255, 132, 0);
+        color: rgb(255, 175, 90);
     }
     .blockMain{
         display: grid;
@@ -639,6 +660,9 @@
         align-items: center;
         text-overflow: ellipsis;
         overflow: hidden;
+        padding-bottom: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
     .changeDisp:hover{
         color: rgb(255, 132, 0);

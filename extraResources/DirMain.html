@@ -20,7 +20,6 @@
                 虚拟目录
             </div>
             <div class="head" :style="{width:tableWidth+'px'}">
-                <!-- 当前路径：<br/>{{getPath()}} -->
                 <div>当前目录:</div>
                 <div class="pathDisplay">
                     <div class="outsidePath" v-for="(item, index) in headPath()" :key="index">
@@ -294,8 +293,6 @@
                     return;
                 }
                 var linkURL="";
-                // console.log(arr);
-                // console.log(index);
                 for(var i=1;i<=index;i++){
                     linkURL+="/";
                     linkURL+=arr[i];
@@ -367,7 +364,6 @@
                             if (response.status === 200) {
                                 location.reload();
                             } else {
-                                // 处理其他状态码
                                 this.$message.error("重命名出错！");
                             }
                         }else{
@@ -398,7 +394,6 @@
                                 location.reload();
                             } else {
                                 this.$message.error("新建文件夹出错");
-                                // 处理其他状态码
                             }
                         }else{
                             this.$message.error("目录中已有同名文件/文件夹")
@@ -431,13 +426,11 @@
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
-                        // console.log(response.status);
                         if(response.status==200){
                             loading.close();
                             location.reload();
                         }else{
                             this.$message.error("上传失败！");
-                            // console.log("失败");
                         }
                     } catch (error) {
                         console.error(error);
@@ -841,7 +834,6 @@
     }
     .container {
         display: grid;
-        /* grid-template-columns: 30px auto 100px; */
     }
     .row:hover{
         color: rgb(255, 132, 0);

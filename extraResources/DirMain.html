@@ -20,7 +20,14 @@
                 虚拟目录
             </div>
             <div class="head" :style="{width:tableWidth+'px'}">
-                当前路径：<br/>{{getPath()}}
+                <!-- 当前路径：<br/>{{getPath()}} -->
+                <div>当前目录:</div>
+                <div class="pathDisplay">
+                    <div class="outsidePath" v-for="(item, index) in headPath()" :key="index">
+                        <div class="line" v-if="index!=0">/</div>
+                        <div class="pathItem" :ref="'ref'+index" @click="pathRoute(headPath(),index)">{{ item }}</div>
+                    </div>
+                </div>
             </div>
             <div class="toolBar">
                 <form method="post" enctype="multipart/form-data" @change="handleFileChange">
@@ -155,6 +162,20 @@
             list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
         },
         methods: {
+            pathRoute(arr,index){
+                if(index==0){
+                    window.location.href="/";
+                    return;
+                }
+                var linkURL="";
+                // console.log(arr);
+                // console.log(index);
+                for(var i=1;i<=index;i++){
+                    linkURL+="/";
+                    linkURL+=arr[i];
+                }
+                window.location.href=linkURL;
+            },
             handleSelectAll(){
                 if(this.selectedItem.length<this.list.length){
                     this.selectedItem=[];
@@ -477,6 +498,31 @@
 </script>
 
 <style>
+    .pathDisplay{
+        display: flex;
+        align-items: center;
+        overflow: scroll;
+    }
+    .line{
+        font-size: 16px;
+    }
+    .pathItem:hover{
+        color: rgb(255, 132, 0);
+        cursor: pointer;
+    }
+    .pathItem{
+        font-size: 16px;
+        margin-right: 2px;
+        transition: all ease-in-out .2s;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 200px;
+    }
+    .outsidePath{
+        display: flex;
+        white-space: nowrap;
+        align-items: center;
+    }
     @media screen and (max-width: 500px) {
         .el-message-box{
             width: 300px !important;

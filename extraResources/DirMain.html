@@ -620,9 +620,7 @@
         created() {
             if(localStorage.getItem("blockDisplay")!=undefined && localStorage.getItem("blockDisplay")!=null){
                 this.blockDisplay=localStorage.getItem("blockDisplay")=='true'?true:false;
-                console.log(this.blockDisplay);
             }
-            
             this.windowController();
         },
         mounted() {

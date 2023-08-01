@@ -174,7 +174,7 @@
                                 comp(item.name,'png') || 
                                 comp(item.name,'gif') ||
                                 comp(item.name,'svg')) && item.type!='dir'">
-                                <el-image :src="getLink(item)" :style="{'max-height': lineItem*10+20+'px','max-width':'100%'}" fit="contain" lazy></el-image>
+                                <el-image :src="getLink(item)" :style="{'max-height': lineItem*10+20+'px','max-width':'100%'}" fit="contain" lazy v-if="pageLoaded"></el-image>
                             </div>
                             <i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'tiff') ||
@@ -280,6 +280,7 @@
             list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
             blockDisplay:false,
             lineItem:5,
+            pageLoaded:false,
         },
         methods: {
             changeDisplay(){
@@ -625,6 +626,10 @@
         mounted() {
             window.onresize=()=>{
                 this.windowController();
+            }
+            window.onload=()=>{
+                this.pageLoaded=true;
+                console.log("loaded!");
             }
         },
     })

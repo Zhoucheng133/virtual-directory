@@ -104,21 +104,20 @@ v2.0.3 (2023/7/28)
 如果你希望在自己的电脑中配置该项目，以下为操作步骤：
 
 1. 安装`node`，推荐版本为`node@14`
-2. 使用命令行进入到项目文件夹
-3. 输入命令：
+2. 安装`yarn`（推荐），输入命令来安装：
    ```bash
-   npm install
+   npm install -g yarn
    ```
-   如果你更喜欢使用`yarn`，首先确保你已经安装了`yarn`，然后在命令行中输入：
+3. 使用命令行进入到项目文件夹
+   ```bash
+   # 注意根据实际情况
+   cd virtual_directory
+   ```
+4. 输入命令：
    ```bash
    yarn install
    ```
-4. 接着输入命令来运行(`serve`)或生成(`build`)：
-   ```bash
-   npm run electron:serve
-   npm run electron:build
-   ```
-   或者`yarn`：
+5. 接着输入命令来运行(`serve`)或生成(`build`)：
    ```bash
    yarn run electron:serve
    yarn run electron:build

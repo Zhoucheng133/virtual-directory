@@ -274,13 +274,14 @@
     var app = new Vue({
         el: '#app',
         data: {
-            tableWidth:320,
-            flexContent:true,
-            selectedItem:[],
+            tableWidth: 320,
+            flexContent: true,
+            selectedItem: [],
             list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
-            blockDisplay:false,
-            lineItem:5,
-            pageLoaded:false,
+            blockDisplay: false,
+            lineItem: 5,
+            pageLoaded: false,
+            handleDragOver: false,
         },
         methods: {
             async handleDrop(){

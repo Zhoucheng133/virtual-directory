@@ -13,8 +13,12 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <body>
-    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent="handleDragOver" @drop="handleDrop">
-        <div>
+    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent.stop="handleDragOver" @drop="handleDrop" @dragleave.prevent.stop="handleDragLeave">
+        <div class="dragTip" v-if="dragOver">
+            <svg width="60" height="60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.6777 20.271C7.27476 21.3181 4 25.2766 4 30C4 35.5228 8.47715 40 14 40C14.9474 40 15.864 39.8683 16.7325 39.6221" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M36.0547 20.271C40.4577 21.3181 43.7324 25.2766 43.7324 30C43.7324 35.5228 39.2553 40 33.7324 40C32.785 40 31.8684 39.8683 30.9999 39.6221" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 20C36 13.3726 30.6274 8 24 8C17.3726 8 12 13.3726 12 20" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.0654 27.8812L23.9999 20.9238L31.1318 28.0002" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 38.0001V24.4619" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="dragText">将文件拖拽到这里上传</div>
+        </div>
+        <div ref="mainPage">
             <div class="title">
                 虚拟目录
             </div>
@@ -281,11 +285,12 @@
             blockDisplay: false,
             lineItem: 5,
             pageLoaded: false,
-            handleDragOver: false,
+            dragOver: false,
         },
         methods: {
             async handleDrop(){
                 event.preventDefault();
+                this.dragOver=false;
                 const files = event.dataTransfer.files;
                 console.log(files);
                 const loading = this.$loading({
@@ -321,8 +326,19 @@
                     }
                 }
             },
+            handleDragLeave(event){
+                event.preventDefault();
+                if(event.clientX==0 && event.clientY==0){
+                    this.dragOver=false;
+                }
+
+            },
             handleDragOver(){
                 event.preventDefault();
+                if(!this.dragOver){
+                    this.dragOver=true;
+                }
+                
             },
             changeDisplay(){
                 this.blockDisplay=!this.blockDisplay
@@ -676,13 +692,29 @@
             }
             window.onload=()=>{
                 this.pageLoaded=true;
-                console.log("loaded!");
             }
         },
     })
 </script>
 
 <style>
+    .dragText{
+        font-size: 30px;
+        margin-top: 10px;
+    }
+    .dragTip{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        backdrop-filter: blur(5px);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
     .el-breadcrumb{
         font-size: 16px;
     }

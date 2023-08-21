@@ -383,6 +383,7 @@
                         this.$message.error("删除出错！");
                     }
                 } catch (error) {
+                    loading.close();
                     this.$message.error("删除出错！");
                 }
             },
@@ -476,6 +477,7 @@
                             this.$message.error("上传失败！");
                         }
                     } catch (error) {
+                        loading.close();
                         this.$message.error("上传失败！");
                     }
                 }

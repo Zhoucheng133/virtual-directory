@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <body>
-    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')">
+    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent="handleDragOver" @drop="handleDrop">
         <div>
             <div class="title">
                 虚拟目录
@@ -283,6 +283,46 @@
             pageLoaded:false,
         },
         methods: {
+            async handleDrop(){
+                event.preventDefault();
+                const files = event.dataTransfer.files;
+                console.log(files);
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在上传中',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(255, 255, 255, 0.7)'
+                });
+
+                if (files.length > 0) {
+                    const file = files[0];
+                    const formData = new FormData();
+                    for (let i = 0; i < files.length; i++) {
+                        formData.append('files', files[i]);
+                    }
+
+                    try {
+                        const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        });
+                        if(response.status==200){
+                            loading.close();
+                            location.reload();
+                        }else{
+                            loading.close();
+                            this.$message.error("上传失败！");
+                        }
+                    } catch (error) {
+                        loading.close();
+                        this.$message.error("上传失败！不支持上传文件夹");
+                    }
+                }
+            },
+            handleDragOver(){
+                event.preventDefault();
+            },
             changeDisplay(){
                 this.blockDisplay=!this.blockDisplay
                 localStorage.setItem("blockDisplay",this.blockDisplay)
@@ -343,6 +383,7 @@
                         this.$message.error("删除出错！");
                     }
                 } catch (error) {
+                    this.$message.error("删除出错！");
                 }
             },
             async handleRename(fileName) {
@@ -372,6 +413,7 @@
                         this.$message.error("名称不能为空")
                     }
                 } catch (error) {
+                    this.$message.error("重命名出错！");
                 }
             },
             async handleNewFolder(){
@@ -392,7 +434,7 @@
                             if (response.status === 200) {
                                 location.reload();
                             } else {
-                                this.$message.error("新建文件夹出错");
+                                this.$message.error("新建文件夹出错！");
                             }
                         }else{
                             this.$message.error("目录中已有同名文件/文件夹")
@@ -401,6 +443,7 @@
                         this.$message.error("名称不能为空")
                     }
                 } catch (error) {
+                    this.$message.error("新建文件夹出错！");
                 }
             },
             async handleFileChange(event) {
@@ -429,10 +472,11 @@
                             loading.close();
                             location.reload();
                         }else{
+                            loading.close();
                             this.$message.error("上传失败！");
                         }
                     } catch (error) {
-                        console.error(error);
+                        this.$message.error("上传失败！");
                     }
                 }
             },

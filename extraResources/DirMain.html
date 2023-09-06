@@ -11,6 +11,8 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 </head>
 <body>
     <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent.stop="handleDragOver" @drop="handleDrop" @dragleave.prevent.stop="handleDragLeave">
@@ -278,7 +280,7 @@
                     <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
-                <video ref="videoplayer" controls v-else="prevewType=='video'" :src="fileLinkGet()" class="imgPreview"></video>
+                <video v-show="prevewType=='video'" class="imgPreview" id="player" playsinline controls :src="fileLinkGet()"></video>
             </div>
         </div>
     </div>
@@ -342,7 +344,7 @@
                 this.previewOpacity=0;
                 setTimeout(() => {
                     if(that.prevewType=="video"){
-                        this.$refs.videoplayer.load();
+                        player.pause();
                     }
                     that.showPreviw=false;
                 }, 200);
@@ -709,7 +711,8 @@
                         setTimeout(() => {
                             that.previewOpacity=1;
                             if(that.fileType()=="video"){
-                                that.$refs.videoplayer.play();
+                                // that.$refs.videoplayer.play();
+                                player.play();
                             }
                         }, 10);
                         this.stopMove();
@@ -777,6 +780,7 @@
             this.windowController();
         },
         mounted() {
+            const player = new Plyr('#player');
             window.onresize=()=>{
                 this.windowController();
             }

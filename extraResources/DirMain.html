@@ -278,6 +278,7 @@
                     <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
+                <video ref="videoplayer" controls v-else="prevewType=='video'" :src="fileLinkGet()" class="imgPreview"></video>
             </div>
         </div>
     </div>
@@ -324,7 +325,13 @@
                 this.comp(this.prevewItem.name, "tif")){
                     this.prevewType="img";
                     return "img";
-                }else{
+                }else if(this.comp(this.prevewItem.name, "mp4") ||
+                this.comp(this.prevewItem.name, "avi") ||
+                this.comp(this.prevewItem.name, "mkv")){
+                    this.prevewType="video";
+                    return "video";
+                }
+                else{
                     this.prevewType="none";
                     return "none"
                 }
@@ -334,6 +341,7 @@
                 var that=this;
                 this.previewOpacity=0;
                 setTimeout(() => {
+                    this.$refs.videoplayer.load();
                     that.showPreviw=false;
                 }, 200);
             },

@@ -708,6 +708,9 @@
                         var that=this;
                         setTimeout(() => {
                             that.previewOpacity=1;
+                            if(that.fileType()=="video"){
+                                that.$refs.videoplayer.play();
+                            }
                         }, 10);
                         this.stopMove();
                     }else{

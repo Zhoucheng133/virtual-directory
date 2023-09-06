@@ -280,8 +280,8 @@
                     <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
-                <video v-show="prevewType=='video'" class="imgPreview" id="player" playsinline controls :src="fileLinkGet()"></video>
-                <audio v-show="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
+                <video v-else-if="prevewType=='video'" class="imgPreview" id="player" playsinline controls :src="fileLinkGet()"></video>
+                <audio v-else-if="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
             </div>
         </div>
     </div>
@@ -304,6 +304,8 @@
             previewOpacity: 0,
             prevewItem: {},
             prevewType: "none",
+            player: undefined,
+            audioplayer: undefined,
         },
         methods: {
             stopMove(){
@@ -720,8 +722,10 @@
                         setTimeout(() => {
                             that.previewOpacity=1;
                             if(that.fileType()=="video"){
+                                this.player = new Plyr('#player'),
                                 player.play();
                             }else if(that.fileType()=="audio"){
+                                this.audioplayer=new Plyr('#audioplayer')
                                 audioplayer.play();
                             }
                         }, 10);
@@ -790,13 +794,35 @@
             this.windowController();
         },
         mounted() {
-            const player = new Plyr('#player');
-            const audioplayer= new Plyr('#audioplayer')
             window.onresize=()=>{
                 this.windowController();
             }
             window.onload=()=>{
                 this.pageLoaded=true;
+            }
+            window.onkeydown=(event)=>{
+                if(this.showPreviw){
+                    if(event.code=="Escape"){
+                        this.closePreview();
+                    }
+                    if(this.prevewType=="video"){
+                        if(event.code=="Space"){
+                            if(player.paused){
+                                player.play();
+                            }else{
+                                player.pause();
+                            }
+                        }
+                    }else if(this.prevewType=="audio"){
+                        if(event.code=="Space"){
+                            if(audioplayer.paused){
+                                audioplayer.play();
+                            }else{
+                                audioplayer.pause();
+                            }
+                        }
+                    }
+                }
             }
         },
     })

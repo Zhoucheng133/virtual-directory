@@ -280,7 +280,9 @@
                     <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
-                <video v-else-if="prevewType=='video'" class="imgPreview" id="player" playsinline controls :src="fileLinkGet()"></video>
+                <div v-else-if="prevewType=='video'" class="imgPreview" style="max-width: 60vw; max-height: 60wh;">
+                    <video id="player" playsinline controls :src="fileLinkGet()"></video>
+                </div>
                 <audio v-else-if="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
             </div>
         </div>

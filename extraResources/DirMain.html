@@ -281,6 +281,7 @@
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
                 <video v-show="prevewType=='video'" class="imgPreview" id="player" playsinline controls :src="fileLinkGet()"></video>
+                <audio v-show="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
             </div>
         </div>
     </div>
@@ -332,6 +333,12 @@
                 this.comp(this.prevewItem.name, "mkv")){
                     this.prevewType="video";
                     return "video";
+                }else if(this.comp(this.prevewItem.name, "mp3") ||
+                this.comp(this.prevewItem.name, "acc") ||
+                this.comp(this.prevewItem.name, "wav") ||
+                this.comp(this.prevewItem.name, "ogg")){
+                    this.prevewType="audio";
+                    return "audio";
                 }
                 else{
                     this.prevewType="none";
@@ -345,6 +352,8 @@
                 setTimeout(() => {
                     if(that.prevewType=="video"){
                         player.pause();
+                    }else if(that.prevewType=="audio"){
+                        audioplayer.pause();
                     }
                     that.showPreviw=false;
                 }, 200);
@@ -711,8 +720,9 @@
                         setTimeout(() => {
                             that.previewOpacity=1;
                             if(that.fileType()=="video"){
-                                // that.$refs.videoplayer.play();
                                 player.play();
+                            }else if(that.fileType()=="audio"){
+                                audioplayer.play();
                             }
                         }, 10);
                         this.stopMove();
@@ -781,6 +791,7 @@
         },
         mounted() {
             const player = new Plyr('#player');
+            const audioplayer= new Plyr('#audioplayer')
             window.onresize=()=>{
                 this.windowController();
             }

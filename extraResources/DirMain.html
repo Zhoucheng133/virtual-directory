@@ -341,7 +341,9 @@
                 var that=this;
                 this.previewOpacity=0;
                 setTimeout(() => {
-                    this.$refs.videoplayer.load();
+                    if(that.prevewType=="video"){
+                        this.$refs.videoplayer.load();
+                    }
                     that.showPreviw=false;
                 }, 200);
             },

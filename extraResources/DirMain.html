@@ -271,6 +271,15 @@
             </div>
         </div>
         <div class=blank></div>
+        <div class="previewArea" v-show="showPreviw" :style="{'opacity': previewOpacity}">
+            <div class="previewContent">
+                <div class="previewTopBar">
+                    <div class="previewTitle">文件标题显示在这里</div>
+                    <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
+                </div>
+                <img src="http://192.168.101.105:8081/%E6%88%AA%E5%B1%8F2023-07-25%2017.43.36.png" alt="">
+            </div>
+        </div>
     </div>
 </body>
 
@@ -286,8 +295,18 @@
             lineItem: 5,
             pageLoaded: false,
             dragOver: false,
+
+            showPreviw: false,
+            previewOpacity: 0,
         },
         methods: {
+            closePreview(){
+                var that=this;
+                this.previewOpacity=0;
+                setTimeout(() => {
+                    that.showPreviw=false;
+                }, 200);
+            },
             async handleDrop(){
                 event.preventDefault();
                 this.dragOver=false;
@@ -625,7 +644,12 @@
                 }
 
                 if(item.type=="file"){
-                    window.open(dest, '_blank');
+                    // window.open(dest, '_blank');
+                    this.showPreviw=true;
+                    var that=this;
+                    setTimeout(() => {
+                        that.previewOpacity=1;
+                    }, 10);
                 }else{
                     window.location.href=dest;
                 }
@@ -698,6 +722,50 @@
 </script>
 
 <style>
+    .closeButton:hover{
+        color: rgb(255, 175, 90);
+        cursor: pointer;
+    }
+    .closeButton{
+        margin-left: auto;
+        margin-right: 20px;
+        transition: all ease-in-out .2s;
+    }
+    .closeIcon{
+        font-size: 25px;
+        font-weight: bolder;
+    }
+    .previewTitle{
+        margin-left: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .previewContent{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .previewTopBar{
+        height: 70px;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+    .previewArea{
+        z-index: 200;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgba(255, 255, 255, .8);
+        transition: all ease-in-out .2s;
+    }
     .dragText{
         font-size: 30px;
         margin-top: 10px;

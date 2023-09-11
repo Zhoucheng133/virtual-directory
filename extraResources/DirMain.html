@@ -279,7 +279,8 @@
                     <div class="previewTitle">{{ prevewItem.name }}</div>
                     <div class="previewRight">
                         <div class="downloadBt" @click="donwloadFile(fileLinkGet())">下载</div>
-                    <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
+                        <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
+                    </div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
                 <div v-else-if="prevewType=='video'" class="imgPreview" style="max-width: 60vw; max-height: 60wh;">
@@ -757,7 +758,7 @@
                         }, 10);
                         this.stopMove();
                     }else{
-                        window.open(dest, '_blank');
+                        this.donwloadFile(dest);
                     }
                 }else{
                     window.location.href=dest;
@@ -855,6 +856,26 @@
 </script>
 
 <style>
+    .downloadBt:hover{
+        background-color: rgb(193, 100, 0);
+        cursor: pointer;
+    }
+    .downloadBt{
+        margin-right: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 10px;
+        padding-left: 10px;
+        background-color: rgb(255, 175, 90);
+        border-radius: 10px;
+        color: white;
+        transition: all ease-in-out .2s;
+    }
+    .previewRight{
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+    }
     .previewFrame{
         width: 100vw;
         height: calc(100vh - 70px);
@@ -869,7 +890,6 @@
         cursor: pointer;
     }
     .closeButton{
-        margin-left: auto;
         margin-right: 20px;
         transition: all ease-in-out .2s;
     }

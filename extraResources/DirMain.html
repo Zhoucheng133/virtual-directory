@@ -277,6 +277,8 @@
             <div class="previewContent">
                 <div class="previewTopBar">
                     <div class="previewTitle">{{ prevewItem.name }}</div>
+                    <div class="previewRight">
+                        <div class="downloadBt" @click="donwloadFile(fileLinkGet())">下载</div>
                     <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
                 </div>
                 <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
@@ -311,6 +313,24 @@
             audioplayer: undefined,
         },
         methods: {
+            donwloadFile(link) {
+                const url = new URL(link);
+                const fileName = decodeURIComponent(url.pathname.split('/').pop());
+                fetch(link).then(res => {
+                    res.blob().then(blob => {
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        const name = fileName;
+                        a.style.display = 'none';
+                        a.href = blobUrl;
+                        a.download = name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(blobUrl);
+                    })
+                })
+            },
             stopMove(){
                 let m = function(e){e.preventDefault();};
                 document.body.style.overflow='hidden';

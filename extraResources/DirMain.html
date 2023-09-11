@@ -284,6 +284,7 @@
                     <video id="player" playsinline controls :src="fileLinkGet()"></video>
                 </div>
                 <audio v-else-if="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
+                <iframe v-else-if="prevewType=='pdf'" :src="fileLinkGet()" frameborder="0" class="previewFrame"></iframe>
             </div>
         </div>
     </div>
@@ -343,6 +344,9 @@
                 this.comp(this.prevewItem.name, "ogg")){
                     this.prevewType="audio";
                     return "audio";
+                }else if(this.comp(this.prevewItem.name, "pdf")){
+                    this.prevewType="pdf";
+                    return "pdf";
                 }
                 else{
                     this.prevewType="none";
@@ -831,6 +835,11 @@
 </script>
 
 <style>
+    .previewFrame{
+        width: 100vw;
+        height: calc(100vh - 70px);
+        transform: translateY(35px);
+    }
     .imgPreview{
         max-width: 80vw;
         max-height: 80vh;

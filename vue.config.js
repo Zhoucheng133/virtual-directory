@@ -15,10 +15,4 @@ module.exports = {
 			},
 		},
 	},
-	// configureWebpack:{
-	// 	externals: {
-	// 		"fs": 'require("fs")',
-	// 		"path": 'require("path")',
-	// 	},
-	// }
 }

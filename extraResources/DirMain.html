@@ -1,68 +1,90 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> 
-    <meta name="apple-mobile-web-app-capable" content="yes"> 
-    <title>虚拟目录</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>虚拟目录</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/vue-contextmenujs/dist/contextmenu.umd.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+	<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 </head>
+
 <body>
-    <div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}" @contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent.stop="handleDragOver" @drop="handleDrop" @dragleave.prevent.stop="handleDragLeave">
-        <div class="dragTip" v-if="dragOver">
-            <svg width="60" height="60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.6777 20.271C7.27476 21.3181 4 25.2766 4 30C4 35.5228 8.47715 40 14 40C14.9474 40 15.864 39.8683 16.7325 39.6221" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M36.0547 20.271C40.4577 21.3181 43.7324 25.2766 43.7324 30C43.7324 35.5228 39.2553 40 33.7324 40C32.785 40 31.8684 39.8683 30.9999 39.6221" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 20C36 13.3726 30.6274 8 24 8C17.3726 8 12 13.3726 12 20" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.0654 27.8812L23.9999 20.9238L31.1318 28.0002" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 38.0001V24.4619" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <div class="dragText">将文件拖拽到这里上传</div>
-        </div>
-        <div ref="mainPage">
-            <div class="title">
-                虚拟目录
-            </div>
-            <div class="head" :style="{width:tableWidth+'px'}">
-                <div class="pathDisplay">
-                    <el-breadcrumb separator="/">
-                        <el-breadcrumb-item v-for="(item, index) in headPath()" class="pathItem"><a :href="pathRoute(headPath(),index)">{{ shownName(item) }}</a></el-breadcrumb-item>
-                    </el-breadcrumb>
-                </div>
-            </div>
-            <div class="toolBar">
-                <form method="post" enctype="multipart/form-data" @change="handleFileChange">
-                    <input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;" multiple>
-                    <div class="uploadButton" @click="uploadFile">上传</div>
-                </form>
-                <div class="folderButton" @click="handleNewFolder">新建文件夹</div>
-                <div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">重命名</div>
-                <div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
-                <div class="changeDisp">
-                    <div @click="changeDisplay" v-if="blockDisplay==false"><i class="bi bi-list-columns-reverse" style="margin-right: 5px;"></i>列表</div>
-                    <div @click="changeDisplay" v-else><i class="bi bi-grid-3x3" style="margin-right: 5px;"></i>网格</div>
-                </div>
-            </div>
-            <div class="container" :style="{width:tableWidth+'px'}" v-if="blockDisplay==false">
-                <div class="topbar">
-                    <div class="cell"><div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div></div>
-                    <div class="cell">文件名</div>
-                    <div class="cell cell_end">大小</div>
-                </div>
-                <div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
-                    <div class="cell"></div>
-                    <div class="cell"><i class="bi bi-folder mainIcon"></i></div>
-                    <div class="cell">../</div>
-                    <div class="cell cell_end">上一层</div>
-                </div>
-                <div :class="isSelected(item)?'selected row':'row'" v-for="(item,index) in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
-                    <div class="checkBox cell">
-                        <el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
-                    </div>
-                    <div class="cell"  @click="linkTO(item)">
-                        <i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
-                        <i class="bi bi-file-earmark-image mainIcon" v-else-if="
+	<div id="app" :style="flexContent==true?{'display':'flex','flex-direction':'column','align-items': 'center'}:{}"
+		@contextmenu.prevent.stop="onContextmenu('')" @dragover.prevent.stop="handleDragOver" @drop="handleDrop"
+		@dragleave.prevent.stop="handleDragLeave">
+		<div class="dragTip" v-if="dragOver">
+			<svg width="60" height="60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					d="M11.6777 20.271C7.27476 21.3181 4 25.2766 4 30C4 35.5228 8.47715 40 14 40C14.9474 40 15.864 39.8683 16.7325 39.6221"
+					stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+				<path
+					d="M36.0547 20.271C40.4577 21.3181 43.7324 25.2766 43.7324 30C43.7324 35.5228 39.2553 40 33.7324 40C32.785 40 31.8684 39.8683 30.9999 39.6221"
+					stroke="#ffaf5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+				<path d="M36 20C36 13.3726 30.6274 8 24 8C17.3726 8 12 13.3726 12 20" stroke="#ffaf5a" stroke-width="4"
+					stroke-linecap="round" stroke-linejoin="round" />
+				<path d="M17.0654 27.8812L23.9999 20.9238L31.1318 28.0002" stroke="#ffaf5a" stroke-width="4"
+					stroke-linecap="round" stroke-linejoin="round" />
+				<path d="M24 38.0001V24.4619" stroke="#ffaf5a" stroke-width="4" stroke-linecap="round"
+					stroke-linejoin="round" />
+			</svg>
+			<div class="dragText">将文件拖拽到这里上传</div>
+		</div>
+		<div ref="mainPage">
+			<div class="title">
+				虚拟目录
+			</div>
+			<div class="head" :style="{width:tableWidth+'px'}">
+				<div class="pathDisplay">
+					<el-breadcrumb separator="/">
+						<el-breadcrumb-item v-for="(item, index) in headPath()" class="pathItem"><a
+								:href="pathRoute(headPath(),index)">{{ shownName(item) }}</a></el-breadcrumb-item>
+					</el-breadcrumb>
+				</div>
+			</div>
+			<div class="toolBar">
+				<form method="post" enctype="multipart/form-data" @change="handleFileChange">
+					<input type="file" name="file" id="fileInput" ref="fileInput" style="display: none;" multiple>
+					<div class="uploadButton" @click="uploadFile">上传</div>
+				</form>
+				<div class="folderButton" @click="handleNewFolder">新建文件夹</div>
+				<div :class="selectedItem.length==1?'renameButton':'noSelection'" @click="handleRename(selectedItem[0].name)">
+					重命名</div>
+				<div :class="selectedItem.length==0?'noSelection':'delButton'" @click="handleDel('')">删除</div>
+				<div class="changeDisp">
+					<div @click="changeDisplay" v-if="blockDisplay==false"><i class="bi bi-list-columns-reverse"
+							style="margin-right: 5px;"></i>列表</div>
+					<div @click="changeDisplay" v-else><i class="bi bi-grid-3x3" style="margin-right: 5px;"></i>网格</div>
+				</div>
+			</div>
+			<div class="container" :style="{width:tableWidth+'px'}" v-if="blockDisplay==false">
+				<div class="topbar">
+					<div class="cell">
+						<div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div>
+					</div>
+					<div class="cell">文件名</div>
+					<div class="cell cell_end">大小</div>
+				</div>
+				<div class="backFolder_style row" v-if="isRoot()==false" @click="backFolder">
+					<div class="cell"></div>
+					<div class="cell"><i class="bi bi-folder mainIcon"></i></div>
+					<div class="cell">../</div>
+					<div class="cell cell_end">上一层</div>
+				</div>
+				<div :class="isSelected(item)?'selected row':'row'" v-for="(item,index) in list" v-if="item.name[0]!='.'"
+					@contextmenu.prevent.stop="onContextmenu(item)">
+					<div class="checkBox cell">
+						<el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
+					</div>
+					<div class="cell" @click="linkTO(item)">
+						<i class="bi bi-folder mainIcon" v-if="item.type=='dir'"></i>
+						<i class="bi bi-file-earmark-image mainIcon" v-else-if="
                             (comp(item.name,'jpg') || 
                             comp(item.name,'jpeg') ||
                             comp(item.name,'png') || 
@@ -73,16 +95,16 @@
                             comp(item.name,'ai') ||
                             comp(item.name,'svg') ||
                             comp(item.name,'dng')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-play mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-play mainIcon" v-else-if="
                             (comp(item.name,'mp4') || 
                             comp(item.name,'mov') || 
                             comp(item.name,'mkv') ||
                             comp(item.name,'avi') ||
                             comp(item.name,'rmvb')) && item.type!='dir'">
 
-                        </i>
-                        <i class="bi bi-file-earmark-music mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark-music mainIcon" v-else-if="
                             (comp(item.name,'mp3') || 
                             comp(item.name,'acc') || 
                             comp(item.name,'flac') ||
@@ -91,25 +113,25 @@
                             comp(item.name,'mid') ||
                             comp(item.name,'midi')) && item.type!='dir'">
 
-                        </i>
-                        <i class="bi bi-file-text mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-text mainIcon" v-else-if="
                             (comp(item.name,'txt') || 
                             comp(item.name,'doc') || 
                             comp(item.name,'docx') ||
                             comp(item.name,'md') ||
                             comp(item.name,'rtf')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-slides mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark-slides mainIcon" v-else-if="
                             (comp(item.name,'ppt') || 
                             comp(item.name,'key') || 
                             comp(item.name,'pptx')) && item.type!='dir'">
-                        </i>
-                        <i class="bi-file-earmark-bar-graph mainIcon" v-else-if="
+						</i>
+						<i class="bi-file-earmark-bar-graph mainIcon" v-else-if="
                             (comp(item.name,'xls') || 
                             comp(item.name,'xlsx') || 
                             comp(item.name,'numbers')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-code mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark-code mainIcon" v-else-if="
                             (comp(item.name,'cpp') || 
                             comp(item.name,'c') || 
                             comp(item.name,'py') ||
@@ -134,71 +156,79 @@
                             comp(item.name,'sass') ||
                             comp(item.name,'scss') ||
                             comp(item.name,'yml')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-pdf mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark-pdf mainIcon" v-else-if="
                             comp(item.name,'pdf') && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-zip mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-zip mainIcon" v-else-if="
                             (comp(item.name,'zip') || 
                             comp(item.name,'rar') || 
                             comp(item.name,'7z') ||
                             comp(item.name,'tar') ||
                             comp(item.name,'iso') ||
                             comp(item.name,'dmg')) && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark-post mainIcon" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark-post mainIcon" v-else-if="
                             comp(item.name,'exe') && item.type!='dir'">
-                        </i>
-                        <i class="bi bi-file-earmark mainIcon" v-else></i>
-                    </div>
-                    <div class="cell"  @click="linkTO(item)">{{ item.name }}</div>
-                    <div class="cell cell_end" v-if="item.type=='file'" style="text-align: right"  @click="linkTO(item)">
-                        {{ shownSize(item.size) }}
-                    </div>
-                </div>
-            </div>
-            <div class="blockContainer" v-else :style="{width:tableWidth+'px'}">
-                <div class="topbar">
-                    <div class="cell"><div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div></div>
-                    <div class="cell"></div>
-                    <div class="cell cell_end"></div>
-                </div>
-                <div class="blockMain" :style="{'grid-template-columns':'repeat('+lineItem+', 1fr)'}">
-                    <div class="blockItem" v-if="isRoot()==false" @click="backFolder">
-                            <i class="bi bi-folder blockFolder" :style="{'font-size':lineItem*10+20+'px'}" style="color: rgb(255, 214, 170);"></i>
-                            <div class="blockText">返回上一层</div>
-                    </div>
-                    <div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list" v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
-                        <div class="blockSelection">
-                            <el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
-                        </div>
-                        <div @click="linkTO(item)">
-                            <i class="bi bi-folder blockFolder" v-if="item.type=='dir'" :style="{'font-size':lineItem*10+20+'px'}"></i>
-                            <div :style="{height: lineItem*10+20+'px','margin-top': (lineItem*10+20)/5-1+'px','margin-bottom': (lineItem*10+20)/5-1+'px','display':'flex','align-items':'center'}" v-else-if="
+						</i>
+						<i class="bi bi-file-earmark mainIcon" v-else></i>
+					</div>
+					<div class="cell" @click="linkTO(item)">{{ item.name }}</div>
+					<div class="cell cell_end" v-if="item.type=='file'" style="text-align: right" @click="linkTO(item)">
+						{{ shownSize(item.size) }}
+					</div>
+				</div>
+			</div>
+			<div class="blockContainer" v-else :style="{width:tableWidth+'px'}">
+				<div class="topbar">
+					<div class="cell">
+						<div class="folderButton" @click="handleSelectAll" class="selectAll" style="margin-left: 0;">全选</div>
+					</div>
+					<div class="cell"></div>
+					<div class="cell cell_end"></div>
+				</div>
+				<div class="blockMain" :style="{'grid-template-columns':'repeat('+lineItem+', 1fr)'}">
+					<div class="blockItem" v-if="isRoot()==false" @click="backFolder">
+						<i class="bi bi-folder blockFolder" :style="{'font-size':lineItem*10+20+'px'}"
+							style="color: rgb(255, 214, 170);"></i>
+						<div class="blockText">返回上一层</div>
+					</div>
+					<div :class="isSelected(item)?'blockSelected blockItem':'blockItem'" v-for="(item,index) in list"
+						v-if="item.name[0]!='.'" @contextmenu.prevent.stop="onContextmenu(item)">
+						<div class="blockSelection">
+							<el-checkbox @change="selectItem(item)" v-model="list[index].selected"></el-checkbox>
+						</div>
+						<div @click="linkTO(item)">
+							<i class="bi bi-folder blockFolder" v-if="item.type=='dir'"
+								:style="{'font-size':lineItem*10+20+'px'}"></i>
+							<div
+								:style="{height: lineItem*10+20+'px','margin-top': (lineItem*10+20)/5-1+'px','margin-bottom': (lineItem*10+20)/5-1+'px','display':'flex','align-items':'center'}"
+								v-else-if="
                                 (comp(item.name,'jpg') || 
                                 comp(item.name,'jpeg') ||
                                 comp(item.name,'png') || 
                                 comp(item.name,'gif') ||
                                 comp(item.name,'svg')) && item.type!='dir'">
-                                <el-image :src="getLink(item)" :style="{'max-height': lineItem*10+20+'px','max-width':'100%'}" fit="contain" lazy v-if="pageLoaded"></el-image>
-                            </div>
-                            <i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+								<el-image :src="getLink(item)" :style="{'max-height': lineItem*10+20+'px','max-width':'100%'}"
+									fit="contain" lazy v-if="pageLoaded"></el-image>
+							</div>
+							<i class="bi bi-file-earmark-image blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'tiff') ||
                                 comp(item.name,'psd') ||
                                 comp(item.name,'tif') ||
                                 comp(item.name,'ai') ||
                                 comp(item.name,'svg') ||
                                 comp(item.name,'dng')) && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-play blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-play blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'mp4') || 
                                 comp(item.name,'mov') || 
                                 comp(item.name,'mkv') ||
                                 comp(item.name,'avi') ||
                                 comp(item.name,'rmvb')) && item.type!='dir'">
 
-                            </i>
-                            <i class="bi bi-file-earmark-music blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-earmark-music blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'mp3') || 
                                 comp(item.name,'acc') || 
                                 comp(item.name,'flac') ||
@@ -207,25 +237,25 @@
                                 comp(item.name,'mid') ||
                                 comp(item.name,'midi')) && item.type!='dir'">
 
-                            </i>
-                            <i class="bi bi-file-text blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-text blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'txt') || 
                                 comp(item.name,'doc') || 
                                 comp(item.name,'docx') ||
                                 comp(item.name,'md') ||
                                 comp(item.name,'rtf')) && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-earmark-slides blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-earmark-slides blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'ppt') || 
                                 comp(item.name,'key') || 
                                 comp(item.name,'pptx')) && item.type!='dir'">
-                            </i>
-                            <i class="bi-file-earmark-bar-graph blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi-file-earmark-bar-graph blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'xls') || 
                                 comp(item.name,'xlsx') || 
                                 comp(item.name,'numbers')) && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-earmark-code blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-earmark-code blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'cpp') || 
                                 comp(item.name,'c') || 
                                 comp(item.name,'py') ||
@@ -250,964 +280,1039 @@
                                 comp(item.name,'sass') ||
                                 comp(item.name,'scss') ||
                                 comp(item.name,'yml')) && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-earmark-pdf blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-earmark-pdf blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 comp(item.name,'pdf') && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-zip blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-zip blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 (comp(item.name,'zip') || 
                                 comp(item.name,'rar') || 
                                 comp(item.name,'7z') ||
                                 comp(item.name,'tar') ||
                                 comp(item.name,'iso') ||
                                 comp(item.name,'dmg')) && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-earmark-post blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
+							</i>
+							<i class="bi bi-file-earmark-post blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else-if="
                                 comp(item.name,'exe') && item.type!='dir'">
-                            </i>
-                            <i class="bi bi-file-earmark blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else></i>
-                        </div>
-                        <div class="blockText" @click="linkTO(item)">{{item.name}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class=blank></div>
-        <div class="previewArea" v-show="showPreviw" :style="{'opacity': previewOpacity}" @touchmove.prevent>
-            <div class="previewContent">
-                <div class="previewTopBar">
-                    <div class="previewTitle">{{ prevewItem.name }}</div>
-                    <div class="previewRight">
-                        <div class="downloadBt" @click="donwloadFile(fileLinkGet())">下载</div>
-                        <div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
-                    </div>
-                </div>
-                <img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
-                <div v-else-if="prevewType=='video'" class="imgPreview" style="max-width: 60vw; max-height: 60wh;">
-                    <video id="player" playsinline controls :src="fileLinkGet()"></video>
-                </div>
-                <audio v-else-if="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
-                <iframe v-else-if="prevewType=='pdf'" :src="fileLinkGet()" frameborder="0" class="previewFrame"></iframe>
-            </div>
-        </div>
-    </div>
+							</i>
+							<i class="bi bi-file-earmark blockFolder" :style="{'font-size':lineItem*10+20+'px'}" v-else></i>
+						</div>
+						<div class="blockText" @click="linkTO(item)">{{item.name}}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class=blank></div>
+		<div class="previewArea" v-show="showPreviw" :style="{'opacity': previewOpacity}" @touchmove.prevent>
+			<div class="previewContent">
+				<div class="previewTopBar">
+					<div class="previewTitle">{{ prevewItem.name }}</div>
+					<div class="previewRight">
+						<div class="downloadBt" @click="donwloadFile(fileLinkGet())">下载</div>
+						<div class="closeButton" @click="closePreview"><i class="el-icon-close closeIcon"></i></div>
+					</div>
+				</div>
+				<img v-if="prevewType=='img'" :src="fileLinkGet()" alt="" class="imgPreview">
+				<div v-else-if="prevewType=='video'" class="imgPreview" style="max-width: 60vw; max-height: 60wh;">
+					<video id="player" playsinline controls :src="fileLinkGet()"></video>
+				</div>
+				<audio v-else-if="prevewType=='audio'" id="audioplayer" :src="fileLinkGet()" controls></audio>
+				<iframe v-else-if="prevewType=='pdf'" :src="fileLinkGet()" frameborder="0" class="previewFrame"></iframe>
+			</div>
+		</div>
+	</div>
 </body>
 
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            tableWidth: 320,
-            flexContent: true,
-            selectedItem: [],
-            list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
-            blockDisplay: false,
-            lineItem: 5,
-            pageLoaded: false,
-            dragOver: false,
+	var app = new Vue({
+		el: '#app',
+		data: {
+			tableWidth: 320,
+			flexContent: true,
+			selectedItem: [],
+			list: JSON.parse(`<%- JSON.stringify(dirList) %>`),
+			blockDisplay: false,
+			lineItem: 5,
+			pageLoaded: false,
+			dragOver: false,
 
-            showPreviw: false,
-            previewOpacity: 0,
-            prevewItem: {},
-            prevewType: "none",
-            player: undefined,
-            audioplayer: undefined,
-        },
-        methods: {
-            donwloadFile(link) {
-                const url = new URL(link);
-                const fileName = decodeURIComponent(url.pathname.split('/').pop());
-                fetch(link).then(res => {
-                    res.blob().then(blob => {
-                        const blobUrl = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        const name = fileName;
-                        a.style.display = 'none';
-                        a.href = blobUrl;
-                        a.download = name;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(blobUrl);
-                    })
-                })
-            },
-            stopMove(){
-                let m = function(e){e.preventDefault();};
-                document.body.style.overflow='hidden';
-                document.addEventListener("touchmove",m,{ passive:false });
-            },
-            //开启页面滚动
-            Move(){
-                let m =function(e){e.preventDefault();};
-                document.body.style.overflow='';//出现滚动条
-                document.removeEventListener("touchmove",m,{ passive:true });
-            },
-            fileType(){
-                if(this.comp(this.prevewItem.name, "jpg") || 
-                this.comp(this.prevewItem.name, "jpeg") ||
-                this.comp(this.prevewItem.name, "png") || 
-                this.comp(this.prevewItem.name, "bmp") ||
-                this.comp(this.prevewItem.name, "svg") ||
-                this.comp(this.prevewItem.name, "webp") ||
-                this.comp(this.prevewItem.name, "tiff") ||
-                this.comp(this.prevewItem.name, "tif")){
-                    this.prevewType="img";
-                    return "img";
-                }else if(this.comp(this.prevewItem.name, "mp4") ||
-                this.comp(this.prevewItem.name, "avi") ||
-                this.comp(this.prevewItem.name, "mkv")){
-                    this.prevewType="video";
-                    return "video";
-                }else if(this.comp(this.prevewItem.name, "mp3") ||
-                this.comp(this.prevewItem.name, "acc") ||
-                this.comp(this.prevewItem.name, "wav") ||
-                this.comp(this.prevewItem.name, "ogg")){
-                    this.prevewType="audio";
-                    return "audio";
-                }else if(this.comp(this.prevewItem.name, "pdf")){
-                    this.prevewType="pdf";
-                    return "pdf";
-                }
-                else{
-                    this.prevewType="none";
-                    return "none"
-                }
-            },
-            closePreview(){
-                this.Move()
-                var that=this;
-                this.previewOpacity=0;
-                setTimeout(() => {
-                    if(that.prevewType=="video"){
-                        player.pause();
-                    }else if(that.prevewType=="audio"){
-                        audioplayer.pause();
-                    }
-                    that.showPreviw=false;
-                }, 200);
-            },
-            async handleDrop(){
-                event.preventDefault();
-                this.dragOver=false;
-                const files = event.dataTransfer.files;
-                console.log(files);
-                const loading = this.$loading({
-                    lock: true,
-                    text: '正在上传中',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(255, 255, 255, 0.7)'
-                });
+			showPreviw: false,
+			previewOpacity: 0,
+			prevewItem: {},
+			prevewType: "none",
+			player: undefined,
+			audioplayer: undefined,
+		},
+		methods: {
+			donwloadFile(link) {
+				const url = new URL(link);
+				const fileName = decodeURIComponent(url.pathname.split('/').pop());
+				fetch(link).then(res => {
+					res.blob().then(blob => {
+						const blobUrl = window.URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						const name = fileName;
+						a.style.display = 'none';
+						a.href = blobUrl;
+						a.download = name;
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						window.URL.revokeObjectURL(blobUrl);
+					})
+				})
+			},
+			stopMove() {
+				let m = function (e) { e.preventDefault(); };
+				document.body.style.overflow = 'hidden';
+				document.addEventListener("touchmove", m, { passive: false });
+			},
+			//开启页面滚动
+			Move() {
+				let m = function (e) { e.preventDefault(); };
+				document.body.style.overflow = '';//出现滚动条
+				document.removeEventListener("touchmove", m, { passive: true });
+			},
+			fileType() {
+				if (this.comp(this.prevewItem.name, "jpg") ||
+					this.comp(this.prevewItem.name, "jpeg") ||
+					this.comp(this.prevewItem.name, "png") ||
+					this.comp(this.prevewItem.name, "bmp") ||
+					this.comp(this.prevewItem.name, "svg") ||
+					this.comp(this.prevewItem.name, "webp") ||
+					this.comp(this.prevewItem.name, "tiff") ||
+					this.comp(this.prevewItem.name, "tif")) {
+					this.prevewType = "img";
+					return "img";
+				} else if (this.comp(this.prevewItem.name, "mp4") ||
+					this.comp(this.prevewItem.name, "avi") ||
+					this.comp(this.prevewItem.name, "mkv")) {
+					this.prevewType = "video";
+					return "video";
+				} else if (this.comp(this.prevewItem.name, "mp3") ||
+					this.comp(this.prevewItem.name, "acc") ||
+					this.comp(this.prevewItem.name, "wav") ||
+					this.comp(this.prevewItem.name, "ogg")) {
+					this.prevewType = "audio";
+					return "audio";
+				} else if (this.comp(this.prevewItem.name, "pdf")) {
+					this.prevewType = "pdf";
+					return "pdf";
+				}
+				else {
+					this.prevewType = "none";
+					return "none"
+				}
+			},
+			closePreview() {
+				this.Move()
+				var that = this;
+				this.previewOpacity = 0;
+				setTimeout(() => {
+					if (that.prevewType == "video") {
+						player.pause();
+					} else if (that.prevewType == "audio") {
+						audioplayer.pause();
+					}
+					that.showPreviw = false;
+				}, 200);
+			},
+			async handleDrop() {
+				event.preventDefault();
+				this.dragOver = false;
+				const files = event.dataTransfer.files;
+				console.log(files);
+				const loading = this.$loading({
+					lock: true,
+					text: '正在上传中',
+					spinner: 'el-icon-loading',
+					background: 'rgba(255, 255, 255, 0.7)'
+				});
 
-                if (files.length > 0) {
-                    const file = files[0];
-                    const formData = new FormData();
-                    for (let i = 0; i < files.length; i++) {
-                        formData.append('files', files[i]);
-                    }
+				if (files.length > 0) {
+					const file = files[0];
+					const formData = new FormData();
+					for (let i = 0; i < files.length; i++) {
+						formData.append('files', files[i]);
+					}
 
-                    try {
-                        const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        });
-                        if(response.status==200){
-                            loading.close();
-                            location.reload();
-                        }else{
-                            loading.close();
-                            this.$message.error("上传失败！");
-                        }
-                    } catch (error) {
-                        loading.close();
-                        this.$message.error("上传失败！不支持上传文件夹");
-                    }
-                }
-            },
-            handleDragLeave(event){
-                event.preventDefault();
-                if(event.clientX==0 && event.clientY==0){
-                    this.dragOver=false;
-                }
+					try {
+						const response = await axios.post('/.submitRequest?path=' + this.getPath(), formData, {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						});
+						if (response.status == 200) {
+							loading.close();
+							location.reload();
+						} else {
+							loading.close();
+							this.$message.error("上传失败！");
+						}
+					} catch (error) {
+						loading.close();
+						this.$message.error("上传失败！不支持上传文件夹");
+					}
+				}
+			},
+			handleDragLeave(event) {
+				event.preventDefault();
+				if (event.clientX == 0 && event.clientY == 0) {
+					this.dragOver = false;
+				}
 
-            },
-            handleDragOver(){
-                event.preventDefault();
-                if(!this.dragOver){
-                    this.dragOver=true;
-                }
-                
-            },
-            changeDisplay(){
-                this.blockDisplay=!this.blockDisplay
-                localStorage.setItem("blockDisplay",this.blockDisplay)
-            },
-            pathRoute(arr,index){
-                if(index==0){
-                    return "/";
-                }
-                var linkURL="";
-                for(var i=1;i<=index;i++){
-                    linkURL+="/";
-                    linkURL+=arr[i];
-                }
-                return linkURL;
-            },
-            handleSelectAll(){
-                if(this.selectedItem.length<this.list.length){
-                    this.selectedItem=[];
-                    for(item of this.list){
-                        item.selected=true;
-                        this.selectedItem.push(item);
-                    }
-                }else{
-                    this.selectedItem=[];
-                    for(item of this.list){
-                        item.selected=false;
-                    }
-                }
-            },
-            async handleDel(item) {
-                try {
-                    var delItem = [];
-                    if (item != '') {
-                        delItem = [item];
-                    } else {
-                        delItem = this.selectedItem;
-                    }
-                    await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                    })
-                    const loading = this.$loading({
-                        lock: true,
-                        text: '正在删除',
-                        spinner: 'el-icon-loading',
-                        background: 'rgba(255, 255, 255, 0.7)'
-                    });
-                    const response = await axios.post('/.delRequest?path=' + this.getPath(), {
-                        delFile: delItem,
-                    });
-                    if (response.status == 200) {
-                        loading.close();
-                        location.reload();
-                    } else {
-                        loading.close();
-                        this.$message.error("删除出错！");
-                    }
-                } catch (error) {
-                    loading.close();
-                    this.$message.error("删除出错！");
-                }
-            },
-            async handleRename(fileName) {
-                try {
-                    var fileList=[];
-                    var newName = "";
-                    await this.$prompt('在下面输入新的文件/文件夹名称', '输入新名称', {
-                        confirmButtonText: '确定',
-                    }).then(({ value }) => {
-                        newName = value;
-                        fileList=this.list.map(obj => obj.name);
-                    });
-                    if(newName.slice(0,1)=='.'){
-                        this.$message.error("不合法的名称")
-                    }else if(newName!=""&&newName!=null){
-                        if(!fileList.includes(newName)){
-                            const response = await axios.post('/.renameRequest?path=' + this.getPath() +"&oldName="+fileName + "&newName=" + newName);
-                            if (response.status === 200) {
-                                location.reload();
-                            } else {
-                                this.$message.error("重命名出错！");
-                            }
-                        }else{
-                            this.$message.error("目录中已有同名文件/文件夹")
-                        }
-                    }else{
-                        this.$message.error("名称不能为空")
-                    }
-                } catch (error) {
-                    this.$message.error("重命名出错！");
-                }
-            },
-            async handleNewFolder(){
-                try {
-                    var fileList=[];
-                    var newName = "";
-                    await this.$prompt('在下面输入新建文件夹名称', '输入新名称', {
-                        confirmButtonText: '确定',
-                    }).then(({ value }) => {
-                        newName = value;
-                        fileList=this.list.map(obj => obj.name);
-                    });
-                    if(newName.slice(0,1)=='.'){
-                        this.$message.error("不合法的名称")
-                    }else if(newName!=""&&newName!=null){
-                        if(!fileList.includes(newName)){
-                            const response = await axios.post('/.newfolderRequest?path='+this.getPath()+"&name="+newName);
-                            if (response.status === 200) {
-                                location.reload();
-                            } else {
-                                this.$message.error("新建文件夹出错！");
-                            }
-                        }else{
-                            this.$message.error("目录中已有同名文件/文件夹")
-                        }
-                    }else{
-                        this.$message.error("名称不能为空")
-                    }
-                } catch (error) {
-                    this.$message.error("新建文件夹出错！");
-                }
-            },
-            async handleFileChange(event) {
-                const files = event.target.files;
-                const loading = this.$loading({
-                    lock: true,
-                    text: '正在上传中',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(255, 255, 255, 0.7)'
-                });
+			},
+			handleDragOver() {
+				event.preventDefault();
+				if (!this.dragOver) {
+					this.dragOver = true;
+				}
 
-                if (files.length > 0) {
-                    const file = files[0];
-                    const formData = new FormData();
-                    for (let i = 0; i < files.length; i++) {
-                        formData.append('files', files[i]);
-                    }
+			},
+			changeDisplay() {
+				this.blockDisplay = !this.blockDisplay
+				localStorage.setItem("blockDisplay", this.blockDisplay)
+			},
+			pathRoute(arr, index) {
+				if (index == 0) {
+					return "/";
+				}
+				var linkURL = "";
+				for (var i = 1; i <= index; i++) {
+					linkURL += "/";
+					linkURL += arr[i];
+				}
+				return linkURL;
+			},
+			handleSelectAll() {
+				if (this.selectedItem.length < this.list.length) {
+					this.selectedItem = [];
+					for (item of this.list) {
+						item.selected = true;
+						this.selectedItem.push(item);
+					}
+				} else {
+					this.selectedItem = [];
+					for (item of this.list) {
+						item.selected = false;
+					}
+				}
+			},
+			async handleDel(item) {
+				try {
+					var delItem = [];
+					if (item != '') {
+						delItem = [item];
+					} else {
+						delItem = this.selectedItem;
+					}
+					await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+					})
+					const loading = this.$loading({
+						lock: true,
+						text: '正在删除',
+						spinner: 'el-icon-loading',
+						background: 'rgba(255, 255, 255, 0.7)'
+					});
+					const response = await axios.post('/.delRequest?path=' + this.getPath(), {
+						delFile: delItem,
+					});
+					if (response.status == 200) {
+						loading.close();
+						location.reload();
+					} else {
+						loading.close();
+						this.$message.error("删除出错！");
+					}
+				} catch (error) {
+					loading.close();
+					this.$message.error("删除出错！");
+				}
+			},
+			async handleRename(fileName) {
+				try {
+					var fileList = [];
+					var newName = "";
+					await this.$prompt('在下面输入新的文件/文件夹名称', '输入新名称', {
+						confirmButtonText: '确定',
+					}).then(({ value }) => {
+						newName = value;
+						fileList = this.list.map(obj => obj.name);
+					});
+					if (newName.slice(0, 1) == '.') {
+						this.$message.error("不合法的名称")
+					} else if (newName != "" && newName != null) {
+						if (!fileList.includes(newName)) {
+							const response = await axios.post('/.renameRequest?path=' + this.getPath() + "&oldName=" + fileName + "&newName=" + newName);
+							if (response.status === 200) {
+								location.reload();
+							} else {
+								this.$message.error("重命名出错！");
+							}
+						} else {
+							this.$message.error("目录中已有同名文件/文件夹")
+						}
+					} else {
+						this.$message.error("名称不能为空")
+					}
+				} catch (error) {
+					this.$message.error("重命名出错！");
+				}
+			},
+			async handleNewFolder() {
+				try {
+					var fileList = [];
+					var newName = "";
+					await this.$prompt('在下面输入新建文件夹名称', '输入新名称', {
+						confirmButtonText: '确定',
+					}).then(({ value }) => {
+						newName = value;
+						fileList = this.list.map(obj => obj.name);
+					});
+					if (newName.slice(0, 1) == '.') {
+						this.$message.error("不合法的名称")
+					} else if (newName != "" && newName != null) {
+						if (!fileList.includes(newName)) {
+							const response = await axios.post('/.newfolderRequest?path=' + this.getPath() + "&name=" + newName);
+							if (response.status === 200) {
+								location.reload();
+							} else {
+								this.$message.error("新建文件夹出错！");
+							}
+						} else {
+							this.$message.error("目录中已有同名文件/文件夹")
+						}
+					} else {
+						this.$message.error("名称不能为空")
+					}
+				} catch (error) {
+					this.$message.error("新建文件夹出错！");
+				}
+			},
+			async handleFileChange(event) {
+				const files = event.target.files;
+				const loading = this.$loading({
+					lock: true,
+					text: '正在上传中',
+					spinner: 'el-icon-loading',
+					background: 'rgba(255, 255, 255, 0.7)'
+				});
 
-                    try {
-                        const response = await axios.post('/.submitRequest?path='+this.getPath(), formData, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        });
-                        if(response.status==200){
-                            loading.close();
-                            location.reload();
-                        }else{
-                            loading.close();
-                            this.$message.error("上传失败！");
-                        }
-                    } catch (error) {
-                        loading.close();
-                        this.$message.error("上传失败！");
-                    }
-                }
-            },
-            uploadFile(){
-                this.$refs.fileInput.click();
-            },
-            isSelected(item){
-                return (this.selectedItem.includes(item));
-            },
-            selectItem(item){
-                if(this.selectedItem.includes(item)){
-                    this.selectedItem.splice(this.selectedItem.indexOf(item), 1)
-                }else{
-                    this.selectedItem.push(item)
-                }
-            },
-            onContextmenu(item){
-                this.$contextmenu({
-                    items: [
-                        {
-                            label: "打开",
-                            icon: "bi-file-arrow-down",
-                            disabled: item==''?true:false,
-                            onClick: () => {
-                                this.linkTO(item)
-                            }
-                        },
-                        {
-                            label: "刷新",
-                            icon: "bi-arrow-clockwise",
-                            onClick: ()=>{
-                                location.reload();
-                            },
-                            divided: true
-                        },
-                        {
-                            label: "新建文件夹",
-                            icon: "bi-folder-plus",
-                            onClick: ()=>{
-                                this.handleNewFolder();
-                            }
-                        },
-                        {
-                            label: "重命名",
-                            disabled: item==''?true:false,
-                            onClick: ()=>{
-                                this.handleRename(item.name);
-                            }
-                        },
-                        {
-                            label: "删除",
-                            icon: "bi-trash3",
-                            disabled: item==''?true:false,
-                            onClick: ()=>{
-                                this.handleDel(item);
-                            }
-                        }
-                    ],
-                    event,
-                    customClass: "custom-class",
-                    zIndex: 3,
-                    minWidth: 150
-                });
-                return false;
-            },
-            comp(str,extensionName){
-                str=String(str).toLowerCase();
-                extensionLength=extensionName.length;
-                if(str[str.length-extensionLength-1]!="."){
-                    return false;
-                }
-                if(str.substring(str.length-extensionLength)==extensionName){
-                    return true;
-                }else{
-                    return false;
-                }
-            },
-            headPath(){
-                var PATH=decodeURIComponent(window.location.pathname);
-                var pathArr=['根目录'];
-                if(PATH=="/"){
-                    return pathArr;
-                }
-                let match;
-                const regex = /\/([^/]+)|\/([^/]+)$/g;
-                while ((match = regex.exec(PATH)) !== null) {
-                    const content = match[1] || match[2];
-                    if (content) {
-                        pathArr.push(content);
-                    }
-                }
-                return pathArr;
-            },
-            getPath() {
-                return decodeURIComponent(window.location.pathname);
-            },
-            backFolder() {
-                const currentURL = window.location.href;
-                const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
-                window.location.href = parentURL;
-            },
-            isRoot() {
-                if (window.location.origin == window.location.href) {
-                    return true;
-                } else if (window.location.origin + '/' == window.location.href) {
-                    return true;
-                }
-                return false;
-            },
-            getLink(item){
-                var url = window.location.href + '/';
-                url += item.name;
-                return url;
-            },
-            fileLinkGet(){
-                if(JSON.stringify(this.prevewItem)=="{}"){
-                    return;
-                }
-                var dest="";
+				if (files.length > 0) {
+					const file = files[0];
+					const formData = new FormData();
+					for (let i = 0; i < files.length; i++) {
+						formData.append('files', files[i]);
+					}
 
-                if (this.isRoot()) {
-                    var url = window.location.origin + '/';
-                    url += this.prevewItem.name;
-                    dest = url;
-                }else{
-                    var nowURL = window.location.href;
-                    nowURL += "/"
-                    nowURL += this.prevewItem.name;
-                    dest = nowURL;
-                }
-                return dest;
-            },
-            linkTO(item) {
-                var dest="";
+					try {
+						const response = await axios.post('/.submitRequest?path=' + this.getPath(), formData, {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						});
+						if (response.status == 200) {
+							loading.close();
+							location.reload();
+						} else {
+							loading.close();
+							this.$message.error("上传失败！");
+						}
+					} catch (error) {
+						loading.close();
+						this.$message.error("上传失败！");
+					}
+				}
+			},
+			uploadFile() {
+				this.$refs.fileInput.click();
+			},
+			isSelected(item) {
+				return (this.selectedItem.includes(item));
+			},
+			selectItem(item) {
+				if (this.selectedItem.includes(item)) {
+					this.selectedItem.splice(this.selectedItem.indexOf(item), 1)
+				} else {
+					this.selectedItem.push(item)
+				}
+			},
+			onContextmenu(item) {
+				this.$contextmenu({
+					items: [
+						{
+							label: "打开",
+							icon: "bi-file-arrow-down",
+							disabled: item == '' ? true : false,
+							onClick: () => {
+								this.linkTO(item)
+							}
+						},
+						{
+							label: "刷新",
+							icon: "bi-arrow-clockwise",
+							onClick: () => {
+								location.reload();
+							},
+							divided: true
+						},
+						{
+							label: "新建文件夹",
+							icon: "bi-folder-plus",
+							onClick: () => {
+								this.handleNewFolder();
+							}
+						},
+						{
+							label: "重命名",
+							disabled: item == '' ? true : false,
+							onClick: () => {
+								this.handleRename(item.name);
+							}
+						},
+						{
+							label: "删除",
+							icon: "bi-trash3",
+							disabled: item == '' ? true : false,
+							onClick: () => {
+								this.handleDel(item);
+							}
+						}
+					],
+					event,
+					customClass: "custom-class",
+					zIndex: 3,
+					minWidth: 150
+				});
+				return false;
+			},
+			comp(str, extensionName) {
+				str = String(str).toLowerCase();
+				extensionLength = extensionName.length;
+				if (str[str.length - extensionLength - 1] != ".") {
+					return false;
+				}
+				if (str.substring(str.length - extensionLength) == extensionName) {
+					return true;
+				} else {
+					return false;
+				}
+			},
+			headPath() {
+				var PATH = decodeURIComponent(window.location.pathname);
+				var pathArr = ['根目录'];
+				if (PATH == "/") {
+					return pathArr;
+				}
+				let match;
+				const regex = /\/([^/]+)|\/([^/]+)$/g;
+				while ((match = regex.exec(PATH)) !== null) {
+					const content = match[1] || match[2];
+					if (content) {
+						pathArr.push(content);
+					}
+				}
+				return pathArr;
+			},
+			getPath() {
+				return decodeURIComponent(window.location.pathname);
+			},
+			backFolder() {
+				const currentURL = window.location.href;
+				const parentURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+				window.location.href = parentURL;
+			},
+			isRoot() {
+				if (window.location.origin == window.location.href) {
+					return true;
+				} else if (window.location.origin + '/' == window.location.href) {
+					return true;
+				}
+				return false;
+			},
+			getLink(item) {
+				var url = window.location.href + '/';
+				url += item.name;
+				return url;
+			},
+			fileLinkGet() {
+				if (JSON.stringify(this.prevewItem) == "{}") {
+					return;
+				}
+				var dest = "";
 
-                if (this.isRoot()) {
-                    var url = window.location.origin + '/';
-                    url += item.name;
-                    dest = url;
-                }else{
-                    var nowURL = window.location.href;
-                    nowURL += "/"
-                    nowURL += item.name;
-                    dest = nowURL;
-                }
+				if (this.isRoot()) {
+					var url = window.location.origin + '/';
+					url += this.prevewItem.name;
+					dest = url;
+				} else {
+					var nowURL = window.location.href;
+					nowURL += "/"
+					nowURL += this.prevewItem.name;
+					dest = nowURL;
+				}
+				return dest;
+			},
+			linkTO(item) {
+				var dest = "";
 
-                if(item.type=="file"){
-                    this.prevewItem=item;
-                    if(this.fileType()!="none"){
-                        this.showPreviw=true;
-                        var that=this;
-                        setTimeout(() => {
-                            that.previewOpacity=1;
-                            if(that.fileType()=="video"){
-                                this.player = new Plyr('#player'),
-                                player.play();
-                            }else if(that.fileType()=="audio"){
-                                this.audioplayer=new Plyr('#audioplayer')
-                                audioplayer.play();
-                            }
-                        }, 10);
-                        this.stopMove();
-                    }else{
-                        this.donwloadFile(dest);
-                    }
-                }else{
-                    window.location.href=dest;
-                }
-            },
-            shownSize(size) {
-                if (size / 1024 > 1) {
-                    size = size / 1024;
-                } else {
-                    return size.toFixed(2) + " B"
-                }
-                if (size / 1024 > 1) {
-                    size = size / 1024;
-                } else {
-                    return size.toFixed(2) + " KB"
-                }
-                if (size / 1024 > 1) {
-                    size = size / 1024;
-                } else {
-                    return size.toFixed(2) + " MB"
-                }
-                if (size / 1024 > 1) {
-                    size = size / 1024;
-                } else {
-                    return size.toFixed(2) + " GB"
-                }
-                return size.toFixed(2) + " GB"
-            },
-            shownName(val){
-                if(val.length>15){
-                    return (val.slice(0,14))+"…";
-                }
-                return val;
-            },
-            windowController(){
-                if(window.innerWidth<340){
-                    this.flexContent=false;
-                    this.tableWidth=320;
-                }else if(window.innerWidth<740){
-                    this.tableWidth=window.innerWidth-40;
-                    this.flexContent=false;
-                }else{
-                    this.tableWidth=700;
-                    this.flexContent=true;
-                }
+				if (this.isRoot()) {
+					var url = window.location.origin + '/';
+					url += item.name;
+					dest = url;
+				} else {
+					var nowURL = window.location.href;
+					nowURL += "/"
+					nowURL += item.name;
+					dest = nowURL;
+				}
 
-                if(window.innerWidth>630){
-                    this.lineItem=5;
-                }else if(window.innerWidth>400){
-                    this.lineItem=4;
-                }else{
-                    this.lineItem=3;
-                }
-            }
-        },
-        created() {
-            if(localStorage.getItem("blockDisplay")!=undefined && localStorage.getItem("blockDisplay")!=null){
-                this.blockDisplay=localStorage.getItem("blockDisplay")=='true'?true:false;
-            }
-            this.windowController();
-        },
-        mounted() {
-            window.onresize=()=>{
-                this.windowController();
-            }
-            window.onload=()=>{
-                this.pageLoaded=true;
-            }
-            window.onkeydown=(event)=>{
-                if(this.showPreviw){
-                    if(event.code=="Escape"){
-                        this.closePreview();
-                    }
-                    if(this.prevewType=="video"){
-                        if(event.code=="Space"){
-                            if(player.paused){
-                                player.play();
-                            }else{
-                                player.pause();
-                            }
-                        }
-                    }else if(this.prevewType=="audio"){
-                        if(event.code=="Space"){
-                            if(audioplayer.paused){
-                                audioplayer.play();
-                            }else{
-                                audioplayer.pause();
-                            }
-                        }
-                    }
-                }
-            }
-        },
-    })
+				if (item.type == "file") {
+					this.prevewItem = item;
+					if (this.fileType() != "none") {
+						this.showPreviw = true;
+						var that = this;
+						setTimeout(() => {
+							that.previewOpacity = 1;
+							if (that.fileType() == "video") {
+								this.player = new Plyr('#player'),
+									player.play();
+							} else if (that.fileType() == "audio") {
+								this.audioplayer = new Plyr('#audioplayer')
+								audioplayer.play();
+							}
+						}, 10);
+						this.stopMove();
+					} else {
+						this.donwloadFile(dest);
+					}
+				} else {
+					window.location.href = dest;
+				}
+			},
+			shownSize(size) {
+				if (size / 1024 > 1) {
+					size = size / 1024;
+				} else {
+					return size.toFixed(2) + " B"
+				}
+				if (size / 1024 > 1) {
+					size = size / 1024;
+				} else {
+					return size.toFixed(2) + " KB"
+				}
+				if (size / 1024 > 1) {
+					size = size / 1024;
+				} else {
+					return size.toFixed(2) + " MB"
+				}
+				if (size / 1024 > 1) {
+					size = size / 1024;
+				} else {
+					return size.toFixed(2) + " GB"
+				}
+				return size.toFixed(2) + " GB"
+			},
+			shownName(val) {
+				if (val.length > 15) {
+					return (val.slice(0, 14)) + "…";
+				}
+				return val;
+			},
+			windowController() {
+				if (window.innerWidth < 340) {
+					this.flexContent = false;
+					this.tableWidth = 320;
+				} else if (window.innerWidth < 740) {
+					this.tableWidth = window.innerWidth - 40;
+					this.flexContent = false;
+				} else {
+					this.tableWidth = 700;
+					this.flexContent = true;
+				}
+
+				if (window.innerWidth > 630) {
+					this.lineItem = 5;
+				} else if (window.innerWidth > 400) {
+					this.lineItem = 4;
+				} else {
+					this.lineItem = 3;
+				}
+			}
+		},
+		created() {
+			if (localStorage.getItem("blockDisplay") != undefined && localStorage.getItem("blockDisplay") != null) {
+				this.blockDisplay = localStorage.getItem("blockDisplay") == 'true' ? true : false;
+			}
+			this.windowController();
+		},
+		mounted() {
+			window.onresize = () => {
+				this.windowController();
+			}
+			window.onload = () => {
+				this.pageLoaded = true;
+			}
+			window.onkeydown = (event) => {
+				if (this.showPreviw) {
+					if (event.code == "Escape") {
+						this.closePreview();
+					}
+					if (this.prevewType == "video") {
+						if (event.code == "Space") {
+							if (player.paused) {
+								player.play();
+							} else {
+								player.pause();
+							}
+						}
+					} else if (this.prevewType == "audio") {
+						if (event.code == "Space") {
+							if (audioplayer.paused) {
+								audioplayer.play();
+							} else {
+								audioplayer.pause();
+							}
+						}
+					}
+				}
+			}
+		},
+	})
 </script>
 
 <style>
-    .downloadBt:hover{
-        background-color: rgb(193, 100, 0);
-        cursor: pointer;
-    }
-    .downloadBt{
-        margin-right: 20px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 10px;
-        padding-left: 10px;
-        background-color: rgb(255, 175, 90);
-        border-radius: 10px;
-        color: white;
-        transition: all ease-in-out .2s;
-    }
-    .previewRight{
-        display: flex;
-        align-items: center;
-        margin-left: auto;
-    }
-    .previewFrame{
-        width: 100vw;
-        height: calc(100vh - 70px);
-        transform: translateY(35px);
-    }
-    .imgPreview{
-        max-width: 80vw;
-        max-height: 80vh;
-    }
-    .closeButton:hover{
-        color: rgb(255, 175, 90);
-        cursor: pointer;
-    }
-    .closeButton{
-        margin-right: 20px;
-        transition: all ease-in-out .2s;
-    }
-    .closeIcon{
-        font-size: 25px;
-        font-weight: bolder;
-    }
-    .previewTitle{
-        margin-left: 20px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    .previewContent{
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .previewTopBar{
-        height: 70px;
-        display: flex;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-    .previewArea{
-        z-index: 200;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 100vw;
-        background-color: rgba(255, 255, 255, .8);
-        transition: all ease-in-out .2s;
-    }
-    .dragText{
-        font-size: 30px;
-        margin-top: 10px;
-    }
-    .dragTip{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        backdrop-filter: blur(5px);
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    .el-breadcrumb{
-        font-size: 16px;
-    }
-    .el-breadcrumb__inner a:hover, .el-breadcrumb__inner.is-link:hover{
-        color: rgb(255, 175, 90) !important;
-    }
-    .el-breadcrumb{
-        line-height: 1.5;
-    }
-    .blockSelected{
-        background-color: rgb(235, 235, 235);
-    }
-    .blockSelection{
-        z-index: 100;
-        position: absolute;
-        align-self: flex-start;
-        margin-top: 10px;
-        margin-left: 10px;
-        transform: scale(1.5);
-    }
-    .blockText{
-        width: 100%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        text-align: center;
-    }
-    .blockFolder{
-        color: rgb(255, 175, 90);
-    }
-    .blockMain{
-        display: grid;
-        width: 100%;
-        grid-gap: 10px;
-    }
-    .blockItem:hover{
-        background-color: rgb(245, 245, 245);
-        cursor: pointer;
-    }
-    .blockItem{
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        transition: all ease-in-out .2s;
-        align-items: center;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        padding-bottom: 10px;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-    .changeDisp:hover{
-        color: rgb(255, 132, 0);
-        cursor: pointer;
-    }
-    .changeDisp{
-        color: grey;
-        margin-left: auto;
-        padding-right: 2px;
-        transition: all ease-in-out .2s;
-    }
-    .topbar{
-        display: grid;
-        grid-template-columns: 60px auto 100px;
-        padding: 2px 2px 2px 2px;
-    }
-    .pathDisplay{
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-    }
-    @media screen and (max-width: 500px) {
-        .el-message-box{
-            width: 300px !important;
-        }
-        .el-dialog__wrapper .el-dialog {
-            width: 300px !important;
-            .el-dialog__body{
-                padding: 10px 20px!important;
-                .el-form-item__label{
-                width: 68px!important;
-                }
-                .el-select,.el-input{
-                width: 180px!important;
-                }
-            }
-        }
-    }
-    .el-button:hover{
-        color: rgb(255, 132, 0);
-        background-color: rgb(255, 219, 180);
-        border-color: rgb(255, 180, 100);
-    }
-    .el-button--primary:hover{
-        color: white !important;
-        background-color: rgb(193, 100, 0) !important;
-        border-color:rgb(193, 100, 0) !important;
-    }
-    .el-button{
-        transition: all ease-in-out .2s !important;
-    }
-    .el-button--primary{
-        background-color: rgb(255, 132, 0) !important;
-        border-color:rgb(255, 132, 0) !important;
-    }
-    .el-input.is-active .el-input__inner, .el-input__inner:focus{
-        border-color:rgb(255, 132, 0) !important;
-    }
-    .el-loading-spinner i{
-        color: rgb(255, 132, 0);
-    }
-    .el-loading-spinner .el-loading-text{
-        color: rgb(255, 132, 0);
-    }
-    .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
-        border-color: rgb(255, 132, 0);
-        background-color: rgb(255, 132, 0);
-    }
-    .el-checkbox__inner:hover{
-        border-color: rgb(255, 132, 0);
-    }
-    .el-checkbox__input.is-focus .el-checkbox__inner{
-        border-color: rgb(255, 132, 0);
-    }
-    .folderButton:hover{
-        color: rgb(193, 100, 0);
-        cursor: pointer;
-    }
-    .folderButton{
-        margin-left: 15px;
-        color: rgb(255, 132, 0);
-        transition: all ease-in-out .2s;
-    }
-    .selected:hover{
-        color: rgb(255, 132, 0);
-        cursor: pointer;
-    }
-    .selected{
-        background-color: rgb(235, 235, 235);
-        display: grid;
-        grid-template-columns: 30px auto 100px;
-        padding: 2px 2px 2px 2px;
-        border-radius: 10px;
-        transition: all ease-in-out .2s;
-    }
-    .noSelection:hover{
-        cursor: not-allowed;;
-    }
-    .noSelection{
-        margin-left: 15px;
-        color: grey;
-        transition: all ease-in-out .2s;
-    }
-    .renameButton:hover{
-        color: rgb(193, 100, 0);
-        cursor: pointer;
-    }
-    .renameButton{
-        margin-left: 15px;
-        color: rgb(255, 132, 0);
-        transition: all ease-in-out .2s;
-    }
-    .delButton:hover{
-        color: darkred;
-        cursor: pointer;
-    }
-    .delButton{
-        margin-left: 15px;
-        color: red;
-        transition: all ease-in-out .2s;
-    }
-    .uploadButton:hover{
-        background-color: rgb(193, 100, 0);
-        cursor: pointer;
-    }
-    .uploadButton{
-        background-color: rgb(255, 132, 0);
-        padding: 5px;
-        padding-left: 10px;
-        padding-right: 10px;
-        color: white;
-        border-radius: 5px;
-        transition: all ease-in-out .2s;
-    }
-    .toolBar{
-        display: flex;
-        align-items: center;
-        /* padding-left: 10px; */
-        height: 30px;
-        width: 100%;
-        /* background-color: red; */
-        padding-top: 5px;
-        padding-bottom: 10px;
-    }
-    .menu_item__available:hover{
-        background-color: rgb(255, 238, 220) !important;
-        color: rgb(255, 132, 0) !important;
-    }
-    .container {
-        display: grid;
-    }
-    .row:hover{
-        color: rgb(255, 132, 0);
-        cursor: pointer;
-        background-color: rgb(245, 245, 245);
-    }
-    .row {
-        display: grid;
-        grid-template-columns: 30px 30px auto 100px;
-        transition: all ease-in-out .2s;
-        padding: 2px 2px 2px 2px;
-        border-radius: 10px;
-    }
-    .cell_end{
-        justify-content: flex-end;
-    }
-    .cell {
-        padding: 5px;
-        word-wrap: break-word;
-        word-break: break-all;
-        display: flex;
-        align-items: center;
-    }
-    .blank{
-        width: 100%;
-        height: 20px;
-    }
-    .title{
-        padding-top:20px;
-    }
-    body {
-        margin: 0;
-    }
-    .head {
-        text-align: left;
-        font-size: 26px;
-        word-wrap: break-word;
-        margin-bottom: 10px;
-    }
-    .backFolder_style:hover {
-        color: rgb(255, 132, 0);
-        cursor: pointer;
-    }
-    .backFolder_style {
-        color: rgb(165, 165, 165);
-        transition: all ease-in-out .2s;
-    }
-    .mainIcon {
-        font-size: 18px;
-    }
-    #app {
-        padding-left: 20px;
-        padding-right: 20px;
-        user-select: none;
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        color: #2c3e50;
-        min-height: 100vh;
-        margin: 0;
-        word-wrap: break-word;
-        word-break: break-all;
-    }
+.downloadBt:hover {
+	background-color: rgb(193, 100, 0);
+	cursor: pointer;
+}
+
+.downloadBt {
+	margin-right: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 10px;
+	padding-left: 10px;
+	background-color: rgb(255, 175, 90);
+	border-radius: 10px;
+	color: white;
+	transition: all ease-in-out .2s;
+}
+
+.previewRight {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+}
+
+.previewFrame {
+	width: 100vw;
+	height: calc(100vh - 70px);
+	transform: translateY(35px);
+}
+
+.imgPreview {
+	max-width: 80vw;
+	max-height: 80vh;
+}
+
+.closeButton:hover {
+	color: rgb(255, 175, 90);
+	cursor: pointer;
+}
+
+.closeButton {
+	margin-right: 20px;
+	transition: all ease-in-out .2s;
+}
+
+.closeIcon {
+	font-size: 25px;
+	font-weight: bolder;
+}
+
+.previewTitle {
+	margin-left: 20px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.previewContent {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.previewTopBar {
+	height: 70px;
+	display: flex;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.previewArea {
+	z-index: 200;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+	background-color: rgba(255, 255, 255, .8);
+	transition: all ease-in-out .2s;
+}
+
+.dragText {
+	font-size: 30px;
+	margin-top: 10px;
+}
+
+.dragTip {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	backdrop-filter: blur(5px);
+	z-index: 100;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.el-breadcrumb {
+	font-size: 16px;
+}
+
+.el-breadcrumb__inner a:hover,
+.el-breadcrumb__inner.is-link:hover {
+	color: rgb(255, 175, 90) !important;
+}
+
+.el-breadcrumb {
+	line-height: 1.5;
+}
+
+.blockSelected {
+	background-color: rgb(235, 235, 235);
+}
+
+.blockSelection {
+	z-index: 100;
+	position: absolute;
+	align-self: flex-start;
+	margin-top: 10px;
+	margin-left: 10px;
+	transform: scale(1.5);
+}
+
+.blockText {
+	width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	text-align: center;
+}
+
+.blockFolder {
+	color: rgb(255, 175, 90);
+}
+
+.blockMain {
+	display: grid;
+	width: 100%;
+	grid-gap: 10px;
+}
+
+.blockItem:hover {
+	background-color: rgb(245, 245, 245);
+	cursor: pointer;
+}
+
+.blockItem {
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	transition: all ease-in-out .2s;
+	align-items: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding-bottom: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.changeDisp:hover {
+	color: rgb(255, 132, 0);
+	cursor: pointer;
+}
+
+.changeDisp {
+	color: grey;
+	margin-left: auto;
+	padding-right: 2px;
+	transition: all ease-in-out .2s;
+}
+
+.topbar {
+	display: grid;
+	grid-template-columns: 60px auto 100px;
+	padding: 2px 2px 2px 2px;
+}
+
+.pathDisplay {
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+}
+
+@media screen and (max-width: 500px) {
+	.el-message-box {
+		width: 300px !important;
+	}
+
+	.el-dialog__wrapper .el-dialog {
+		width: 300px !important;
+
+		.el-dialog__body {
+			padding: 10px 20px !important;
+
+			.el-form-item__label {
+				width: 68px !important;
+			}
+
+			.el-select,
+			.el-input {
+				width: 180px !important;
+			}
+		}
+	}
+}
+
+.el-button:hover {
+	color: rgb(255, 132, 0);
+	background-color: rgb(255, 219, 180);
+	border-color: rgb(255, 180, 100);
+}
+
+.el-button--primary:hover {
+	color: white !important;
+	background-color: rgb(193, 100, 0) !important;
+	border-color: rgb(193, 100, 0) !important;
+}
+
+.el-button {
+	transition: all ease-in-out .2s !important;
+}
+
+.el-button--primary {
+	background-color: rgb(255, 132, 0) !important;
+	border-color: rgb(255, 132, 0) !important;
+}
+
+.el-input.is-active .el-input__inner,
+.el-input__inner:focus {
+	border-color: rgb(255, 132, 0) !important;
+}
+
+.el-loading-spinner i {
+	color: rgb(255, 132, 0);
+}
+
+.el-loading-spinner .el-loading-text {
+	color: rgb(255, 132, 0);
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+	border-color: rgb(255, 132, 0);
+	background-color: rgb(255, 132, 0);
+}
+
+.el-checkbox__inner:hover {
+	border-color: rgb(255, 132, 0);
+}
+
+.el-checkbox__input.is-focus .el-checkbox__inner {
+	border-color: rgb(255, 132, 0);
+}
+
+.folderButton:hover {
+	color: rgb(193, 100, 0);
+	cursor: pointer;
+}
+
+.folderButton {
+	margin-left: 15px;
+	color: rgb(255, 132, 0);
+	transition: all ease-in-out .2s;
+}
+
+.selected:hover {
+	color: rgb(255, 132, 0);
+	cursor: pointer;
+}
+
+.selected {
+	background-color: rgb(235, 235, 235);
+	display: grid;
+	grid-template-columns: 30px auto 100px;
+	padding: 2px 2px 2px 2px;
+	border-radius: 10px;
+	transition: all ease-in-out .2s;
+}
+
+.noSelection:hover {
+	cursor: not-allowed;
+	;
+}
+
+.noSelection {
+	margin-left: 15px;
+	color: grey;
+	transition: all ease-in-out .2s;
+}
+
+.renameButton:hover {
+	color: rgb(193, 100, 0);
+	cursor: pointer;
+}
+
+.renameButton {
+	margin-left: 15px;
+	color: rgb(255, 132, 0);
+	transition: all ease-in-out .2s;
+}
+
+.delButton:hover {
+	color: darkred;
+	cursor: pointer;
+}
+
+.delButton {
+	margin-left: 15px;
+	color: red;
+	transition: all ease-in-out .2s;
+}
+
+.uploadButton:hover {
+	background-color: rgb(193, 100, 0);
+	cursor: pointer;
+}
+
+.uploadButton {
+	background-color: rgb(255, 132, 0);
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	color: white;
+	border-radius: 5px;
+	transition: all ease-in-out .2s;
+}
+
+.toolBar {
+	display: flex;
+	align-items: center;
+	/* padding-left: 10px; */
+	height: 30px;
+	width: 100%;
+	/* background-color: red; */
+	padding-top: 5px;
+	padding-bottom: 10px;
+}
+
+.menu_item__available:hover {
+	background-color: rgb(255, 238, 220) !important;
+	color: rgb(255, 132, 0) !important;
+}
+
+.container {
+	display: grid;
+}
+
+.row:hover {
+	color: rgb(255, 132, 0);
+	cursor: pointer;
+	background-color: rgb(245, 245, 245);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 30px 30px auto 100px;
+	transition: all ease-in-out .2s;
+	padding: 2px 2px 2px 2px;
+	border-radius: 10px;
+}
+
+.cell_end {
+	justify-content: flex-end;
+}
+
+.cell {
+	padding: 5px;
+	word-wrap: break-word;
+	word-break: break-all;
+	display: flex;
+	align-items: center;
+}
+
+.blank {
+	width: 100%;
+	height: 20px;
+}
+
+.title {
+	padding-top: 20px;
+}
+
+body {
+	margin: 0;
+}
+
+.head {
+	text-align: left;
+	font-size: 26px;
+	word-wrap: break-word;
+	margin-bottom: 10px;
+}
+
+.backFolder_style:hover {
+	color: rgb(255, 132, 0);
+	cursor: pointer;
+}
+
+.backFolder_style {
+	color: rgb(165, 165, 165);
+	transition: all ease-in-out .2s;
+}
+
+.mainIcon {
+	font-size: 18px;
+}
+
+#app {
+	padding-left: 20px;
+	padding-right: 20px;
+	user-select: none;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: #2c3e50;
+	min-height: 100vh;
+	margin: 0;
+	word-wrap: break-word;
+	word-break: break-all;
+}
 </style>
+
 </html>

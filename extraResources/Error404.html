@@ -1,59 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Directory</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Virtual Directory</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 </head>
+
 <body>
-    <div id="app">
-        <div class="mainTip">错误：找不到目录或文件 ~本地</div>
-        <div class="smallTip" @click="backToHome()">返回到主页</div>
-    </div>
+	<div id="app">
+		<div class="mainTip">错误：找不到目录或文件 ~本地</div>
+		<div class="smallTip" @click="backToHome()">返回到主页</div>
+	</div>
 </body>
 
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            // test: JSON.parse('<%- JSON.stringify(data) %>')
-        },
-        methods: {
-            backToHome(){
-                window.location.href=window.location.origin;
-            }
-        },
-        // created() {
-        //     console.log(this.test);
-        // },
-    })
+	var app = new Vue({
+		el: '#app',
+		data: {
+			// test: JSON.parse('<%- JSON.stringify(data) %>')
+		},
+		methods: {
+			backToHome() {
+				window.location.href = window.location.origin;
+			}
+		},
+		// created() {
+		//     console.log(this.test);
+		// },
+	})
 </script>
 
 <style>
-    body{
-        margin: 0;
-    }
-    .smallTip:hover{
-        color: rgb(255, 150, 0);
-        cursor: pointer;
-    }
-    .smallTip{
-        transition: all ease-in-out .2s;
-        margin-top: 10px;
-    }
-    .mainTip{
-        font-size: 20px;
-    }
-    #app {
-        padding-top: 10px;
-        padding-left: 10px;
-        user-select: none;
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        color: #2c3e50;
-        margin: 0;
-    }
+body {
+	margin: 0;
+}
+
+.smallTip:hover {
+	color: rgb(255, 150, 0);
+	cursor: pointer;
+}
+
+.smallTip {
+	transition: all ease-in-out .2s;
+	margin-top: 10px;
+}
+
+.mainTip {
+	font-size: 20px;
+}
+
+#app {
+	padding-top: 10px;
+	padding-left: 10px;
+	user-select: none;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: #2c3e50;
+	margin: 0;
+}
 </style>
+
 </html>

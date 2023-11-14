@@ -1,29 +1,30 @@
 <template>
   <div id="app">
-    <div class="test">
-      <a-button @click="test">测试</a-button>
-    </div>
+    <!-- 拖拽区域 -->
+    <div class="dragArea"></div>
+    
   </div>
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 
 export default {
   name: 'App',
   methods: {
-    test(){
-      ipcRenderer.send('testServer');
-    }
+    
   },
 }
 </script>
 
 <style>
-.test{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.dragArea{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  -webkit-app-region: drag;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

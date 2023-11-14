@@ -38,11 +38,11 @@ ipcMain.on("testServer", async (event, arg) => {
   const port = 3000;
 
   // 设置静态文件夹
-  app.use(express.static(path.join(__dirname, '../ui_interface')));
+  app.use(express.static(path.join(__dirname, '../ui_interface/vir_dir_page/dist')));
 
   // 处理所有页面请求，返回Vue页面
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../ui_interface', 'index.html'));
+    res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
   });
 
   // 启动服务器

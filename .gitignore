@@ -30,3 +30,5 @@ pnpm-debug.log*
 # src/components/DirMain.html
 # src/components/Error404.html
 src/components/变量测试.txt
+
+ui_interface/vir_dir_page

@@ -1,6 +1,7 @@
-module.exports = {
-	transpileDependencies: true,
-	pluginOptions: {
+const { defineConfig } = require('@vue/cli-service')
+module.exports = defineConfig({
+  transpileDependencies: true,
+  pluginOptions: {
 		electronBuilder: {
 			nodeIntegration: true,
 			builderOptions: {
@@ -15,4 +16,4 @@ module.exports = {
 			},
 		},
 	},
-}
+})

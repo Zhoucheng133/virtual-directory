@@ -41,6 +41,15 @@ let server;
 
 var sockets = [];
 
+// TODO 需要修改
+// const mime = require('mime-types');
+
+function getContentType(extension) {
+  // const contentType = mime.contentType(extension);
+  // return contentType || 'application/octet-stream';
+  return 'application/octet-stream';
+}
+
 // 关闭服务器
 ipcMain.on("serverOff", async (event) => {
   sockets.forEach(function(socket){

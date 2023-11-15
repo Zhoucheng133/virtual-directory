@@ -68,7 +68,12 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   expressApp.get('*', (req, res) => {
     if(req.originalUrl.startsWith('/api/getlist')) {
       // 获取目录列表
+      // Required: 请求的目录，注意不需要开头的/
       const dir=req.query.dir;
+      if(dir==undefined){
+        res.json({ "list": "err" });
+        return;
+      }
       console.log(sharePath+dir);
       fs.readdir(sharePath+dir, (err, files) => {
         if (err) {
@@ -88,13 +93,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
     }else if(req.originalUrl.startsWith('/api/upload')){
-      
+      // TODO 上传
     }else if(req.originalUrl.startsWith('/api/newFolder')){
-
+      // TODO 新建文件夹
     }else if(req.originalUrl.startsWith('/api/rename')){
-
+      // TODO 重命名文件夹
     }else if(req.originalUrl.startsWith('/api/del')){
-
+      // TODO 删除文件夹
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
@@ -103,6 +108,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
   server = http.createServer(expressApp);
 
+  // 添加到socket
   server.on("connection", function (socket) {
 		sockets.push(socket);
 		socket.once("close", function () {

@@ -104,6 +104,9 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/del')){
       // TODO 删除文件
       // Required: 文件/文件夹地址[dir]
+    }else if(req.originalUrl.startsWith('/api/getFile')){
+      // Required: 文件地址[dir]
+      const dir=req.query.dir+sharePath;
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));

@@ -65,7 +65,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
   // 处理所有页面请求，返回Vue页面
   expressApp.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
+    if (req.originalUrl.startsWith('/api')) {
+      // 如果请求地址是 /api开头，返回API
+      res.json({ message: req.originalUrl });
+    } else {
+      // 否则返回Vue页面
+      res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
+    }
   });
 
   server = http.createServer(expressApp);

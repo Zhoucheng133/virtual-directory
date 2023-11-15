@@ -68,7 +68,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   expressApp.get('*', (req, res) => {
     if(req.originalUrl.startsWith('/api/getlist')) {
       // 获取目录列表
-      // Required: 请求的目录，注意不需要开头的/
+      // Required: 请求的目录[dir]，注意不需要开头的/
       const dir=req.query.dir;
       if(dir==undefined){
         res.json({ "list": "err" });
@@ -94,12 +94,16 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       });
     }else if(req.originalUrl.startsWith('/api/upload')){
       // TODO 上传
+      // Required: 上传的目录[dir]
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
+      // Required: 新建文件夹的目录[dir] & 新建文件夹的名称[name]
     }else if(req.originalUrl.startsWith('/api/rename')){
       // TODO 重命名文件夹
+      // Required: 文件夹地址[dir] & 文件夹的的新名称[name]
     }else if(req.originalUrl.startsWith('/api/del')){
-      // TODO 删除文件夹
+      // TODO 删除文件
+      // Required: 文件/文件夹地址[dir]
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));

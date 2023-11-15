@@ -106,7 +106,27 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       // Required: 文件/文件夹地址[dir]
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // Required: 文件地址[dir]
-      const dir=req.query.dir+sharePath;
+      const dir=path.join(sharePath, req.query.dir);
+      fs.stat(dir, (err, stats) => {
+        if (err) {
+          res.end("Request ERR");
+        } else {
+          if (stats.isDirectory()) {
+            res.end("Not file")
+            return;
+          } else {
+            const extension = path.extname(dir).toLowerCase();
+            const contentType = getContentType(extension);
+            const stream = fs.createReadStream(dir);
+            var fileSize=stats.size;
+            res.setHeader("Accept-Ranges","bytes");
+            res.setHeader('Content-Length', fileSize);
+            res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
+            res.setHeader('Content-Type', contentType);
+            stream.pipe(res);
+          }
+        }
+      });
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));

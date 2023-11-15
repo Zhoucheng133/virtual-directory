@@ -65,10 +65,19 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
   // 处理所有页面请求，返回Vue页面
   expressApp.get('*', (req, res) => {
-    if (req.originalUrl.startsWith('/api')) {
-      // 如果请求地址是 /api开头，返回API
+    if(req.originalUrl.startsWith('/api/getlist')) {
+      // 获取目录列表
       res.json({ message: req.originalUrl });
-    } else {
+      const dir=req.query.dir;
+    }else if(req.originalUrl.startsWith('/api/upload')){
+      
+    }else if(req.originalUrl.startsWith('/api/newFolder')){
+
+    }else if(req.originalUrl.startsWith('/api/rename')){
+
+    }else if(req.originalUrl.startsWith('/api/del')){
+
+    }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
     }

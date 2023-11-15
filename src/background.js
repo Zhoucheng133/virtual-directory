@@ -58,6 +58,7 @@ ipcMain.on("serverOff", async (event) => {
 // 启动服务器
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
   const path = require('path');
+  const fs = require('fs');
   expressApp=express();
 
   // 设置静态文件夹
@@ -67,8 +68,25 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   expressApp.get('*', (req, res) => {
     if(req.originalUrl.startsWith('/api/getlist')) {
       // 获取目录列表
-      res.json({ message: req.originalUrl });
       const dir=req.query.dir;
+      console.log(sharePath+dir);
+      fs.readdir(sharePath+dir, (err, files) => {
+        if (err) {
+          res.json({ "list": "err" });
+        } else {
+          var dirList=[];
+          files.forEach(file => {
+            const filePath = path.join(sharePath+dir, file);
+            const stats = fs.statSync(filePath);
+            if (stats.isFile()) {
+              dirList.push({"type":"file","name":file,"size":stats.size,"selected":false});
+            } else if (stats.isDirectory()) {
+              dirList.push({"type":"dir","name":file,"selected":false});
+            }
+          });
+          res.json({ "list": dirList });
+        }
+      });
     }else if(req.originalUrl.startsWith('/api/upload')){
       
     }else if(req.originalUrl.startsWith('/api/newFolder')){
@@ -94,6 +112,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
   // 启动服务器
   server.listen(sharePort, () => {
+
     console.log(`Server is running at http://localhost:${sharePort}`);
     event.reply('serverOnResponse', 'success');
   });

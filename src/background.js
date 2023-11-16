@@ -135,6 +135,28 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
           }
         }
       });
+    }else if(req.originalUrl.startsWith('/api/downloadFile')){
+      // Required: 文件地址[dir]
+      const dir=path.join(sharePath, req.query.dir);
+      fs.stat(dir, (err, stats) => {
+        if (err) {
+          res.end("Request ERR");
+        } else {
+          if (stats.isDirectory()) {
+            res.end("Not file")
+            return;
+          } else {
+            const extension = path.extname(dir).toLowerCase();
+            const stream = fs.createReadStream(dir);
+            var fileSize=stats.size;
+            res.setHeader("Accept-Ranges","bytes");
+            res.setHeader('Content-Length', fileSize);
+            res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
+            res.setHeader('Content-Type', 'application/octet-stream');
+            stream.pipe(res);
+          }
+        }
+      });
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));

@@ -157,6 +157,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
           }
         }
       });
+    }else if(req.originalUrl.startsWith('/api/authRequest')){
+      res.json({"needLogin": username=="" && password=="" ? false : true, "username": username, "password": password});
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));

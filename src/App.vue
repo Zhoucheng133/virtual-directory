@@ -75,8 +75,8 @@
 					</div>
 				</div>
 				<div class="end">
-					<div>v2.1.0</div>
-					<div class="toGit" @click="openGitee">Virtual Directory on Gitee</div>
+					<div>{{ version }}</div>
+					<div><i class="bi bi-github toGit" @click="openGithub"></i></div>
 				</div>
 			</div>
 		</div>
@@ -105,6 +105,7 @@ export default {
 			IPv4:"",
 			IPv6:"",
 			sys:"",
+			version: '',
 
 			isDestroyed: false,
 		}

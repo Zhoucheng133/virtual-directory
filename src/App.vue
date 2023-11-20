@@ -119,8 +119,8 @@ export default {
 			ipcRenderer.send('winMin');
 		},
 		// 在Gitee中打开
-		openGitee(){
-      // TODO 打开链接
+		openGithub(){
+			shell.openExternal('https://github.com/Zhoucheng133/virtual-directory');
 		},
 		// 打开链接
 		openLink(){
@@ -311,6 +311,7 @@ export default {
 		ipcRenderer.send("getSys");
 
 		this.getValue();
+		this.version = process.env.VUE_APP_VERSION
 		document.title="Virtual Directory";
 	},
 }
@@ -333,6 +334,7 @@ export default {
 }
 .toGit{
 	transition: all ease-in-out .3s;
+	width: auto;
 }
 .end{
 	font-size: 13px;

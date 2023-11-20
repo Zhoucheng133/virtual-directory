@@ -3,6 +3,7 @@ import App from './App.vue'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import VueClipboard from 'vue-clipboard2';
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 Vue.use(Antd);
 Vue.use(VueClipboard);

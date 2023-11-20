@@ -70,7 +70,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   expressApp=express();
 
   // 设置静态文件夹
-  expressApp.use(express.static(path.join(__dirname, '../ui_interface/vir_dir_page/dist')));
+  expressApp.use(express.static(path.join(__dirname, '../ui_interface/virtual-dir-page/dist')));
+  // 临时允许跨域
+  expressApp.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
 
   // 处理所有页面请求，返回Vue页面
   expressApp.get('*', (req, res) => {
@@ -105,7 +112,15 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       // Required: 上传的目录[dir]
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
-      // Required: 新建文件夹的目录[dir] & 新建文件夹的名称[name]
+      var folderName=req.query.name;
+      var dir=path.join(sharePath, req.query.dir);
+      fs.mkdir(dir+"/"+folderName, { recursive: true }, (err) => {
+				if (err) {
+					res.json({ "status": false });
+				} else {
+					res.json({ "status": true });
+				}
+			});
     }else if(req.originalUrl.startsWith('/api/rename')){
       // TODO 重命名文件夹
       // Required: 文件夹地址[dir] & 文件夹的的新名称[name]
@@ -161,7 +176,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       res.json({"needLogin": username=="" && password=="" ? false : true, "username": username, "password": password});
     }else{
       // 否则返回Vue页面
-      res.sendFile(path.join(__dirname, '../ui_interface/vir_dir_page/dist', 'index.html'));
+      res.sendFile(path.join(__dirname, '../ui_interface/virtual-dir-page/dist', 'index.html'));
     }
   });
 

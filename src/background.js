@@ -122,8 +122,16 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				}
 			});
     }else if(req.originalUrl.startsWith('/api/rename')){
-      // TODO 重命名文件夹
-      // Required: 文件夹地址[dir] & 文件夹的的新名称[name]
+      // Required: 文件夹地址[dir] & 原文件名[oldName] & 新名称[newName]
+      var dir=path.join(sharePath, req.query.dir);
+      fs.rename(dir+"/"+req.query.oldName, dir+"/"+req.query.newName, (err) => {
+				if (err) {
+          console.log(err);
+					res.json({ "status": false });
+				} else {
+					res.json({ "status": true });
+				}
+			});
     }else if(req.originalUrl.startsWith('/api/del')){
       // TODO 删除文件
       // Required: 文件/文件夹地址[dir]

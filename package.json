@@ -16,6 +16,7 @@
     "ant-design-vue": "1.7.8",
     "bootstrap-icons": "^1.11.1",
     "core-js": "^3.8.3",
+    "crypto-js": "^4.2.0",
     "express": "^4.18.2",
     "mime-types": "^2.1.35",
     "multer": "^1.4.5-lts.1",

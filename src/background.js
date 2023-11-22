@@ -8,6 +8,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const express = require('express');
+const CryptoJS = require("crypto-js");
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -212,7 +213,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
     }else if(req.originalUrl.startsWith('/api/authRequest')){
-      res.json({"needLogin": username=="" && password=="" ? false : true, "username": username, "password": password});
+      res.json({"needLogin": username=="" && password=="" ? false : true, "username": CryptoJS.SHA256(username).toString(), "password": CryptoJS.SHA256(password).toString()});
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../ui_interface/virtual-dir-page/dist', 'index.html'));

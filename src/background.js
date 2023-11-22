@@ -123,7 +123,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
     }else if(req.originalUrl.startsWith('/api/upload')){
-      // TODO 上传
+      // 上传
       // Required: 上传的目录[dir]
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
@@ -137,6 +137,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				}
 			});
     }else if(req.originalUrl.startsWith('/api/rename')){
+      // 重命名
       // Required: 文件夹地址[dir] & 原文件名[oldName] & 新名称[newName]
       var dir=path.join(sharePath, req.query.dir);
       fs.rename(dir+"/"+req.query.oldName, dir+"/"+req.query.newName, (err) => {
@@ -148,7 +149,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 				}
 			});
     }else if(req.originalUrl.startsWith('/api/del')){
-      // TODO 删除文件
+      // 删除文件
+      // Required: 文件夹地址[dir] & 需要删除的文件(夹)[files]
       var dir=path.join(sharePath, req.query.dir);
       var files=JSON.parse(req.query.files);
       // res.json({ "dir": dir, "files": files });
@@ -168,6 +170,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       })
       res.json({ "status": rlt });
     }else if(req.originalUrl.startsWith('/api/getFile')){
+      // 获取文件内容
       // Required: 文件地址[dir]
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
@@ -191,6 +194,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
     }else if(req.originalUrl.startsWith('/api/downloadFile')){
+      // 下载文件
       // Required: 文件地址[dir]
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
@@ -213,6 +217,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
     }else if(req.originalUrl.startsWith('/api/authRequest')){
+      // 账户请求
       res.json({"needLogin": username=="" && password=="" ? false : true, "username": CryptoJS.SHA256(username).toString(), "password": CryptoJS.SHA256(password).toString()});
     }else{
       // 否则返回Vue页面

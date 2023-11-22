@@ -63,6 +63,20 @@ ipcMain.on("serverOff", async (event) => {
   }
 })
 
+// 删除文件
+async function delFile(path) {
+	const fs = require('fs').promises;
+	try {
+		// 执行删除操作
+		await fs.rm(path, { recursive: true });
+		// console.log("删除成功");
+		return true;
+	} catch (err) {
+		// console.log("删除出错:", err);
+		return false;
+	}
+}
+
 // 启动服务器
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
   const path = require('path');
@@ -80,7 +94,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   });
 
   // 处理所有页面请求，返回Vue页面
-  expressApp.get('*', (req, res) => {
+  expressApp.get('*', async (req, res) => {
     if(req.originalUrl.startsWith('/api/getlist')) {
       // 获取目录列表
       // Required: 请求的目录[dir]，注意不需要开头的/
@@ -134,7 +148,24 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 			});
     }else if(req.originalUrl.startsWith('/api/del')){
       // TODO 删除文件
-      // Required: 文件/文件夹地址[dir]
+      var dir=path.join(sharePath, req.query.dir);
+      var files=JSON.parse(req.query.files);
+      // res.json({ "dir": dir, "files": files });
+      var rlt=await new Promise(async (resolve)=>{
+        for(const item of files){
+          const path=dir+"/"+item.name;
+          await delFile(path)
+          .then((result) => {
+            if(result==false){
+              resolve(false);
+              return;
+            }
+          })
+        }
+        resolve(true);
+        return;
+      })
+      res.json({ "status": rlt });
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // Required: 文件地址[dir]
       const dir=path.join(sharePath, req.query.dir);

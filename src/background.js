@@ -242,7 +242,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.end("Not file")
             return;
           } else {
-            const extension = path.extname(dir).toLowerCase();
             const stream = fs.createReadStream(dir);
             var fileSize=stats.size;
             res.setHeader("Accept-Ranges","bytes");

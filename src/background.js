@@ -78,6 +78,18 @@ async function delFile(path) {
 	}
 }
 
+// 是否许可操作
+function Permission(username, password, originalUsername, originalPassword){
+  if(originalPassword=="" && originalUsername==""){
+    return true;
+  }else if(originalPassword!="" && originalUsername!="" && (username==undefined || password==undefined)){
+    return false;
+  }else if(username==CryptoJS.SHA256(originalUsername).toString() && password==CryptoJS.SHA256(originalPassword).toString()){
+    return true;
+  }
+  return false;
+}
+
 // 启动服务器
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
   const path = require('path');
@@ -87,10 +99,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   // 设置静态文件夹
   expressApp.use(express.static(path.join(__dirname, '../ui_interface/virtual-dir-page/dist')));
   // 临时允许跨域
-  expressApp.use((req, res, next) => {
+  expressApp.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Content-Type', 'application/json;charset=utf-8');
     next();
   });
 
@@ -99,6 +112,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     if(req.originalUrl.startsWith('/api/getlist')) {
       // 获取目录列表
       // Required: 请求的目录[dir]，注意不需要开头的/
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "list": "err" });
+        return;
+      }
       const dir=req.query.dir;
       if(dir==undefined){
         res.json({ "list": "err" });
@@ -127,6 +144,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       // Required: 上传的目录[dir]
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "list": "err" });
+        return;
+      }
       var folderName=req.query.name;
       var dir=path.join(sharePath, req.query.dir);
       fs.mkdir(dir+"/"+folderName, { recursive: true }, (err) => {
@@ -139,6 +160,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/rename')){
       // 重命名
       // Required: 文件夹地址[dir] & 原文件名[oldName] & 新名称[newName]
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "list": "err" });
+        return;
+      }
       var dir=path.join(sharePath, req.query.dir);
       fs.rename(dir+"/"+req.query.oldName, dir+"/"+req.query.newName, (err) => {
 				if (err) {
@@ -151,6 +176,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/del')){
       // 删除文件
       // Required: 文件夹地址[dir] & 需要删除的文件(夹)[files]
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "list": "err" });
+        return;
+      }
       var dir=path.join(sharePath, req.query.dir);
       var files=JSON.parse(req.query.files);
       // res.json({ "dir": dir, "files": files });
@@ -172,6 +201,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // 获取文件内容
       // Required: 文件地址[dir]
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "list": "err" });
+        return;
+      }
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
         if (err) {

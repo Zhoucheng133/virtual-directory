@@ -201,10 +201,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // 获取文件内容
       // Required: 文件地址[dir]
-      if(!Permission(req.get("username"), req.get("password"), username, password)){
-        res.json({ "list": "err" });
-        return;
-      }
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
         if (err) {

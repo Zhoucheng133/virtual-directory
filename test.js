@@ -1,3 +1,3 @@
-var url="/FreeDownloads/file.png";
-url=url.slice(1);
-console.log(url);
+const CryptoJS = require("crypto-js");
+
+console.log(CryptoJS.SHA256('待加密字符串1').toString());

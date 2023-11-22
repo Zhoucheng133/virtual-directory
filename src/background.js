@@ -145,7 +145,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
       if(!Permission(req.get("username"), req.get("password"), username, password)){
-        res.json({ "list": "err" });
+        res.json({ "status": "err" });
         return;
       }
       var folderName=req.query.name;
@@ -161,7 +161,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       // 重命名
       // Required: 文件夹地址[dir] & 原文件名[oldName] & 新名称[newName]
       if(!Permission(req.get("username"), req.get("password"), username, password)){
-        res.json({ "list": "err" });
+        res.json({ "status": "err" });
         return;
       }
       var dir=path.join(sharePath, req.query.dir);
@@ -177,7 +177,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       // 删除文件
       // Required: 文件夹地址[dir] & 需要删除的文件(夹)[files]
       if(!Permission(req.get("username"), req.get("password"), username, password)){
-        res.json({ "list": "err" });
+        res.json({ "status": "err" });
         return;
       }
       var dir=path.join(sharePath, req.query.dir);
@@ -201,6 +201,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // 获取文件内容
       // Required: 文件地址[dir]
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "status": "err" });
+        return;
+      }
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
         if (err) {

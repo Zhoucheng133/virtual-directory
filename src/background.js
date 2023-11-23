@@ -181,7 +181,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         return;
       }
       var dir=path.join(sharePath, req.query.dir);
-      var files=JSON.parse(req.query.files);
+      // console.log(req.query.files);
+      var files=req.query.files;
       // res.json({ "dir": dir, "files": files });
       var rlt=await new Promise(async (resolve)=>{
         for(const item of files){

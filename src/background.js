@@ -123,16 +123,13 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         upload(req, res, (err) => {
           if (err) {
             console.log(err);
-            res.json({ "status": false });
+            res.status(400).json({ "status": false });
           }
-  
-          if (req.file) {
-            res.json({ "status": true });
-          }
+          res.status(200).json({ "status": true });
         });
       } catch (error) {
         console.log(error);
-        res.json({ "status": false });
+        res.status(400).json({ "status": false });
       }
     }
   })

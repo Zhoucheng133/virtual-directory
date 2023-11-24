@@ -9,6 +9,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const express = require('express');
 const CryptoJS = require("crypto-js");
+const multer = require('multer');
+const cors = require('cors');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -99,13 +101,41 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   // 设置静态文件夹
   expressApp.use(express.static(path.join(__dirname, '../ui_interface/virtual-dir-page/dist')));
   // 临时允许跨域
-  expressApp.all('*', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', '*');
-    res.header('Access-Control-Allow-Methods', '*');
-    res.header('Content-Type', 'application/json;charset=utf-8');
-    next();
-  });
+  expressApp.use(cors());
+
+  expressApp.post('*', async (req, res)=>{
+    if(req.originalUrl.startsWith('/api/upload')){
+      // 上传
+      // Required: 上传的目录[dir]
+      if(!Permission(req.get("username"), req.get("password"), username, password)){
+        res.json({ "status": "err" });
+        return;
+      }
+      try {
+        var pathSave=path.join(sharePath, req.query.dir);
+        const storage = multer.diskStorage({
+          destination: pathSave,
+          filename: function (req, file, cb) {
+            cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
+          }
+        });
+        const upload = multer({ storage: storage }).any('files');
+        upload(req, res, (err) => {
+          if (err) {
+            console.log(err);
+            res.json({ "status": false });
+          }
+  
+          if (req.file) {
+            res.json({ "status": true });
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        res.json({ "status": false });
+      }
+    }
+  })
 
   // 处理所有页面请求，返回Vue页面
   expressApp.get('*', async (req, res) => {
@@ -139,9 +169,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
           res.json({ "list": dirList });
         }
       });
-    }else if(req.originalUrl.startsWith('/api/upload')){
-      // 上传
-      // Required: 上传的目录[dir]
     }else if(req.originalUrl.startsWith('/api/newFolder')){
       // TODO 新建文件夹
       if(!Permission(req.get("username"), req.get("password"), username, password)){

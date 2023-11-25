@@ -226,10 +226,10 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/getFile')){
       // 获取文件内容
       // Required: 文件地址[dir]
-      if(!Permission(req.get("username"), req.get("password"), username, password)){
-        res.json({ "status": "err" });
-        return;
-      }
+      // if(!Permission(req.get("username"), req.get("password"), username, password)){
+      //   res.json({ "status": "err" });
+      //   return;
+      // }
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
         if (err) {
@@ -239,15 +239,45 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.end("Not file")
             return;
           } else {
-            const extension = path.extname(dir).toLowerCase();
+            // const extension = path.extname(dir).toLowerCase();
+            // const contentType = getContentType(extension);
+            // const stream = fs.createReadStream(dir);
+            // var fileSize=stats.size;
+            // res.setHeader("Accept-Ranges","bytes");
+            // res.setHeader('Content-Length', fileSize);
+            // res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
+            // res.setHeader('Content-Type', contentType);
+            // stream.pipe(res);
+
+            const extension = path.extname(dir).toLowerCase()
             const contentType = getContentType(extension);
-            const stream = fs.createReadStream(dir);
-            var fileSize=stats.size;
-            res.setHeader("Accept-Ranges","bytes");
-            res.setHeader('Content-Length', fileSize);
-            res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
-            res.setHeader('Content-Type', contentType);
-            stream.pipe(res);
+            const stat = fs.statSync(dir);
+            const fileSize = stat.size;
+            const range = req.headers.range;
+            if (range) {
+              const parts = range.replace(/bytes=/, '').split('-');
+              const start = parseInt(parts[0], 10);
+              const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+          
+              const chunksize = (end - start) + 1;
+              const file = fs.createReadStream(dir, { start, end });
+              const head = {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunksize,
+                'Content-Type': contentType,
+              };
+          
+              res.writeHead(206, head);
+              file.pipe(res);
+            } else {
+              const head = {
+                'Content-Length': fileSize,
+                'Content-Type': contentType,
+              };
+              res.writeHead(200, head);
+              fs.createReadStream(dir).pipe(res);
+            }
           }
         }
       });

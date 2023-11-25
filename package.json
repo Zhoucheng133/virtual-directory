@@ -1,6 +1,10 @@
 {
   "name": "vir_dir",
   "version": "3.0.0",
+  "productName": "Virtual Directory",
+  "author": {
+		"name": "zhouc"
+	},
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

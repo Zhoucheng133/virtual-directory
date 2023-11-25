@@ -6,7 +6,7 @@ module.exports = defineConfig({
 		electronBuilder: {
 			nodeIntegration: true,
 			builderOptions: {
-				"extraResources": ["./extraResources/**"],
+				"extraResources": ["./ui_interface/**"],
 				artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
 				mac: {
 					target: {

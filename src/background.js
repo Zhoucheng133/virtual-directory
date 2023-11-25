@@ -284,13 +284,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     }else if(req.originalUrl.startsWith('/api/downloadFile')){
       // 下载文件
       // Required: 文件地址[dir]
-      if(!Permission(req.get("username"), req.get("password"), username, password)){
+      if(!Permission(req.query.username, req.query.password, username, password)){
         res.json({ "status": "err" });
         return;
       }
       const dir=path.join(sharePath, req.query.dir);
       fs.stat(dir, (err, stats) => {
         if (err) {
+          console.log(err);
           res.end("Request ERR");
         } else {
           if (stats.isDirectory()) {
@@ -301,7 +302,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             var fileSize=stats.size;
             res.setHeader("Accept-Ranges","bytes");
             res.setHeader('Content-Length', fileSize);
-            res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
+            res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
             res.setHeader('Content-Type', 'application/octet-stream');
             stream.pipe(res);
           }

@@ -19,6 +19,7 @@ protocol.registerSchemesAsPrivileged([
 let win;
 
 async function createWindow() {
+  const path = require('path');
   win = new BrowserWindow({
     width: 400,
     height: 500,

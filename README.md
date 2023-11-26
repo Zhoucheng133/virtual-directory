@@ -8,7 +8,7 @@
 
 ## 效果图
 
-![在macOS上的效果图](_demo/shotcut_macOS.png)
+![在macOS上的效果图](build/截图.png)
 
 ## 使用说明
 

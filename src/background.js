@@ -2,7 +2,7 @@
 
 // yarn add mime-types
 
-import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -19,11 +19,13 @@ protocol.registerSchemesAsPrivileged([
 let win;
 
 async function createWindow() {
+  Menu.setApplicationMenu(null);
   const path = require('path');
   win = new BrowserWindow({
     width: 400,
     height: 500,
     resizable: false,
+    frame: false,
     icon: path.join(__dirname, 'build/icon.png'),
     titleBarStyle: 'hiddenInset',
     webPreferences: {

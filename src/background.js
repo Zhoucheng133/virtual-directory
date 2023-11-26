@@ -99,7 +99,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
   expressApp=express();
 
   // 设置静态文件夹
-  expressApp.use(express.static(path.join(__dirname, '../ui_interface/virtual-dir-page/dist')));
+  expressApp.use(express.static(path.join(__dirname, '../extraResources/virtual-dir-page/dist')));
   // 临时允许跨域
   expressApp.use(cors());
 
@@ -313,7 +313,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       res.json({"needLogin": username=="" && password=="" ? false : true, "username": CryptoJS.SHA256(username).toString(), "password": CryptoJS.SHA256(password).toString()});
     }else{
       // 否则返回Vue页面
-      res.sendFile(path.join(__dirname, '../ui_interface/virtual-dir-page/dist', 'index.html'));
+      res.sendFile(path.join(__dirname, '../extraResources/virtual-dir-page/dist', 'index.html'));
     }
   });
 

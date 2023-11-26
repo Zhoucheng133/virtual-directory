@@ -1,6 +1,4 @@
-# Virtual Directory (Next)
-
-测试版本
+# Virtual Directory
 
 前端页面[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
@@ -36,6 +34,7 @@ v2.1.0
   - 添加查看上传进度功能
   - 右键菜单添加了下载按钮
   - 修复视频需要加载完成才能播放的问题
+  - 修复多选时右键菜单识别错误
 
 - ### v2.1.0 (2023/9/11)
   - 添加一些文件的预览功能

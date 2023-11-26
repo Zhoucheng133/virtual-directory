@@ -23,6 +23,7 @@ async function createWindow() {
     width: 400,
     height: 500,
     resizable: false,
+    icon: path.join(__dirname, 'build/icon.png'),
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,

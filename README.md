@@ -1,7 +1,5 @@
 # Virtual Directory
 
-**这是开发版本**
-
 ![vue](https://img.shields.io/badge/vue.js-2.6.14-green?logo=vue.js)
 ![Electron](https://img.shields.io/badge/Electron-13-white)
 ![Antd](https://img.shields.io/badge/Antd-1.7.8-blue)

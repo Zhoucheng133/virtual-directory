@@ -1,5 +1,17 @@
 # Virtual Directory
 
+![vue](https://img.shields.io/badge/vue.js-2.6.14-green?logo=vue.js)
+![Electron](https://img.shields.io/badge/Electron-13-white)
+![Antd](https://img.shields.io/badge/Antd-1.7.8-blue)
+![express](https://img.shields.io/badge/express-4.18.2-red )
+![cors](https://img.shields.io/badge/cors-2.8.5-orange)
+![crypto-js](https://img.shields.io/badge/crypto_js-4.2.0-yellow)
+![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
+![multer](https://img.shields.io/badge/multer-1.4.5-purple)
+![vue-clipboard2](https://img.shields.io/badge/vue_clipboard2-0.3.3-lightblue)
+
+![License](https://img.shields.io/badge/License-MIT-dark_green)
+
 前端页面[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 经过测试的系统

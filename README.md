@@ -1,6 +1,16 @@
 # Virtual Directory
 
-**注意，这是开发分支**
+![vue](https://img.shields.io/badge/vue.js-2.6.14-green?logo=vue.js)
+![Electron](https://img.shields.io/badge/Electron-13-white)
+![Antd](https://img.shields.io/badge/Antd-1.7.8-blue)
+![express](https://img.shields.io/badge/express-4.18.2-red )
+![cors](https://img.shields.io/badge/cors-2.8.5-orange)
+![crypto-js](https://img.shields.io/badge/crypto_js-4.2.0-yellow)
+![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
+![multer](https://img.shields.io/badge/multer-1.4.5-purple)
+![vue-clipboard2](https://img.shields.io/badge/vue_clipboard2-0.3.3-lightblue)
+
+![License](https://img.shields.io/badge/License-MIT-dark_green)
 
 ![vue](https://img.shields.io/badge/vue.js-2.6.14-green?logo=vue.js)
 ![Electron](https://img.shields.io/badge/Electron-13-white)
@@ -37,11 +47,10 @@
 - **注意没有互联网连接时，在打开页面时可能出现问题**
 
 ## 目前最新版本
-~~v3.0.0~~  
-v2.1.0
+v3.0.0
 
 ## 更新日志
-- ### v3.0.0 (开发中)
+- ### v3.0.0 (2023/11/26)
   - 使用Webpack重新开发了客户端页面
   - 改进图标的显示
   - 使用客户端页面登录

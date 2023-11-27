@@ -1,5 +1,7 @@
 # Virtual Directory
 
+**这是开发版本**
+
 ![vue](https://img.shields.io/badge/vue.js-2.6.14-green?logo=vue.js)
 ![Electron](https://img.shields.io/badge/Electron-13-white)
 ![Antd](https://img.shields.io/badge/Antd-1.7.8-blue)
@@ -20,7 +22,17 @@
 
 ## 效果图
 
-![在macOS上的效果图](build/截图.png)
+### 服务端：
+
+![在macOS上的效果图](build/截图1.png)
+
+### 客户端：
+
+![客户端1](build/截图2.png)
+
+### 视频预览
+
+![客户端2](build/截图3.png)
 
 ## 使用说明
 

@@ -12,7 +12,9 @@
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 
-前端页面[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
+注意这个项目由两部分组成
+
+使用Vue开发的前端页面[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 经过测试的系统
 -  macOS 13.4

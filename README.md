@@ -9,6 +9,7 @@
 ![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
 ![multer](https://img.shields.io/badge/multer-1.4.5-purple)
 ![vue-clipboard2](https://img.shields.io/badge/vue_clipboard2-0.3.3-lightblue)
+![archiver](https://img.shields.io/badge/archiver-6.0.1-darkgreen)
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 

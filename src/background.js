@@ -11,6 +11,7 @@ const express = require('express');
 const CryptoJS = require("crypto-js");
 const multer = require('multer');
 const cors = require('cors');
+const archiver = require('archiver');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -312,6 +313,44 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
           }
         }
       });
+    }else if(req.originalUrl.startsWith('/api/multiDownload')){
+      // 多文件下载
+      // Required: 文件地址[dir], 文件[files]
+      if(!Permission(req.query.username, req.query.password, username, password)){
+        res.json({ "status": "err" });
+        return;
+      }
+      const filesToDownload = JSON.parse(req.query.files); // 指定要打包的文件名
+
+      const dir=path.join(sharePath, req.query.dir);
+
+      const zipFileName = path.basename(dir)+".zip";
+      const output = fs.createWriteStream(path.join(__dirname, '../extraResources/', zipFileName));
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      archive.on('error', function(err) {
+        res.status(500).send({ error: err.message });
+      });
+
+      filesToDownload.forEach((filename) => {
+        const filePath = path.join(dir, filename);
+        archive.file(filePath, { name: filename });
+      });
+
+      archive.pipe(output);
+      archive.finalize();
+
+      // 当输出流关闭时，发送zip文件给客户端
+      output.on('close', function() {
+        res.download(path.join(__dirname, '../extraResources/', zipFileName), zipFileName, function(err) {
+          // 删除生成的zip文件
+          fs.unlinkSync(path.join(__dirname, '../extraResources/', zipFileName));
+          if (err) {
+            console.error(err);
+            res.status(500).send('Error during download');
+          }
+        });
+      });
+
     }else if(req.originalUrl.startsWith('/api/authRequest')){
       // 账户请求
       res.json({"needLogin": username=="" && password=="" ? false : true, "username": CryptoJS.SHA256(username).toString(), "password": CryptoJS.SHA256(password).toString()});

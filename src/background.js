@@ -353,7 +353,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
     }else if(req.originalUrl.startsWith('/api/authRequest')){
       // 账户请求
-      res.json({"needLogin": username=="" && password=="" ? false : true, "username": CryptoJS.SHA256(username).toString(), "password": CryptoJS.SHA256(password).toString()});
+      res.json({"needLogin": username=="" && password=="" ? false : true});
+    }else if(req.originalUrl.startsWith('/api/loginRequest')){
+      var usernameSHA=req.query.username;
+      var passwordSHA=req.query.password;
+      res.json({"status": CryptoJS.SHA256(username)==usernameSHA && CryptoJS.SHA256(password)==passwordSHA})
     }else{
       // 否则返回Vue页面
       res.sendFile(path.join(__dirname, '../extraResources/virtual-dir-page/dist', 'index.html'));

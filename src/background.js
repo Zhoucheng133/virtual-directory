@@ -97,6 +97,11 @@ function Permission(username, password, originalUsername, originalPassword){
   return false;
 }
 
+// 移除最后一个目录
+function removeLastDirectory(filePath) {
+  return filePath.replace(/\/[^/]*$/, '');
+}
+
 // 启动服务器
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
   const path = require('path');
@@ -112,26 +117,23 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     if(req.originalUrl.startsWith('/api/upload')){
       // 上传
       // Required: 上传的目录[dir]
-      if(!Permission(req.get("username"), req.get("password"), username, password)){
+      // console.log(req.query.username+": "+req.query.password);
+      if(!Permission(req.query.username, req.query.password, username, password)){
         res.json({ "status": "err" });
         return;
       }
+      // var webkitRelativePaths = req.body.paths;
+      const flag=req.query.isDir;
       try {
         var pathSave=path.join(sharePath, req.query.dir);
         const storage = multer.diskStorage({
           destination: function (req, file, cb) {
-            // const webkitRelativePath = file.webkitRelativePath;
-            const webkitRelativePath = req.body.webkitRelativePath;
-            if (webkitRelativePath && webkitRelativePath !== "") {
-              const dirPath = path.dirname(webkitRelativePath);
-              const targetDir = path.join(pathSave, dirPath);
-              // 创建目标文件夹
-              fs.ensureDirSync(targetDir);
-    
-              cb(null, targetDir);
-            } else {
-              cb(null, pathSave);
+            const fs = require('fs-extra');
+            if(flag=="true"){
+              pathSave=removeLastDirectory(pathSave);
             }
+            fs.ensureDirSync(pathSave);
+            cb(null, pathSave);
           },
           filename: function (req, file, cb) {
             cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));

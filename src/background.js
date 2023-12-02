@@ -119,7 +119,20 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       try {
         var pathSave=path.join(sharePath, req.query.dir);
         const storage = multer.diskStorage({
-          destination: pathSave,
+          destination: function (req, file, cb) {
+            // const webkitRelativePath = file.webkitRelativePath;
+            const webkitRelativePath = req.body.webkitRelativePath;
+            if (webkitRelativePath && webkitRelativePath !== "") {
+              const dirPath = path.dirname(webkitRelativePath);
+              const targetDir = path.join(pathSave, dirPath);
+              // 创建目标文件夹
+              fs.ensureDirSync(targetDir);
+    
+              cb(null, targetDir);
+            } else {
+              cb(null, pathSave);
+            }
+          },
           filename: function (req, file, cb) {
             cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
           }
@@ -244,16 +257,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.end("Not file")
             return;
           } else {
-            // const extension = path.extname(dir).toLowerCase();
-            // const contentType = getContentType(extension);
-            // const stream = fs.createReadStream(dir);
-            // var fileSize=stats.size;
-            // res.setHeader("Accept-Ranges","bytes");
-            // res.setHeader('Content-Length', fileSize);
-            // res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
-            // res.setHeader('Content-Type', contentType);
-            // stream.pipe(res);
-
             const extension = path.extname(dir).toLowerCase()
             const contentType = getContentType(extension);
             const stat = fs.statSync(dir);

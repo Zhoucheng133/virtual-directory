@@ -97,6 +97,11 @@ function Permission(username, password, originalUsername, originalPassword){
   return false;
 }
 
+// 移除最后一个目录
+function removeLastDirectory(filePath) {
+  return filePath.replace(/[\\\/][^\\\/]+$/, '');
+}
+
 // 启动服务器
 ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) => {
   const path = require('path');
@@ -112,14 +117,24 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
     if(req.originalUrl.startsWith('/api/upload')){
       // 上传
       // Required: 上传的目录[dir]
-      if(!Permission(req.get("username"), req.get("password"), username, password)){
+      // console.log(req.query.username+": "+req.query.password);
+      if(!Permission(req.query.username, req.query.password, username, password)){
         res.json({ "status": "err" });
         return;
       }
+      // var webkitRelativePaths = req.body.paths;
+      const flag=req.query.isDir;
       try {
         var pathSave=path.join(sharePath, req.query.dir);
         const storage = multer.diskStorage({
-          destination: pathSave,
+          destination: function (req, file, cb) {
+            const fs = require('fs-extra');
+            if(flag=="true"){
+              pathSave=removeLastDirectory(pathSave);
+            }
+            fs.ensureDirSync(pathSave);
+            cb(null, pathSave);
+          },
           filename: function (req, file, cb) {
             cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
           }
@@ -244,16 +259,6 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.end("Not file")
             return;
           } else {
-            // const extension = path.extname(dir).toLowerCase();
-            // const contentType = getContentType(extension);
-            // const stream = fs.createReadStream(dir);
-            // var fileSize=stats.size;
-            // res.setHeader("Accept-Ranges","bytes");
-            // res.setHeader('Content-Length', fileSize);
-            // res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
-            // res.setHeader('Content-Type', contentType);
-            // stream.pipe(res);
-
             const extension = path.extname(dir).toLowerCase()
             const contentType = getContentType(extension);
             const stat = fs.statSync(dir);

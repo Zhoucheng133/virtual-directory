@@ -99,7 +99,7 @@ function Permission(username, password, originalUsername, originalPassword){
 
 // 移除最后一个目录
 function removeLastDirectory(filePath) {
-  return filePath.replace(/\/[^/]*$/, '');
+  return filePath.replace(/[\\\/][^\\\/]+$/, '');
 }
 
 // 启动服务器

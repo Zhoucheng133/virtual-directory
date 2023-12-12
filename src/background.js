@@ -335,10 +335,14 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       archive.on('error', function(err) {
         res.status(500).send({ error: err.message });
       });
-
       filesToDownload.forEach((filename) => {
         const filePath = path.join(dir, filename);
-        archive.file(filePath, { name: filename });
+        if(fs.statSync(filePath).isFile()){
+          archive.file(filePath, { name: filename });
+        }else{
+          const relativePath = path.relative(dir, filePath);
+          archive.directory(filePath, relativePath);
+        }
       });
 
       archive.pipe(output);

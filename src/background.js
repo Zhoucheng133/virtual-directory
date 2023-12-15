@@ -335,8 +335,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.end("Not file")
             return;
           } else {
-            const timestamp = Date.now();
-            const compressedImagePath = path.join(__dirname, '../extraResources/Cache', `compressed_image_${timestamp}.jpg`);
+            const randomValue = Date.now() + Math.floor(Math.random() * 1000);
+            const compressedImagePath = path.join(__dirname, '../extraResources/Cache', `compressed_image_${randomValue}.jpg`);
             sharp(dir)
             .resize({width: 80, height: 80, fit: 'inside'})
             .withMetadata()

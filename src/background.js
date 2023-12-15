@@ -12,6 +12,7 @@ const CryptoJS = require("crypto-js");
 const multer = require('multer');
 const cors = require('cors');
 const archiver = require('archiver');
+const sharp = require('sharp');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -315,6 +316,51 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
             res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
             res.setHeader('Content-Type', 'application/octet-stream');
             stream.pipe(res);
+          }
+        }
+      });
+    }else if(req.originalUrl.startsWith('/api/imgPreview')){
+      // 图片预览
+      // Required: 文件地址[dir]
+      if(!Permission(req.query.username, req.query.password, username, password)){
+        res.json({ "status": "err" });
+        return;
+      }
+      const dir=path.join(sharePath, req.query.dir);
+      fs.stat(dir, (err, stats) => {
+        if (err) {
+          res.end("Request ERR");
+        } else {
+          if (stats.isDirectory()) {
+            res.end("Not file")
+            return;
+          } else {
+            const timestamp = Date.now();
+            const compressedImagePath = path.join(__dirname, '../extraResources/Cache', `compressed_image_${timestamp}.jpg`);
+            sharp(dir)
+            .resize({width: 80, height: 80, fit: 'inside'})
+            .withMetadata()
+            .toFile(compressedImagePath, (err, info) => {
+              if (err) {
+                console.error(`加载缩略图失败: ${err}`);
+                res.status(500).send('加载缩略图失败');
+              } else {
+                // 发送压缩后的图片到客户端
+                res.sendFile(compressedImagePath, {}, (err) => {
+                  if (err) {
+                    console.error(`加载缩略图失败: ${err}`);
+                    res.status(500).send('加载缩略图失败');
+                  } else {
+                    // 文件传输完成后删除文件
+                    fs.unlink(compressedImagePath, (err) => {
+                      if (err) {
+                        console.error(`自动删除缩略图失败 ${err}`);
+                      }
+                    });
+                  }
+                });
+              }
+            });
           }
         }
       });

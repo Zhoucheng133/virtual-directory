@@ -169,7 +169,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         res.json({ "list": "err" });
         return;
       }
-      console.log(sharePath+dir);
+      // console.log(sharePath+dir);
       fs.readdir(sharePath+dir, (err, files) => {
         if (err) {
           res.json({ "list": "err" });

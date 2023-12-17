@@ -397,11 +397,11 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       archive.finalize();
     
       archive.on('end', function () {
-        console.log('Archive finished');
+        // console.log('Archive finished');
       });
     
       res.on('close', function () {
-        console.log('Connection closed prematurely');
+        // console.log('Connection closed prematurely');
         archive.abort();
       });
 

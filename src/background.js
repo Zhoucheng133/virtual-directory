@@ -332,33 +332,27 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
           res.end("Request ERR");
         } else {
           if (stats.isDirectory()) {
-            res.end("Not file")
+            res.end("Not file");
             return;
           } else {
-            const randomValue = Date.now() + Math.floor(Math.random() * 1000);
-            const compressedImagePath = path.join(__dirname, '../extraResources/Cache', `compressed_image_${randomValue}.jpg`);
+            // const randomValue = Date.now() + Math.floor(Math.random() * 1000);
             sharp(dir)
-            .resize({width: 80, height: 80, fit: 'inside'})
+            .resize({ width: 80, height: 80, fit: 'inside' })
             .withMetadata()
-            .toFile(compressedImagePath, (err, info) => {
+            .toBuffer((err, buffer) => {
               if (err) {
                 console.error(`加载缩略图失败: ${err}`);
                 res.status(500).send('加载缩略图失败');
               } else {
-                // 发送压缩后的图片到客户端
-                res.sendFile(compressedImagePath, {}, (err) => {
-                  if (err) {
-                    console.error(`加载缩略图失败: ${err}`);
-                    res.status(500).send('加载缩略图失败');
-                  } else {
-                    // 文件传输完成后删除文件
-                    fs.unlink(compressedImagePath, (err) => {
-                      if (err) {
-                        console.error(`自动删除缩略图失败 ${err}`);
-                      }
-                    });
-                  }
+                const compressedImageBase64 = buffer.toString('base64');
+                // const dataUrl = `data:image/jpeg;base64,${compressedImageBase64}`;
+                
+                // 直接将压缩后的图片通过响应发送给客户端
+                res.writeHead(200, {
+                  'Content-Type': 'image/jpeg',
+                  'Content-Length': buffer.length
                 });
+                res.end(buffer, 'binary');
               }
             });
           }

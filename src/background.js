@@ -376,7 +376,7 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
       const dir=path.join(sharePath, req.query.dir);
 
       const zipFileName = path.basename(dir)+".zip";
-      const output = fs.createWriteStream(path.join(__dirname, '../extraResources/', zipFileName));
+      res.setHeader('Content-disposition', 'attachment; filename=' + zipFileName);
       const archive = archiver('zip', { zlib: { level: 9 } });
       archive.on('error', function(err) {
         res.status(500).send({ error: err.message });
@@ -391,19 +391,18 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
         }
       });
 
-      archive.pipe(output);
-      archive.finalize();
+      archive.pipe(res);
 
-      // 当输出流关闭时，发送zip文件给客户端
-      output.on('close', function() {
-        res.download(path.join(__dirname, '../extraResources/', zipFileName), zipFileName, function(err) {
-          // 删除生成的zip文件
-          fs.unlinkSync(path.join(__dirname, '../extraResources/', zipFileName));
-          if (err) {
-            console.error(err);
-            res.status(500).send('Error during download');
-          }
-        });
+      // 完成后结束响应
+      archive.finalize();
+    
+      archive.on('end', function () {
+        console.log('Archive finished');
+      });
+    
+      res.on('close', function () {
+        console.log('Connection closed prematurely');
+        archive.abort();
       });
 
     }else if(req.originalUrl.startsWith('/api/authRequest')){

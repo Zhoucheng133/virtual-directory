@@ -369,8 +369,8 @@ ipcMain.on("serverOn", async (event, sharePath, sharePort, username, password) =
 
       const dir=path.join(sharePath, req.query.dir);
 
-      const zipFileName = path.basename(dir)+".zip";
-      res.setHeader('Content-disposition', 'attachment; filename=' + zipFileName);
+      const zipFileName = encodeURIComponent(path.basename(dir)+".zip");
+      res.setHeader('Content-disposition', `attachment; filename=${zipFileName}`);
       const archive = archiver('zip', { zlib: { level: 9 } });
       archive.on('error', function(err) {
         res.status(500).send({ error: err.message });

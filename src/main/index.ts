@@ -3,8 +3,10 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+let mainWindow;
+
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 700,
     height: 500,
     show: false,
@@ -45,8 +47,11 @@ app.whenReady().then(() => {
   })
 })
 
-ipcMain.on('close', ()=>{
+ipcMain.on('closeApp', ()=>{
   app.quit();
+})
+ipcMain.on('minApp', ()=>{
+  mainWindow.minimize();
 })
 
 app.on('window-all-closed', () => {

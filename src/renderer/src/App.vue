@@ -1,7 +1,3 @@
-<!-- <script setup lang="ts">
-const ipcHandle = () => window.electron.ipcRenderer.send('ping')
-</script> -->
-
 <template>
   <div class="titleBar">
     <div class="dragArea"></div>

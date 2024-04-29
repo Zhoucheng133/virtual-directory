@@ -9,6 +9,7 @@ function createWindow(): void {
     height: 500,
     show: false,
     autoHideMenuBar: true,
+    resizable: false,
     titleBarStyle: "hidden",
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {

@@ -23,6 +23,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "bootstrap-icons": "^1.11.3",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

@@ -41,5 +41,17 @@ export default defineStore('formData', ()=>{
     }));
   })
 
-  return { easyMode, port, dir, write, read, del, useLogin, username, password };
+  const setForm=(val:any)=>{
+    easyMode.value=val.easyMode;
+    port.value=val.port;
+    dir.value=val.dir;
+    write.value=val.write;
+    read.value=val.read;
+    del.value=val.del;
+    useLogin.value=val.useLogin;
+    username.value=val.username;
+    password.value=val.password;
+  }
+
+  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm };
 })

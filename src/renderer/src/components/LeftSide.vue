@@ -40,6 +40,15 @@
 
 <script setup lang="ts">
 import formData from '@renderer/stores/formData';
+import { onMounted } from 'vue';
+
+onMounted(()=>{
+  const form=localStorage.getItem('form');
+  if(form){
+    const data=JSON.parse(form);
+    formData().setForm(data);
+  }
+})
 </script>
 
 <style scoped>

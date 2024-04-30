@@ -26,6 +26,7 @@
     "ant-design-vue": "4.x",
     "bootstrap-icons": "^1.11.3",
     "dayjs": "^1.11.11",
+    "express": "^4.19.2",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

@@ -7,6 +7,15 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import logData from '@renderer/stores/logData';
+import { onMounted } from 'vue';
+
+onMounted(()=>{
+  logData().initLog();
+})
+</script>
+
 <style scoped>
 .runButton{
   margin-top: 20px;

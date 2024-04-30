@@ -27,6 +27,19 @@ export default defineStore('formData', ()=>{
       read.value=true;
     }
   })
+  watch([easyMode, port, dir, write, read, del, useLogin, username, password], ()=>{
+    localStorage.setItem("form", JSON.stringify({
+      easyMode: easyMode.value,
+      port: port.value,
+      dir: dir.value,
+      write: write.value,
+      read: read.value,
+      del: del.value,
+      useLogin: useLogin.value,
+      username: username.value,
+      password: password.value
+    }));
+  })
 
   return { easyMode, port, dir, write, read, del, useLogin, username, password };
 })

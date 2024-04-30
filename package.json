@@ -25,6 +25,7 @@
     "@electron-toolkit/utils": "^3.0.0",
     "ant-design-vue": "4.x",
     "bootstrap-icons": "^1.11.3",
+    "dayjs": "^1.11.11",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

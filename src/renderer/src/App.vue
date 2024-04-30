@@ -8,10 +8,16 @@
       <i class="bi bi-x"></i>
     </div>
   </div>
+  <div class="mainPage">
+    <LeftSide class="pageComponent" />
+    <RightSide class="pageComponent" />
+  </div>
 </template>
 
 
 <script setup lang="ts">
+import LeftSide from './components/LeftSide.vue';
+import RightSide from './components/RightSide.vue';
 const closeApp=()=>{
   window.electron.ipcRenderer.send("closeApp");
 }
@@ -27,6 +33,13 @@ body{
 </style>
 
 <style scoped>
+.pageComponent{
+  flex: 1;
+  height: calc(100vh - 30px);
+}
+.mainPage{
+  display: flex;
+}
 .minButton:hover{
   background-color: rgb(240, 240, 240);
 }

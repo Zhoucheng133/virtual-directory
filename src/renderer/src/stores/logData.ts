@@ -11,7 +11,7 @@ export default defineStore('logStore', ()=>{
 
   const initLog=()=>{
     log.value.push({
-      time: dayjs(new Date()).format("YYYY-MM-DD hh:mm"),
+      time: dayjs(new Date()).format("HH:mm"),
       content: "初始化成功"
     })
   }

@@ -55,7 +55,7 @@ onMounted(()=>{
 .bg{
   width: 100%;
   padding: 30px;
-  padding-top: 10px;
+  padding-top: 20px;
   user-select: none;
 }
 .bi-question{

@@ -27,6 +27,10 @@ onMounted(()=>{
   display: grid;
   grid-template-columns: auto 70px;
   font-size: 14px;
+  color: grey;
+  height: 30px;
+  /* background-color: red; */
+  align-items: center;
 }
 .runButton{
   margin-top: 20px;
@@ -37,7 +41,10 @@ onMounted(()=>{
   background-color: rgb(250, 250, 250);
   border-radius: 10px;
   overflow: auto;
-  padding: 20px;
+  /* padding: 15px; */
+  padding-top: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .bg{
   width: 100%;

@@ -23,6 +23,8 @@ export default defineStore('formData', ()=>{
       read.value=false;
       write.value=true;
       del.value=false;
+    }else{
+      read.value=true;
     }
   })
 

@@ -16,10 +16,12 @@
 <script setup lang="ts">
 import formData from '@renderer/stores/formData';
 import logData from '@renderer/stores/logData';
+import { message } from 'ant-design-vue';
 import { onMounted } from 'vue';
 
 const copyIP=()=>{
   navigator.clipboard.writeText(logData().ip+':'+formData().port);
+  message.success("复制成功！");
 }
 
 onMounted(()=>{

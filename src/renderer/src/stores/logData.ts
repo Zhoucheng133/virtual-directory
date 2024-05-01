@@ -16,5 +16,12 @@ export default defineStore('logStore', ()=>{
     })
   }
 
-  return { log, initLog };
+  const addLog=(val: string)=>{
+    log.value.push({
+      time: dayjs(new Date()).format("HH:mm"),
+      content: val,
+    })
+  }
+
+  return { log, initLog, addLog };
 })

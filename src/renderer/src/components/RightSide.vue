@@ -16,6 +16,9 @@ import { onMounted } from 'vue';
 
 onMounted(()=>{
   logData().initLog();
+  window.electron.ipcRenderer.invoke('getIP').then((response)=>{
+    logData().addLog("本机地址: "+response);
+  })
 })
 </script>
 

@@ -8,6 +8,7 @@ export default defineStore('logStore', ()=>{
     content: string,
   }
   let log=ref<Log[]>([]);
+  let ip=ref("");
 
   const initLog=()=>{
     log.value.push({
@@ -23,5 +24,10 @@ export default defineStore('logStore', ()=>{
     })
   }
 
-  return { log, initLog, addLog };
+  const setIP=(val: string)=>{
+    ip.value=val;
+    addLog("本机地址: "+ip.value);
+  }
+
+  return { log, initLog, addLog, setIP, ip };
 })

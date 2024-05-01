@@ -14,8 +14,10 @@
       </a-form-item>
       <a-form-item label="映射目录">
         <div style="display: flex; align-items: center;">
-          <a-input v-model:value="formData().dir"></a-input>
-          <a-button style="margin-left: 10px;">浏览</a-button>
+          <a-tooltip placement="bottom" :title="formData().dir">
+            <a-input v-model:value="formData().dir" spellcheck="false" disabled></a-input>
+          </a-tooltip>
+          <a-button style="margin-left: 10px;" @click="formData().selectDir">浏览</a-button>
         </div>
       </a-form-item>
       <a-form-item label="设置权限">
@@ -41,7 +43,6 @@
 <script setup lang="ts">
 import formData from '@renderer/stores/formData';
 import { onMounted } from 'vue';
-
 onMounted(()=>{
   const form=localStorage.getItem('form');
   if(form){

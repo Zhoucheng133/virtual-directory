@@ -41,6 +41,12 @@ export default defineStore('formData', ()=>{
     }));
   })
 
+  const selectDir=()=>{
+    window.electron.ipcRenderer.invoke('selectDir').then((response)=>{
+      dir.value=response;
+    })
+  };
+
   const setForm=(val:any)=>{
     easyMode.value=val.easyMode;
     port.value=val.port;
@@ -53,5 +59,5 @@ export default defineStore('formData', ()=>{
     password.value=val.password;
   }
 
-  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm };
+  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm, selectDir };
 })

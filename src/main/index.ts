@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -78,4 +78,15 @@ ipcMain.handle('getIP', ()=>{
     }
   }
   return addr[0];
+})
+
+// 浏览本地目录
+ipcMain.handle('selectDir', async ()=>{
+  let returnPath="";
+  await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  }).then((path)=>{
+    returnPath=path.filePaths[0];
+  })
+  return returnPath;
 })

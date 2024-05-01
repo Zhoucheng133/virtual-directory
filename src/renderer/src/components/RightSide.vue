@@ -8,7 +8,9 @@
     </div>
     <div class="buttonArea" style="display: flex; justify-content: space-between;">
       <a-button @click="copyIP">复制服务地址</a-button>
-      <a-button class="runButton" type="primary">启动服务</a-button>
+      <a-button class="runButton" type="primary" @click="mainData().toggleRun" :danger="mainData().onRunning ? true : false">
+        {{ mainData().onRunning ? '停止服务' : '启动服务' }}
+      </a-button>
     </div>
   </div>
 </template>
@@ -16,6 +18,7 @@
 <script setup lang="ts">
 import formData from '@renderer/stores/formData';
 import logData from '@renderer/stores/logData';
+import mainData from '@renderer/stores/mainData';
 import { message } from 'ant-design-vue';
 import { onMounted } from 'vue';
 

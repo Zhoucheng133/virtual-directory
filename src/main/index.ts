@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { networkInterfaces } from 'os';
 
 let mainWindow;
 
@@ -47,15 +48,34 @@ app.whenReady().then(() => {
   })
 })
 
-ipcMain.on('closeApp', ()=>{
-  app.quit();
-})
-ipcMain.on('minApp', ()=>{
-  mainWindow.minimize();
-})
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+// 下面是主进程函数
+
+// 关闭App
+ipcMain.on('closeApp', ()=>{
+  app.quit();
+})
+
+// 最小化App
+ipcMain.on('minApp', ()=>{
+  mainWindow.minimize();
+})
+
+// 获取IP地址
+ipcMain.handle('getIP', ()=>{
+  const interfaces = networkInterfaces();
+  let addr:string[]=[];
+  for (const interfaceName in interfaces) {
+    for (const details of interfaces[interfaceName] ?? []) {
+      if (details.family === 'IPv4') {
+        addr.push(details.address);
+      }
+    }
+  }
+  return addr[0];
 })

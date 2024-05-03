@@ -102,11 +102,11 @@ ipcMain.handle('selectDir', async ()=>{
 // 运行服务
 ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp=express();
-  expressApp.use(cors);
+  expressApp.use(cors());
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
 
   // 指向页面
-  expressApp.get('/', async(_req, res)=>{
+  expressApp.get('/', async(_req: any, res: any)=>{
     res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
   })
 

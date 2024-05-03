@@ -3,8 +3,10 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { networkInterfaces } from 'os';
+import express from 'express';
 
 let mainWindow;
+let expressApp;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -89,4 +91,8 @@ ipcMain.handle('selectDir', async ()=>{
     returnPath=path.filePaths[0];
   })
   return returnPath;
+})
+
+ipcMain.handle('runServe', ()=>{
+  expressApp=express();
 })

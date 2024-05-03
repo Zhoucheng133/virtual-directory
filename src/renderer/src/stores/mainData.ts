@@ -17,6 +17,7 @@ export default defineStore('mainData', ()=>{
         return;
       }else if(formData().useLogin && (formData().username.length==0 || formData().password.length==0)){
         message.error("用户信息不能为空");
+        return;
       }
       onRunning.value=true;
     }

@@ -1,5 +1,6 @@
 <template>
-  <Main v-if="stores().isLogin" />
+  <Loading v-if="stores().loading" />
+  <Main v-else-if="stores().isLogin" />
   <Login v-else />
 </template>
 
@@ -7,6 +8,7 @@
 import stores from './stores';
 import Login from './components/Login.vue';
 import Main from './components/Main.vue';
+import Loading from './components/Loading.vue';
 import { onMounted } from 'vue';
 
 onMounted(()=>{

@@ -17,6 +17,7 @@ export default defineStore('index', ()=>{
   let data=ref<data[]>([]);
   const baseURL="http://127.0.0.1:8088";
   let isLogin=ref(false);
+  let loading=ref(true);
 
   const loginController=async (username: string, password: string)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
@@ -43,7 +44,8 @@ export default defineStore('index', ()=>{
         await loginController(jsonData.username, jsonData.password);
       }
     }
+    loading.value=false;
   }
 
-  return { path, data, isLogin, init, loginController };
+  return { path, data, isLogin, init, loginController, loading };
 })

@@ -121,7 +121,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
 
   // 登陆请求
   expressApp.get('/api/login', async(req: any, res: any)=>{
-    const name=req.query.name;
+    const name=req.query.username;
     const pass=req.query.password;
     const mypass=CryptoJS.SHA256(password);
     if(pass==mypass && name==username){

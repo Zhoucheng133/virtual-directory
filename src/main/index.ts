@@ -7,6 +7,7 @@ import express from 'express';
 import path from 'path';
 import http from "http";
 import * as CryptoJS from 'crypto-js';
+import cors from 'cors';
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
@@ -98,8 +99,10 @@ ipcMain.handle('selectDir', async ()=>{
   return returnPath;
 })
 
+// 运行服务
 ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp=express();
+  expressApp.use(cors);
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
 
   // 指向页面

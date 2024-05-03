@@ -6,9 +6,10 @@ import { networkInterfaces } from 'os';
 import express from 'express';
 import path from 'path';
 import http from "http";
+import * as CryptoJS from 'crypto-js';
 
-let mainWindow;
-let expressApp;
+let mainWindow: BrowserWindow;
+let expressApp: any;
 var sockets: any[] = [];
 let server: any;
 
@@ -97,16 +98,44 @@ ipcMain.handle('selectDir', async ()=>{
   return returnPath;
 })
 
-ipcMain.handle('runServer', (_event, port)=>{
+ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp=express();
-  // expressApp.use(express.static(path.join(__dirname, '../dist/virtual-dir-page/dist')));
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
+
+  // 指向页面
   expressApp.get('/', async(_req, res)=>{
     res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
   })
 
+  // 判断是否需要登陆
+  expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
+    if(username.length==0){
+      res.send(false);
+    }else{
+      res.send(true);
+    }
+  })
+
+  // 登陆请求
+  expressApp.get('/api/login', async(req: any, res: any)=>{
+    const name=req.query.name;
+    const pass=req.query.password;
+    const mypass=CryptoJS.SHA256(password);
+    if(pass==mypass && name==username){
+      res.send(true);
+    }else{
+      res.send(false);
+    }
+  })
+
+  // TODO 获取数据
+  expressApp.get('/api/getData', async(req: any, res: any)=>{
+    const innerPath=req.query.path;
+    res.send(localPath+'/'+innerPath);
+  })
+
   server = http.createServer(expressApp);
-  server.on("connection", function (socket) {
+  server.on("connection", function (socket: any) {
 		sockets.push(socket);
 		socket.once("close", function () {
 			sockets.splice(sockets.indexOf(socket), 1);

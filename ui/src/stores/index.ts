@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import axios from "axios";
+// import axios from "axios";
 
 export default defineStore('index', ()=>{
 
@@ -15,16 +15,16 @@ export default defineStore('index', ()=>{
   let path=ref<string[]>(['根目录', '测试目录1', '测试目录2', '测试目录3', '测试目录4']);
   let data=ref<data[]>([]);
 
-  const baseURL="localhost:5678";
+  // const baseURL="localhost:5678";
   
-  const getData=async ()=>{
-    const response=await axios.get(`${baseURL}/api/getdata`, {
-      params: {
-        username: "",
-        password: "",
-      }
-    });
-  }
+  // const getData=async ()=>{
+  //   const response=await axios.get(`${baseURL}/api/getdata`, {
+  //     params: {
+  //       username: "",
+  //       password: "",
+  //     }
+  //   });
+  // }
 
   // getData();
 

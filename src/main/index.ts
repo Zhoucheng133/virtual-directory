@@ -4,9 +4,13 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { networkInterfaces } from 'os';
 import express from 'express';
+import path from 'path';
+import http from "http";
 
 let mainWindow;
 let expressApp;
+var sockets: any[] = [];
+let server: any;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -93,6 +97,34 @@ ipcMain.handle('selectDir', async ()=>{
   return returnPath;
 })
 
-ipcMain.handle('runServe', ()=>{
+ipcMain.handle('runServer', (_event, port)=>{
   expressApp=express();
+  // expressApp.use(express.static(path.join(__dirname, '../dist/virtual-dir-page/dist')));
+  expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
+  expressApp.get('/', async(_req, res)=>{
+    res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
+  })
+
+  server = http.createServer(expressApp);
+  server.on("connection", function (socket) {
+		sockets.push(socket);
+		socket.once("close", function () {
+			sockets.splice(sockets.indexOf(socket), 1);
+		});
+	});
+  server.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+})
+
+ipcMain.handle('stopServer', ()=>{
+  sockets.forEach(function(socket){
+		socket.destroy();
+	});
+  if(server){
+    server.close(() => {
+      return true;
+    });
+  }
+  return false;
 })

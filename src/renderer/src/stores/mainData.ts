@@ -10,6 +10,7 @@ export default defineStore('mainData', ()=>{
     if(onRunning.value){
       // 停止运行
       onRunning.value=false;
+      window.electron.ipcRenderer.invoke('stopServer');
     }else{
       // 运行服务
       if(formData().dir.length==0){
@@ -19,7 +20,7 @@ export default defineStore('mainData', ()=>{
         message.error("用户信息不能为空");
         return;
       }
-      window.electron.ipcRenderer.invoke('runServer', formData().port)
+      window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, formData().username, formData().password)
       onRunning.value=true;
     }
   }

@@ -1,17 +1,15 @@
 <template>
-  <Main v-if="isLogin" />
+  <Main v-if="stores().isLogin" />
   <Login v-else />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import stores from './stores';
 import Login from './components/Login.vue';
 import Main from './components/Main.vue';
-let isLogin=ref(false);
-const userData=localStorage.getItem("userData");
-if(userData){
+import { onMounted } from 'vue';
 
-}else{
-  
-}
+onMounted(()=>{
+  stores().init();
+})
 </script>

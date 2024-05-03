@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-// import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default defineStore('index', ()=>{
 
@@ -26,6 +26,7 @@ export default defineStore('index', ()=>{
       }
     });
     if(loginfeedback.data){
+      isLogin.value=true;
       return true;
     }
     return false;
@@ -39,9 +40,7 @@ export default defineStore('index', ()=>{
       const userData=localStorage.getItem('userData');
       if(userData){
         const jsonData=JSON.parse(userData);
-        if(await loginController(jsonData.username, jsonData.password)){
-          isLogin.value=true;
-        }
+        await loginController(jsonData.username, jsonData.password);
       }
     }
   }

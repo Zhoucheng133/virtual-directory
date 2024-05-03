@@ -1,7 +1,7 @@
 <template>
   <div class="bg">
     <div class="panel">
-      <div class="title">登陆</div>
+      <div class="title">登录</div>
       <div class="inputArea">
         <a-form layout="vertical">
           <a-form-item label="用户名">
@@ -10,9 +10,12 @@
           <a-form-item label="密码">
             <a-input-password v-model:value="password"></a-input-password>
           </a-form-item>
+          <a-form-item>
+            <a-checkbox v-model:checked="saveLogin">记住账户和密码</a-checkbox>
+          </a-form-item>
         </a-form>
       </div>
-      <div class="loginButton">
+      <div class="loginButton" @click="login">
         <i class="bi bi-arrow-right-short"></i>
       </div>
     </div>
@@ -20,10 +23,28 @@
 </template>
 
 <script setup lang="ts">
+import { message } from 'ant-design-vue';
+import stores from '../stores';
 import { ref } from 'vue';
 
 let username=ref("");
 let password=ref("");
+let saveLogin=ref(false);
+document.title="虚拟目录: 登录";
+
+const login=async ()=>{
+  if(await stores().loginController(username.value, password.value)){
+    if(saveLogin.value){
+      localStorage.setItem("userData", JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }));
+    }
+    message.success("登录成功");
+  }else{      
+    message.error("用户名或者密码有误");
+  }
+}
 
 </script>
 
@@ -54,7 +75,7 @@ let password=ref("");
   transition: background-color linear .2s;
 }
 .inputArea{
-  height: calc(100% - 100px);
+  height: calc(100% - 70px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -64,6 +85,7 @@ let password=ref("");
   font-weight: bold;
 }
 .panel{
+  user-select: none;
   width: 300px;
   height: 400px;
   border-radius: 10px;

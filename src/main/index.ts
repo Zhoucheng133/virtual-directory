@@ -150,7 +150,82 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // TODO 获取数据
+  const getExt = (fileName: string) => {
+    if (!fileName) return undefined; // 处理文件名为 undefined 或 null 的情况
+    const parts = fileName.split('.');
+    if (parts.length === 1) return undefined; // 如果文件名没有扩展名，则返回 undefined
+    return parts.pop()!.toLowerCase(); // 使用非空断言确保 pop() 方法不会返回 undefined
+  };
+
+  const getType=(fileName: string)=>{
+    const ext=getExt(fileName);
+    if(ext){
+      switch (ext){
+        case 'png':
+        case 'jpg':
+        case 'jpeg':
+        case 'gif':
+        case 'svg':
+          return 'image';
+        case 'xls':
+        case 'xlsx':
+          return 'xls'
+        case 'txt':
+        case 'c':
+        case 'cpp':
+        case 'swift':
+        case 'java':
+        case 'dart':
+        case 'vue':
+        case 'css':
+        case 'js':
+        case 'json':
+        case 'md':
+        case 'php':
+        case 'py':
+        case 'ruby':
+        case 'cs':
+        case 'sql':
+        case 'go':
+          return 'txt'
+        case 'doc':
+        case 'docx':
+          return 'document';
+        case 'html':
+          return 'html';
+        case 'ppt':
+        case 'pptx':
+          return 'ppt';
+        case '7z':
+        case 'rar':
+        case 'zip':
+        case 'tar':
+        case 'gz':
+          return 'zip';
+        case 'mp3':
+        case 'wav':
+        case 'ogg':
+        case 'flac':
+        case 'm4a':
+          return 'audio';
+        case 'mp4':
+        case 'avi':
+        case 'mkv':
+        case 'mov':
+        case 'rmvb':
+          return 'video';
+        case 'pdf':
+          return 'pdf';
+        case 'bt':
+          return 'bt';
+        default:
+          return '';
+      }
+    }
+    return "";
+  }
+
+  // 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
 
     const innerPath=JSON.parse(req.query.path);
@@ -162,7 +237,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
       try {
         // console.log(path.join(localPath, ...innerPath));
         const files=fs.readdirSync(path.join(localPath, ...innerPath));
-        files.forEach(item => {
+        files.forEach(async item => {
           const itemPath = path.join(localPath, ...innerPath, item);
           const stats = fs.statSync(itemPath);
           dirs.push({
@@ -170,7 +245,8 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
             isFile: stats.isFile(),
             isSelected: false,
             fileName: item,
-            size:stats.isFile() ? formatFileSize(stats.size): null
+            size:stats.isFile() ? formatFileSize(stats.size): null,
+            type: stats.isFile() ? getType(item) : "dir",
           })
         })
         res.json({

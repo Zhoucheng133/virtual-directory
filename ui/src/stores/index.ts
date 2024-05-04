@@ -11,6 +11,7 @@ export default defineStore('index', ()=>{
     isSelected: boolean,
     fileName: string,
     size: string,
+    type: string
   }
 
   let path=ref<string[]>(['根目录']);

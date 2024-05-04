@@ -153,22 +153,29 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     
     let dirs: any[]=[];
     if(loginController(name, pass)){
-      const files=fs.readdirSync(localPath);
-      files.forEach(item => {
-        const itemPath = path.join(localPath, item);
-        const stats = fs.statSync(itemPath);
-        dirs.push({
-          id: uuidv4(),
-          isFile: stats.isFile(),
-          isSelected: false,
-          fileName: item,
-          size:stats.isFile() ? stats.size: 0
+      try {
+        const files=fs.readdirSync(localPath);
+        files.forEach(item => {
+          const itemPath = path.join(localPath, item);
+          const stats = fs.statSync(itemPath);
+          dirs.push({
+            id: uuidv4(),
+            isFile: stats.isFile(),
+            isSelected: false,
+            fileName: item,
+            size:stats.isFile() ? stats.size: 0
+          })
         })
-      })
-      res.json({
-        ok: true,
-        data: dirs
-      })
+        res.json({
+          ok: true,
+          data: dirs
+        })
+      } catch (error) {
+        res.json({
+          ok: false,
+          data: "目录不存在"
+        });
+      }
     }else{
       res.json({
         ok: false,

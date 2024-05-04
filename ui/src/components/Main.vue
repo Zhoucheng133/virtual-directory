@@ -1,25 +1,32 @@
 <template>
   <div class="mainPage" ref="mainPageRef">
-    <div class="head" :style="{width: pageWidth-20+'px'}">
-      <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}">
-        <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
+    <div class="fixedArea">
+      <div class="head" :style="{width: pageWidth-20+'px'}">
+        <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}">
+          <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
+        </div>
       </div>
-    </div>
-    <div class="opHead" :style="{width: pageWidth-20+'px'}">
+      <div class="opHead" :style="{width: pageWidth-20+'px'}">
 
-    </div>
-    <div class="tableHead" :style="{width: pageWidth-20+'px'}">
-      <div class="tableHeadItem"></div>
-      <div class="tableHeadItem"></div>
-      <div class="tableHeadItem">文件名称</div>
-      <div class="tableHeadItem">大小</div>
+      </div>
+      <div class="selectText" :style="{width: pageWidth-20+'px'}">
+        已选择 {{ stores().selectedCount }} 个项目
+      </div>
+      <div class="tableHead" :style="{width: pageWidth-20+'px'}">
+        <div class="tableHeadItem"></div>
+        <div class="tableHeadItem"></div>
+        <div class="tableHeadItem">文件名称</div>
+        <div class="tableHeadItem">大小</div>
+      </div>
     </div>
     <div class="content">
       <div  v-for="(item, index) in stores().data" :key="index" :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
         <div class="tableItem" style="justify-content: center; display: flex;">
           <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
         </div>
-        <div class="tableItem"></div>
+        <div class="tableItem">
+          <img :src="stores().getIconSrc(item)" width="30px" draggable="false">
+        </div>
         <div class="tableItem">{{ item.fileName }}</div>
         <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
       </div>
@@ -47,6 +54,17 @@ body{
 </style>
 
 <style scoped>
+.selectText{
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+.fixedArea{
+  position: fixed;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
 .tableSelected{
   background-color: rgb(245, 245, 245);
 }
@@ -54,15 +72,15 @@ body{
   background-color: rgb(240, 240, 240);
 }
 .opHead{
-  position: fixed;
-  top: 50px;
+  /* position: fixed; */
+  /* top: 50px; */
   border: 1px solid pink;
   height: 40px;
   background-color: white;
   z-index: 10;
 }
 .content{
-  margin-top: 120px;
+  margin-top: 160px;
 }
 .tableGrid, .tableSelected{
   display: grid;
@@ -77,13 +95,13 @@ body{
   display: grid;
   grid-template-columns: 50px 50px auto 100px;
   /* max-width: 1000px; */
-  position: fixed;
+  /* position: fixed; */
   height: 30px;
   align-items: center;
   /* border: 1px solid blue; */
   background-color: white;
-  top: 90px;
-  z-index: 10;
+  /* top: 90px; */
+  /* z-index: 10; */
   border-bottom: 1px solid lightgrey;
 }
 .pathText:hover{
@@ -103,7 +121,7 @@ body{
   align-items: center;
 }
 .head{
-  position: fixed;
+  /* position: fixed; */
   height: 50px;
   /* background-color: red; */
   /* border: 1px solid; */
@@ -113,7 +131,7 @@ body{
   overflow: auto;
   /* border: 1px solid red; */
   background-color: white;
-  top: 0;
+  /* top: 0; */
   z-index: 10;
 }
 ::-webkit-scrollbar {

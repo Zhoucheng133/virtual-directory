@@ -1,7 +1,21 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import * as CryptoJS from 'crypto-js';
+
+import audioIcon from "../assets/fileIcons/audio.svg";
+import btIcon from "../assets/fileIcons/bt.svg";
+import folerIcon from "../assets/fileIcons/folder.svg";
+import htmlIcon from "../assets/fileIcons/html.svg";
+import imageIcon from "../assets/fileIcons/image.svg";
+import pdfIcon from "../assets/fileIcons/pdf.svg";
+import pptIcon from "../assets/fileIcons/ppt.svg";
+import txtIcon from "../assets/fileIcons/txt.svg";
+import unkownIcon from "../assets/fileIcons/unkown.svg";
+import videoIcon from "../assets/fileIcons/video.svg";
+import wordIcon from "../assets/fileIcons/word.svg";
+import xlsIcon from "../assets/fileIcons/xls.svg";
+import zipIcon from "../assets/fileIcons/zip.svg";
 
 export default defineStore('index', ()=>{
 
@@ -23,6 +37,7 @@ export default defineStore('index', ()=>{
     username: "",
     password: ""
   });
+  let selectedCount=ref(0);
 
   const loginController=async (username: string, password: string)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
@@ -101,6 +116,46 @@ export default defineStore('index', ()=>{
       });
     }
   }
+  const getIconSrc=(item: Data)=>{
+    if(!item.isFile){
+      return folerIcon;
+    }
+    switch(item.type){
+      case 'image':
+        return imageIcon;
+      case 'document':
+        return wordIcon;
+      case 'pdf':
+        return pdfIcon;
+      case 'audio':
+        return audioIcon;
+      case 'zip':
+        return zipIcon;
+      case 'ppt':
+        return pptIcon;
+      case 'txt':
+        return txtIcon;
+      case 'video':
+        return videoIcon;
+      case 'html':
+        return htmlIcon;
+      case 'xls':
+        return xlsIcon;
+      case 'bt':
+        return btIcon;
+    }
+    return unkownIcon;
+  }
 
-  return { path, data, isLogin, init, loginController, loading, getData };
+  watch(data, ()=>{
+    selectedCount.value=0
+    data.value.forEach(item=>{
+      if(item.isSelected){
+        selectedCount.value+=1;
+      }
+    })
+  }, {deep: true})
+    
+
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount };
 })

@@ -26,14 +26,15 @@
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.21",
+    "@types/uuid": "^9.0.8",
     "ant-design-vue": "4.x",
     "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
     "express": "^4.19.2",
-    "nanoid": "^5.0.7",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",

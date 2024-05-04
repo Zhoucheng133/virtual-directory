@@ -146,17 +146,17 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   // TODO 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
 
-    // const innerPath=req.query.path;
-    
+    const innerPath=JSON.parse(req.query.path);
     const name=req.query.username;
     const pass=req.query.password;
     
     let dirs: any[]=[];
     if(loginController(name, pass)){
       try {
-        const files=fs.readdirSync(localPath);
+        console.log(path.join(localPath, ...innerPath));
+        const files=fs.readdirSync(path.join(localPath, ...innerPath));
         files.forEach(item => {
-          const itemPath = path.join(localPath, item);
+          const itemPath = path.join(localPath, ...innerPath, item);
           const stats = fs.statSync(itemPath);
           dirs.push({
             id: uuidv4(),

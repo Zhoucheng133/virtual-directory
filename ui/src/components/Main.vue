@@ -5,6 +5,9 @@
         <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
       </div>
     </div>
+    <div class="opHead" :style="{width: pageWidth-20+'px'}">
+
+    </div>
     <div class="tableHead" :style="{width: pageWidth-20+'px'}">
       <div class="tableHeadItem"></div>
       <div class="tableHeadItem"></div>
@@ -12,8 +15,10 @@
       <div class="tableHeadItem">大小</div>
     </div>
     <div class="content">
-      <div class="tableGrid" v-for="(item, index) in stores().data" :key="index">
-        <div class="tableItem"></div>
+      <div  v-for="(item, index) in stores().data" :key="index" :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
+        <div class="tableItem" style="justify-content: center; display: flex;">
+          <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
+        </div>
         <div class="tableItem"></div>
         <div class="tableItem">{{ item.fileName }}</div>
         <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
@@ -42,27 +47,44 @@ body{
 </style>
 
 <style scoped>
-.content{
-  margin-top: 80px;
+.tableSelected{
+  background-color: rgb(245, 245, 245);
 }
-.tableGrid{
+.tableGrid:hover, .tableSelected:hover{
+  background-color: rgb(240, 240, 240);
+}
+.opHead{
+  position: fixed;
+  top: 50px;
+  border: 1px solid pink;
+  height: 40px;
+  background-color: white;
+  z-index: 10;
+}
+.content{
+  margin-top: 120px;
+}
+.tableGrid, .tableSelected{
   display: grid;
   grid-template-columns: 50px 50px auto 100px;
-  height: 30px;
+  height: 40px;
   align-items: center;
-  border: 1px solid green;
+  border-radius: 10px;
+  transition: background-color linear .2s;
+  /* border: 1px solid green; */
 }
 .tableHead{
   display: grid;
   grid-template-columns: 50px 50px auto 100px;
   /* max-width: 1000px; */
   position: fixed;
-  margin-top: 50px;
   height: 30px;
   align-items: center;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   background-color: white;
-  top: 0;
+  top: 90px;
+  z-index: 10;
+  border-bottom: 1px solid lightgrey;
 }
 .pathText:hover{
   color: #1677ff !important;
@@ -89,9 +111,10 @@ body{
   display: flex;
   align-items: center;
   overflow: auto;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   background-color: white;
   top: 0;
+  z-index: 10;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -119,6 +142,7 @@ body{
   max-width: 1000px;
   margin: auto;
   user-select: none;
+  padding-bottom: 20px;
   /* height: 200px; */
   /* background-color: red; */
 }

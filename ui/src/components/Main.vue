@@ -13,7 +13,9 @@
         已选择 {{ stores().selectedCount }} 个项目
       </div>
       <div class="tableHead" :style="{width: pageWidth-20+'px'}">
-        <div class="tableHeadItem"></div>
+        <div class="tableHeadItem" style="justify-content: center; display: flex;">
+          <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect"></a-checkbox>
+        </div>
         <div class="tableHeadItem"></div>
         <div class="tableHeadItem">文件名称</div>
         <div class="tableHeadItem">大小</div>

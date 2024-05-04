@@ -38,6 +38,7 @@ export default defineStore('index', ()=>{
     password: ""
   });
   let selectedCount=ref(0);
+  let allSelect=ref(false);
 
   const loginController=async (username: string, password: string)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
@@ -152,10 +153,25 @@ export default defineStore('index', ()=>{
     data.value.forEach(item=>{
       if(item.isSelected){
         selectedCount.value+=1;
+      }else{
+        allSelect.value=false;
       }
     })
   }, {deep: true})
+  
+  const allSelectToggle=()=>{
     
+    if(!allSelect.value){
+      data.value.forEach(item=>{
+        item.isSelected=false;
+      })
+      // allSelect.value=false;
+    }else{
+      data.value.forEach(item=>{
+        item.isSelected=true;
+      }) // allSelect.value=true;
+    }
+  }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount };
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect };
 })

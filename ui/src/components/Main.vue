@@ -11,6 +11,14 @@
       <div class="tableHeadItem">文件名称</div>
       <div class="tableHeadItem">大小</div>
     </div>
+    <div class="content">
+      <div class="tableGrid" v-for="(item, index) in stores().data" :key="index">
+        <div class="tableItem"></div>
+        <div class="tableItem"></div>
+        <div class="tableItem">{{ item.fileName }}</div>
+        <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,6 +42,16 @@ body{
 </style>
 
 <style scoped>
+.content{
+  margin-top: 80px;
+}
+.tableGrid{
+  display: grid;
+  grid-template-columns: 50px 50px auto 100px;
+  height: 30px;
+  align-items: center;
+  border: 1px solid green;
+}
 .tableHead{
   display: grid;
   grid-template-columns: 50px 50px auto 100px;

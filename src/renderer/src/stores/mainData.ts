@@ -20,7 +20,12 @@ export default defineStore('mainData', ()=>{
         message.error("用户信息不能为空");
         return;
       }
-      window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, formData().username, formData().password)
+      if(formData().useLogin){
+        window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, formData().username, formData().password)
+      }else{
+        window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, '', '')
+      }
+      
       onRunning.value=true;
     }
   }

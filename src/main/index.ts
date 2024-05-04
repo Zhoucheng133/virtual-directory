@@ -119,6 +119,14 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  const loginController=(name: string, pass: string)=>{
+    const mypass=CryptoJS.SHA256(password).toString();
+    if(pass==mypass && name==username){
+      return true;
+    }
+    return false;
+  }
+
   // 登陆请求
   expressApp.get('/api/login', async(req: any, res: any)=>{
     const name=req.query.username;

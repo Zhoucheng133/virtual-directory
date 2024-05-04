@@ -153,7 +153,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     let dirs: any[]=[];
     if(loginController(name, pass)){
       try {
-        console.log(path.join(localPath, ...innerPath));
+        // console.log(path.join(localPath, ...innerPath));
         const files=fs.readdirSync(path.join(localPath, ...innerPath));
         files.forEach(item => {
           const itemPath = path.join(localPath, ...innerPath, item);

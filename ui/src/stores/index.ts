@@ -5,7 +5,7 @@ import * as CryptoJS from 'crypto-js';
 
 export default defineStore('index', ()=>{
 
-  interface data{
+  interface Data{
     id: string,
     isFile: boolean,
     isSelected: boolean,
@@ -13,8 +13,8 @@ export default defineStore('index', ()=>{
     size: number,
   }
 
-  let path=ref<string[]>(['根目录', '测试目录1', '测试目录2', '测试目录3', '测试目录4']);
-  let data=ref<data[]>([]);
+  let path=ref<string[]>(['根目录', 'Feedback']);
+  let data=ref<Data[]>([]);
   const baseURL="http://127.0.0.1:8088";
   let isLogin=ref(false);
   let loading=ref(true);
@@ -55,5 +55,17 @@ export default defineStore('index', ()=>{
     loading.value=false;
   }
 
-  return { path, data, isLogin, init, loginController, loading };
+  const getData=async ()=>{
+    const response=await axios.get(baseURL+'/api/getData', {
+      params: {
+        path: JSON.stringify(path.value.slice(1)),
+        username: userData.value.username,
+        password: CryptoJS.SHA256(userData.value.password).toString()
+      }
+    });
+    console.log(response.data);
+    
+  }
+
+  return { path, data, isLogin, init, loginController, loading, getData };
 })

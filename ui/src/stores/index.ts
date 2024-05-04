@@ -18,6 +18,10 @@ export default defineStore('index', ()=>{
   const baseURL="http://127.0.0.1:8088";
   let isLogin=ref(false);
   let loading=ref(true);
+  let userData=ref({
+    username: "",
+    password: ""
+  });
 
   const loginController=async (username: string, password: string)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
@@ -27,6 +31,10 @@ export default defineStore('index', ()=>{
       }
     });
     if(loginfeedback.data){
+      userData.value={
+        username: username,
+        password: password,
+      }
       isLogin.value=true;
       return true;
     }

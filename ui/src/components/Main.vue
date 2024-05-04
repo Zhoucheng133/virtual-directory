@@ -14,9 +14,8 @@
       </div>
       <div class="tableHead" :style="{width: pageWidth-20+'px'}">
         <div class="tableHeadItem" style="justify-content: center; display: flex;">
-          <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect"></a-checkbox>
+          <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
         </div>
-        <div class="tableHeadItem"></div>
         <div class="tableHeadItem">文件名称</div>
         <div class="tableHeadItem">大小</div>
       </div>
@@ -95,7 +94,7 @@ body{
 }
 .tableHead{
   display: grid;
-  grid-template-columns: 50px 50px auto 100px;
+  grid-template-columns: 100px auto 100px;
   /* max-width: 1000px; */
   /* position: fixed; */
   height: 30px;

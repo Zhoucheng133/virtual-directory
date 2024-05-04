@@ -55,6 +55,31 @@ export default defineStore('index', ()=>{
     loading.value=false;
   }
 
+  const customSort=(a: any, b: any)=>{
+    let i = 0;
+
+    while (i < a.length && i < b.length) {
+      const charA = a.charAt(i);
+      const charB = b.charAt(i);
+
+      if (charA !== charB) {
+        if (isNaN(charA) || isNaN(charB)) {
+          // 如果不是数字，则按照默认字符串比较规则排序
+          return charA.localeCompare(charB);
+        } else {
+          // 如果是数字，则按照数字大小从小到大排序
+          const numA = parseInt(a.substring(i), 10) || 0;
+          const numB = parseInt(b.substring(i), 10) || 0;
+
+          return numA - numB;
+        }
+      }
+
+      i++;
+    }
+    return a.length - b.length;
+  }
+
   const getData=async ()=>{
     const response=await axios.get(baseURL+'/api/getData', {
       params: {
@@ -65,7 +90,14 @@ export default defineStore('index', ()=>{
     });
     // console.log(response.data);
     if(response.data.ok){
-      data.value=response.data.data;
+      data.value=response.data.data.sort((a: Data, b: Data)=>{
+        if(a.isFile && !b.isFile){
+          return 1;
+        }else if(!a.isFile && b.isFile){
+          return -1;
+        }
+        return customSort(a.fileName, b.fileName)
+      });
     }
   }
 

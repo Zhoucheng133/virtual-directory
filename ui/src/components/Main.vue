@@ -61,6 +61,8 @@ body{
   height: 30px;
   align-items: center;
   border: 1px solid blue;
+  background-color: white;
+  top: 0;
 }
 .pathText:hover{
   color: #1677ff !important;
@@ -88,6 +90,8 @@ body{
   align-items: center;
   overflow: auto;
   border: 1px solid red;
+  background-color: white;
+  top: 0;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -109,7 +113,9 @@ body{
   background-color: grey;
 }
 .mainPage{
-  padding: 10px;
+  /* padding: 10px; */
+  padding-left: 10px;
+  padding-right: 10px;
   max-width: 1000px;
   margin: auto;
   user-select: none;

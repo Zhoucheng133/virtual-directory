@@ -21,15 +21,29 @@
       </div>
     </div>
     <div class="content">
-      <div  v-for="(item, index) in stores().data" :key="index" :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
-        <div class="tableItem" style="justify-content: center; display: flex;">
-          <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
-        </div>
-        <div class="tableItem">
-          <img :src="stores().getIconSrc(item)" width="30px" draggable="false">
-        </div>
-        <div class="tableItem">{{ item.fileName }}</div>
-        <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
+      <div  v-for="(item, index) in stores().data" :key="index">
+        <a-dropdown :trigger="['contextmenu']">
+          <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
+            <div class="tableItem" style="justify-content: center; display: flex;">
+              <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
+            </div>
+            <div class="tableItem">
+              <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
+            </div>
+            <div class="tableItem">{{ item.fileName }}</div>
+            <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
+          </div>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item key="1">打开</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="2"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="3"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
+              <a-menu-item key="4"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
     </div>
   </div>
@@ -55,6 +69,9 @@ body{
 </style>
 
 <style scoped>
+.tableItem{
+  font-size: 14px;
+}
 .selectText{
   height: 30px;
   display: flex;

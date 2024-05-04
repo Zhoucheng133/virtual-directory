@@ -143,6 +143,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  const formatFileSize=(bytes: number)=>{
+    if (bytes === 0) return '0 Bytes';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
   // TODO 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
 
@@ -163,7 +170,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
             isFile: stats.isFile(),
             isSelected: false,
             fileName: item,
-            size:stats.isFile() ? stats.size: 0
+            size:stats.isFile() ? formatFileSize(stats.size): null
           })
         })
         res.json({

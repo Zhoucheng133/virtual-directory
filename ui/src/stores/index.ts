@@ -10,10 +10,10 @@ export default defineStore('index', ()=>{
     isFile: boolean,
     isSelected: boolean,
     fileName: string,
-    size: number,
+    size: string,
   }
 
-  let path=ref<string[]>(['根目录', 'Feedback']);
+  let path=ref<string[]>(['根目录']);
   let data=ref<Data[]>([]);
   const baseURL="http://127.0.0.1:8088";
   let isLogin=ref(false);
@@ -63,8 +63,10 @@ export default defineStore('index', ()=>{
         password: CryptoJS.SHA256(userData.value.password).toString()
       }
     });
-    console.log(response.data);
-    
+    // console.log(response.data);
+    if(response.data.ok){
+      data.value=response.data.data;
+    }
   }
 
   return { path, data, isLogin, init, loginController, loading, getData };

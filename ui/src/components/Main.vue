@@ -15,14 +15,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import stores from '../stores';
 const mainPageRef:any=ref(null);
 const pageWidth=ref(1000);
 window.onresize=()=>{
-  // console.log(mainPageRef.value.offsetWidth);
   pageWidth.value=mainPageRef.value.offsetWidth;
 }
+onMounted(()=>{
+  stores().getData();
+})
 </script>
 
 <style>

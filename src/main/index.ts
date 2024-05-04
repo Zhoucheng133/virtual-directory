@@ -8,6 +8,8 @@ import path from 'path';
 import http from "http";
 import * as CryptoJS from 'crypto-js';
 import cors from 'cors';
+import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
@@ -113,13 +115,16 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   // 判断是否需要登陆
   expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
     if(username.length==0){
-      res.send(false);
+      res.json(false);
     }else{
-      res.send(true);
+      res.json(true);
     }
   })
 
   const loginController=(name: string, pass: string)=>{
+    if(username.length==0){
+      return true;
+    }
     const mypass=CryptoJS.SHA256(password).toString();
     if(pass==mypass && name==username){
       return true;
@@ -131,18 +136,45 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp.get('/api/login', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    const mypass=CryptoJS.SHA256(password);
-    if(pass==mypass && name==username){
-      res.send(true);
+    if(loginController(name, pass)){
+      res.json(true);
     }else{
-      res.send(false);
+      res.json(false);
     }
   })
 
   // TODO 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
-    const innerPath=req.query.path;
-    res.send(localPath+'/'+innerPath);
+
+    // const innerPath=req.query.path;
+    
+    const name=req.query.username;
+    const pass=req.query.password;
+    
+    let dirs: any[]=[];
+    if(loginController(name, pass)){
+      const files=fs.readdirSync(localPath);
+      files.forEach(item => {
+        const itemPath = path.join(localPath, item);
+        const stats = fs.statSync(itemPath);
+        dirs.push({
+          id: uuidv4(),
+          isFile: stats.isFile(),
+          isSelected: false,
+          fileName: item,
+          size:stats.isFile() ? stats.size: 0
+        })
+      })
+      res.json({
+        ok: true,
+        data: dirs
+      })
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
   })
 
   server = http.createServer(expressApp);

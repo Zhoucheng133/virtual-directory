@@ -187,7 +187,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
         case 'bt':
           return 'bt';
         default:
-          return '';
+          return 'other';
       }
     }
     return "";

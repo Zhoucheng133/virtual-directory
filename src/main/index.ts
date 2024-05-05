@@ -10,6 +10,7 @@ import * as CryptoJS from 'crypto-js';
 import cors from 'cors';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import mime from 'mime-types';
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
@@ -192,6 +193,11 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     return "";
   }
 
+  const getContentType=(extension: any)=>{
+    const contentType = mime.contentType(extension);
+    return contentType || 'application/octet-stream';
+  }
+
   // 登录请求
   const loginController=(name: string, pass: string)=>{
     if(username.length==0){
@@ -226,6 +232,67 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
       res.json(true);
     }else{
       res.json(false);
+    }
+  })
+
+  // 获取文件信息
+  expressApp.get('/api/getFile', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    
+    const filePath=JSON.parse(req.query.path);
+    if(loginController(name, pass)){
+      const dir=path.join(localPath, ...filePath);
+      fs.stat(dir, (err, stats) => {
+        if(err){
+          res.json({
+            ok: false,
+            data: "文件不存在"
+          });
+        }else{
+          if (stats.isDirectory()) {
+            res.json({
+              ok: false,
+              data: "文件不存在"
+            });
+          }else{
+            const extension = path.extname(dir).toLowerCase()
+            const contentType = getContentType(extension);
+            const stat = fs.statSync(dir);
+            const fileSize = stat.size;
+            const range = req.headers.range;
+            if (range) {
+              const parts = range.replace(/bytes=/, '').split('-');
+              const start = parseInt(parts[0], 10);
+              const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+          
+              const chunksize = (end - start) + 1;
+              const file = fs.createReadStream(dir, { start, end });
+              const head = {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunksize,
+                'Content-Type': contentType,
+              };
+          
+              res.writeHead(206, head);
+              file.pipe(res);
+            } else {
+              const head = {
+                'Content-Length': fileSize,
+                'Content-Type': contentType,
+              };
+              res.writeHead(200, head);
+              fs.createReadStream(dir).pipe(res);
+            }
+          }
+        }
+      })
+    }else{
+      res.json({
+        ok: false,
+        data: "目录不存在"
+      });
     }
   })
 

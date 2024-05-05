@@ -42,7 +42,9 @@
               <div class="tableItem" @click="stores().openHandler(item)">
                 <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
               </div>
-              <div class="tableItem" @click="stores().openHandler(item)">{{ item.fileName }}</div>
+              <div class="tableItem" @click="stores().openHandler(item)">
+                <div class="fileName">{{ item.fileName }}</div>
+              </div>
               <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
             </div>
             <template #overlay>
@@ -164,11 +166,19 @@ body{
   display: flex;
   align-items: center;
 }
+.fileName{
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .tableItem{
   font-size: 14px;
   height: 100%;
   display: flex;
   align-items: center;
+  width: 100%;
+  overflow: hidden;
 }
 .selectText{
   height: 30px;

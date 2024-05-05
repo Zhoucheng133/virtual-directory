@@ -32,17 +32,17 @@
       </div>
     </div>
     <div class="content">
-      <div v-for="(item, index) in stores().data" :key="index" @click="stores().openHandler(item)">
+      <div v-for="(item, index) in stores().data" :key="index">
         <a-dropdown :trigger="['contextmenu']">
           <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
             <div class="tableItem" style="justify-content: center; display: flex;">
               <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
             </div>
-            <div class="tableItem">
+            <div class="tableItem" @click="stores().openHandler(item)">
               <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
             </div>
-            <div class="tableItem">{{ item.fileName }}</div>
-            <div class="tableItem">{{ item.isFile ? item.size: '' }}</div>
+            <div class="tableItem" @click="stores().openHandler(item)">{{ item.fileName }}</div>
+            <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
           </div>
           <template #overlay>
             <a-menu>
@@ -153,6 +153,9 @@ body{
 }
 .tableItem{
   font-size: 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 .selectText{
   height: 30px;

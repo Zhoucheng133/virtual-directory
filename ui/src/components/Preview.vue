@@ -5,8 +5,11 @@
     <div class="closeButton" @click="closePreview"><i class="bi bi-x"></i></div>
   </div>
   <div class="previewMain">
-    <vue-plyr>
+    <vue-plyr v-if="stores().preview.type=='video'">
       <video controls crossorigin playsinline :src="stores().preview.link"></video>
+    </vue-plyr>
+    <vue-plyr v-else-if="stores().preview.type=='audio'">
+      <audio controls crossorigin playsinline :src="stores().preview.link"></audio>
     </vue-plyr>
   </div>
 </template>
@@ -23,6 +26,10 @@ const closePreview=()=>{
 </script>
 
 <style>
+.plyr--audio{
+  display: flex !important;
+  justify-content: center !important;
+}
 .plyr{
   max-height: 80vh;
   max-width: 80vw;

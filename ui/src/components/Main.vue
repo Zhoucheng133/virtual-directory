@@ -70,12 +70,12 @@ import Preview from './Preview.vue';
 const mainPageRef=ref(null);
 const pageWidth=ref(1000);
 let previewIn=ref(true);
-
 const fadeOutPreview=()=>{
   previewIn.value=false;
   setTimeout(() => {
     previewIn.value=true;
   }, 300);
+  document.body.style.overflow = 'auto';
 }
 window.onresize=()=>{
   pageWidth.value=mainPageRef.value.offsetWidth;

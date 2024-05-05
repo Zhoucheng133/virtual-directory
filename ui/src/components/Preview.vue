@@ -17,6 +17,7 @@
 <script setup>
 import stores from '../stores';
 const emit=defineEmits(['fadeOut'])
+document.body.style.overflow = 'hidden';
 const closePreview=()=>{
   emit('fadeOut');
   setTimeout(() => {

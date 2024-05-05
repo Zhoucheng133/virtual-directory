@@ -39,6 +39,10 @@ export default defineStore('index', ()=>{
   });
   let selectedCount=ref(0);
   let allSelect=ref(false);
+  let preview=ref({
+    fileName: '',
+    type: ''
+  });
 
   const loginController=async (username: string, password: string)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
@@ -148,6 +152,12 @@ export default defineStore('index', ()=>{
   const openHandler=(item: Data)=>{
     if(item.isFile){
       // TODO 预览文件
+      if(item.type=='video'){
+        preview.value.type='video';
+        preview.value.fileName=item.fileName;
+        const videoURL=`${baseURL}/api/getFile?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
+
+      }
     }else{
       path.value.push(item.fileName);
       getData();
@@ -184,5 +194,12 @@ export default defineStore('index', ()=>{
     }
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir };
+  const setPreview=(type: string, fileName: string)=>{
+    preview.value={
+      type: type,
+      fileName: fileName
+    };
+  }
+
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview };
 })

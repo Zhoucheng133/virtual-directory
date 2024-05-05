@@ -58,13 +58,25 @@
       </div>
     </div>
   </div>
+  <div :class="previewIn ? 'preview':'previewOut'" v-if="stores().preview.type!=''">
+    <Preview @fadeOut="fadeOutPreview" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import stores from '../stores';
+import Preview from './Preview.vue';
 const mainPageRef:any=ref(null);
 const pageWidth=ref(1000);
+let previewIn=ref(true);
+
+const fadeOutPreview=()=>{
+  previewIn.value=false;
+  setTimeout(() => {
+    previewIn.value=true;
+  }, 300);
+}
 window.onresize=()=>{
   pageWidth.value=mainPageRef.value.offsetWidth;
 }
@@ -80,6 +92,37 @@ body{
 </style>
 
 <style scoped>
+@keyframes fadeIn {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  0%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+.previewOut{
+  animation: fadeOut .2s linear forwards;
+}
+.preview{
+  animation: fadeIn .2s linear forwards;
+}
+.preview, .previewOut{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+}
 .delButton_disabled{
   color: grey;
   margin-left: 15px;

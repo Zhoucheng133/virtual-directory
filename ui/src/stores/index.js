@@ -31,8 +31,7 @@ export default defineStore('index', ()=>{
   let selectedCount=ref(0);
   let allSelect=ref(false);
   let preview=ref({
-    fileName: '',
-    type: '',
+    item: {},
     link: '',
   });
 
@@ -143,9 +142,8 @@ export default defineStore('index', ()=>{
 
   const openHandler=(item)=>{
     if(item.isFile){
-      preview.value.fileName=item.fileName;
       preview.value.link=`${baseURL}/api/getFile?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
-      preview.value.type=item.type;
+      preview.value.item=item;
     }else{
       path.value.push(item.fileName);
       getData();
@@ -182,10 +180,9 @@ export default defineStore('index', ()=>{
     }
   }
 
-  const setPreview=(type, fileName)=>{
+  const setPreview=(type, item)=>{
     preview.value={
-      type: type,
-      fileName: fileName,
+      item: item,
       link: '',
     };
   }

@@ -1,18 +1,19 @@
 <template>
   <div class="titleBar">
-    <div class="fileName">{{ stores().preview.fileName }}</div>
+    <div class="fileName">{{ stores().preview.item.fileName }}</div>
     <div class="downloadButton">下载</div>
     <div class="closeButton" @click="closePreview"><i class="bi bi-x"></i></div>
   </div>
   <div class="previewMain">
-    <vue-plyr v-if="stores().preview.type=='video'">
+    <vue-plyr v-if="stores().preview.item.type=='video'">
       <video controls crossorigin playsinline :src="stores().preview.link"></video>
     </vue-plyr>
-    <vue-plyr v-else-if="stores().preview.type=='audio'">
+    <vue-plyr v-else-if="stores().preview.item.type=='audio'">
       <audio controls crossorigin playsinline :src="stores().preview.link"></audio>
     </vue-plyr>
-    <img v-else-if="stores().preview.type=='image'" :src="stores().preview.link" alt="" class="imagePreview">
-    <iframe v-else-if="stores().preview.type=='pdf'" :src="stores().preview.link" frameborder="0" class="pdfPreview"></iframe>
+    <img v-else-if="stores().preview.item.type=='image'" :src="stores().preview.link" alt="" class="imagePreview">
+    <iframe v-else-if="stores().preview.item.type=='pdf'" :src="stores().preview.link" frameborder="0" class="pdfPreview"></iframe>
+    <img v-else :src="stores().getIconSrc(stores().preview.item)" style="width: 100px;">
   </div>
 </template>
 
@@ -23,7 +24,7 @@ document.body.style.overflow = 'hidden';
 const closePreview=()=>{
   emit('fadeOut');
   setTimeout(() => {
-    stores().setPreview('', '');
+    stores().setPreview('', {});
   }, 200);
 }
 window.addEventListener("keydown", (event)=>{

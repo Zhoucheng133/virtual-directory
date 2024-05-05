@@ -60,7 +60,7 @@
       </div>
     </div>
   </div>
-  <div :class="previewIn ? 'preview':'previewOut'" v-if="stores().preview.type!=''">
+  <div :class="previewIn ? 'preview':'previewOut'" v-if="stores().preview.item.fileName">
     <Preview @fadeOut="fadeOutPreview" />
   </div>
 </template>

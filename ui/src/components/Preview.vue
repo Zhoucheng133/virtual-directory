@@ -11,6 +11,7 @@
     <vue-plyr v-else-if="stores().preview.type=='audio'">
       <audio controls crossorigin playsinline :src="stores().preview.link"></audio>
     </vue-plyr>
+    <img v-else-if="stores().preview.type=='image'" :src="stores().preview.link" alt="" class="imagePreview">
   </div>
 </template>
 
@@ -38,6 +39,10 @@ const closePreview=()=>{
 </style>
 
 <style scoped>
+.imagePreview{
+  max-width: 80vw;
+  max-height: 80vh;
+}
 .closeButton{
   margin-left: 10px;
   font-size: 25px;

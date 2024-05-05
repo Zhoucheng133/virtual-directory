@@ -63,11 +63,11 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref } from 'vue';
 import stores from '../stores';
 import Preview from './Preview.vue';
-const mainPageRef:any=ref(null);
+const mainPageRef=ref(null);
 const pageWidth=ref(1000);
 let previewIn=ref(true);
 

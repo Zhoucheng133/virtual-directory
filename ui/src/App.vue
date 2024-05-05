@@ -4,7 +4,7 @@
   <Login v-else />
 </template>
 
-<script setup lang="ts">
+<script setup>
 import stores from './stores';
 import Login from './components/Login.vue';
 import Main from './components/Main.vue';

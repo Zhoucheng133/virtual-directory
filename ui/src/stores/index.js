@@ -19,17 +19,8 @@ import zipIcon from "../assets/fileIcons/zip.svg";
 
 export default defineStore('index', ()=>{
 
-  interface Data{
-    id: string,
-    isFile: boolean,
-    isSelected: boolean,
-    fileName: string,
-    size: string,
-    type: string
-  }
-
-  let path=ref<string[]>(['根目录']);
-  let data=ref<Data[]>([]);
+  let path=ref(['根目录']);
+  let data=ref([]);
   const baseURL="http://127.0.0.1:8088";
   let isLogin=ref(false);
   let loading=ref(true);
@@ -41,10 +32,11 @@ export default defineStore('index', ()=>{
   let allSelect=ref(false);
   let preview=ref({
     fileName: '',
-    type: ''
+    type: '',
+    link: '',
   });
 
-  const loginController=async (username: string, password: string)=>{
+  const loginController=async (username, password)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
       params: {
         username: username,
@@ -76,7 +68,7 @@ export default defineStore('index', ()=>{
     loading.value=false;
   }
 
-  const customSort=(a: any, b: any)=>{
+  const customSort=(a, b)=>{
     let i = 0;
 
     while (i < a.length && i < b.length) {
@@ -108,7 +100,7 @@ export default defineStore('index', ()=>{
       }
     });
     if(response.data.ok){
-      data.value=response.data.data.sort((a: Data, b: Data)=>{
+      data.value=response.data.data.sort((a, b)=>{
         if(a.isFile && !b.isFile){
           return 1;
         }else if(!a.isFile && b.isFile){
@@ -118,7 +110,7 @@ export default defineStore('index', ()=>{
       });
     }
   }
-  const getIconSrc=(item: Data)=>{
+  const getIconSrc=(item)=>{
     if(!item.isFile){
       return folerIcon;
     }
@@ -149,14 +141,13 @@ export default defineStore('index', ()=>{
     return unkownIcon;
   }
 
-  const openHandler=(item: Data)=>{
+  const openHandler=(item)=>{
     if(item.isFile){
       // TODO 预览文件
       if(item.type=='video'){
         preview.value.type='video';
         preview.value.fileName=item.fileName;
-        const videoURL=`${baseURL}/api/getFile?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
-
+        preview.value.link=`${baseURL}/api/getFile?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
       }
     }else{
       path.value.push(item.fileName);
@@ -164,7 +155,7 @@ export default defineStore('index', ()=>{
     }
   }
 
-  const toDir=(item: string)=>{
+  const toDir=(item)=>{
     const index=path.value.indexOf(item);
     path.value.splice(index+1);
     getData();
@@ -194,10 +185,11 @@ export default defineStore('index', ()=>{
     }
   }
 
-  const setPreview=(type: string, fileName: string)=>{
+  const setPreview=(type, fileName)=>{
     preview.value={
       type: type,
-      fileName: fileName
+      fileName: fileName,
+      link: '',
     };
   }
 

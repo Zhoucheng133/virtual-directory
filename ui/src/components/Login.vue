@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { message } from 'ant-design-vue';
 import stores from '../stores';
 import { ref } from 'vue';

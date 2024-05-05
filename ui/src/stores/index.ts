@@ -87,11 +87,9 @@ export default defineStore('index', ()=>{
           // 如果是数字，则按照数字大小从小到大排序
           const numA = parseInt(a.substring(i), 10) || 0;
           const numB = parseInt(b.substring(i), 10) || 0;
-
           return numA - numB;
         }
       }
-
       i++;
     }
     return a.length - b.length;
@@ -152,10 +150,15 @@ export default defineStore('index', ()=>{
     if(item.isFile){
       // TODO 预览文件
     }else{
-      // TODO 打开文件夹
       path.value.push(item.fileName);
       getData();
     }
+  }
+
+  const toDir=(item: string)=>{
+    const index=path.value.indexOf(item);
+    path.value.splice(index+1);
+    getData();
   }
 
   watch(data, ()=>{
@@ -170,7 +173,6 @@ export default defineStore('index', ()=>{
   }, {deep: true})
   
   const allSelectToggle=()=>{
-    
     if(!allSelect.value){
       data.value.forEach(item=>{
         item.isSelected=false;
@@ -183,5 +185,5 @@ export default defineStore('index', ()=>{
     }
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler };
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir };
 })

@@ -2,7 +2,7 @@
   <div class="mainPage" ref="mainPageRef">
     <div class="fixedArea">
       <div class="head" :style="{width: pageWidth-20+'px'}">
-        <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}">
+        <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}" @click="stores().toDir(item)">
           <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
         </div>
       </div>
@@ -146,6 +146,7 @@ body{
   align-items: center;
   border-radius: 10px;
   transition: background-color linear .2s;
+  cursor: pointer;
   /* border: 1px solid green; */
 }
 .tableHead{
@@ -167,6 +168,7 @@ body{
 .pathText{
   transition: all linear .2s;
   cursor: pointer;
+  transition: color linear .2s;
 }
 .pathItem{
   white-space: nowrap;

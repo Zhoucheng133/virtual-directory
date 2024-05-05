@@ -77,7 +77,7 @@ const fadeOutPreview=()=>{
   setTimeout(() => {
     previewIn.value=true;
   }, 300);
-  document.body.style.overflow = 'auto';
+  document.body.style.overflowY = 'auto';
 }
 window.onresize=()=>{
   pageWidth.value=mainPageRef.value.offsetWidth;

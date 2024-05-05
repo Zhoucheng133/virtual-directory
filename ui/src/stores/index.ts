@@ -148,6 +148,7 @@ export default defineStore('index', ()=>{
     return unkownIcon;
   }
 
+
   watch(data, ()=>{
     selectedCount.value=0
     data.value.forEach(item=>{

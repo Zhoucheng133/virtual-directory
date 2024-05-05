@@ -7,7 +7,18 @@
         </div>
       </div>
       <div class="opHead" :style="{width: pageWidth-20+'px'}">
-
+        <a-dropdown-button type="primary">
+          上传
+          <template #overlay>
+          <a-menu>
+            <a-menu-item key="1">
+              上传文件夹
+            </a-menu-item>
+          </a-menu>
+        </template>
+        </a-dropdown-button>
+        <div class="newFolderButton">新建文件夹</div>
+        <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
       </div>
       <div class="selectText" :style="{width: pageWidth-20+'px'}">
         已选择 {{ stores().selectedCount }} 个项目
@@ -69,6 +80,34 @@ body{
 </style>
 
 <style scoped>
+.delButton_disabled{
+  color: grey;
+  margin-left: 15px;
+  cursor: pointer;
+  transition: color linear .2s;
+}
+.delButton:hover{
+  color: darkred;
+}
+.delButton{
+  color: red;
+  margin-left: 15px;
+  cursor: pointer;
+  transition: color linear .2s;
+}
+.newFolderButton:hover{
+  color: #0f5cc7;
+}
+.newFolderButton{
+  color: #1677ff;
+  margin-left: 15px;
+  cursor: pointer;
+  transition: color linear .2s;
+}
+.opHead{
+  display: flex;
+  align-items: center;
+}
 .tableItem{
   font-size: 14px;
 }
@@ -92,7 +131,7 @@ body{
 .opHead{
   /* position: fixed; */
   /* top: 50px; */
-  border: 1px solid pink;
+  /* border: 1px solid pink; */
   height: 40px;
   background-color: white;
   z-index: 10;

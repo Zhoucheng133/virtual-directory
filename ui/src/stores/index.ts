@@ -103,7 +103,6 @@ export default defineStore('index', ()=>{
         password: CryptoJS.SHA256(userData.value.password).toString()
       }
     });
-    // console.log(response.data);
     if(response.data.ok){
       data.value=response.data.data.sort((a: Data, b: Data)=>{
         if(a.isFile && !b.isFile){

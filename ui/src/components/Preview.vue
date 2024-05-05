@@ -5,7 +5,9 @@
     <div class="closeButton" @click="closePreview"><i class="bi bi-x"></i></div>
   </div>
   <div class="previewMain">
-    
+    <vue-plyr>
+      <video controls crossorigin playsinline :src="stores().preview.link"></video>
+    </vue-plyr>
   </div>
 </template>
 
@@ -20,6 +22,13 @@ const closePreview=()=>{
 }
 </script>
 
+<style>
+.plyr{
+  max-height: 80vh;
+  max-width: 80vw;
+}
+</style>
+
 <style scoped>
 .closeButton{
   margin-left: 10px;
@@ -30,6 +39,7 @@ const closePreview=()=>{
   display: flex;
   align-items: center;
   justify-content: center;
+  height: calc(100vh - 80px) ;
 }
 .downloadButton:hover{
   background-color: #0f5cc7;

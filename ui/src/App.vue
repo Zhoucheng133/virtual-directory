@@ -21,5 +21,6 @@ body{
   margin: 0;
   height: auto !important;
   width: auto !important;
+  overflow-x: hidden;
 }
 </style>

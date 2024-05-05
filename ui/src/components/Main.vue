@@ -1,60 +1,62 @@
 <template>
-  <div class="mainPage" ref="mainPageRef">
-    <div class="fixedArea">
-      <div class="head" :style="{width: pageWidth-20+'px'}">
-        <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}" @click="stores().toDir(item)">
-          <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
-        </div>
-      </div>
-      <div class="opHead" :style="{width: pageWidth-20+'px'}">
-        <a-dropdown-button type="primary">
-          上传
-          <template #overlay>
-          <a-menu>
-            <a-menu-item key="1">
-              上传文件夹
-            </a-menu-item>
-          </a-menu>
-        </template>
-        </a-dropdown-button>
-        <div class="newFolderButton">新建文件夹</div>
-        <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
-      </div>
-      <div class="selectText" :style="{width: pageWidth-20+'px'}">
-        已选择 {{ stores().selectedCount }} 个项目
-      </div>
-      <div class="tableHead" :style="{width: pageWidth-20+'px'}">
-        <div class="tableHeadItem" style="justify-content: center; display: flex;">
-          <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
-        </div>
-        <div class="tableHeadItem">文件名称</div>
-        <div class="tableHeadItem">大小</div>
-      </div>
-    </div>
-    <div class="content">
-      <div v-for="(item, index) in stores().data" :key="index">
-        <a-dropdown :trigger="['contextmenu']">
-          <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
-            <div class="tableItem" style="justify-content: center; display: flex;">
-              <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
-            </div>
-            <div class="tableItem" @click="stores().openHandler(item)">
-              <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
-            </div>
-            <div class="tableItem" @click="stores().openHandler(item)">{{ item.fileName }}</div>
-            <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
+  <div class="body">
+    <div class="mainPage" ref="mainPageRef">
+      <div class="fixedArea">
+        <div class="head" :style="{width: pageWidth-20+'px'}">
+          <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}" @click="stores().toDir(item)">
+            <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
           </div>
-          <template #overlay>
+        </div>
+        <div class="opHead" :style="{width: pageWidth-20+'px'}">
+          <a-dropdown-button type="primary">
+            上传
+            <template #overlay>
             <a-menu>
-              <a-menu-item key="1">打开</a-menu-item>
-              <a-menu-divider />
-              <a-menu-item key="2"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
-              <a-menu-divider />
-              <a-menu-item key="3"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
-              <a-menu-item key="4"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+              <a-menu-item key="1">
+                上传文件夹
+              </a-menu-item>
             </a-menu>
           </template>
-        </a-dropdown>
+          </a-dropdown-button>
+          <div class="newFolderButton">新建文件夹</div>
+          <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
+        </div>
+        <div class="selectText" :style="{width: pageWidth-20+'px'}">
+          已选择 {{ stores().selectedCount }} 个项目
+        </div>
+        <div class="tableHead" :style="{width: pageWidth-20+'px'}">
+          <div class="tableHeadItem" style="justify-content: center; display: flex;">
+            <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
+          </div>
+          <div class="tableHeadItem">文件名称</div>
+          <div class="tableHeadItem">大小</div>
+        </div>
+      </div>
+      <div class="content" :style="{width: pageWidth-20+'px'}">
+        <div v-for="(item, index) in stores().data" :key="index">
+          <a-dropdown :trigger="['contextmenu']">
+            <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
+              <div class="tableItem" style="justify-content: center; display: flex;">
+                <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
+              </div>
+              <div class="tableItem" @click="stores().openHandler(item)">
+                <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
+              </div>
+              <div class="tableItem" @click="stores().openHandler(item)">{{ item.fileName }}</div>
+              <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
+            </div>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item key="1">打开</a-menu-item>
+                <a-menu-divider />
+                <a-menu-item key="2"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
+                <a-menu-divider />
+                <a-menu-item key="3"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
+                <a-menu-item key="4"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </div>
       </div>
     </div>
   </div>
@@ -258,12 +260,17 @@ body{
 ::-webkit-scrollbar-thumb:hover{
   background-color: grey;
 }
+.body{
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
 .mainPage{
   /* padding: 10px; */
   padding-left: 10px;
   padding-right: 10px;
   max-width: 1000px;
-  margin: auto;
+  /* margin: auto; */
   user-select: none;
   padding-bottom: 20px;
   /* height: 200px; */

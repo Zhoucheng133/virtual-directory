@@ -26,6 +26,11 @@ const closePreview=()=>{
     stores().setPreview('', '');
   }, 200);
 }
+window.addEventListener("keydown", (event)=>{
+  if(event.key=='Escape'){
+    closePreview();
+  }
+})
 </script>
 
 <style>

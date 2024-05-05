@@ -12,6 +12,7 @@
       <audio controls crossorigin playsinline :src="stores().preview.link"></audio>
     </vue-plyr>
     <img v-else-if="stores().preview.type=='image'" :src="stores().preview.link" alt="" class="imagePreview">
+    <iframe v-else-if="stores().preview.type=='pdf'" :src="stores().preview.link" frameborder="0" class="pdfPreview"></iframe>
   </div>
 </template>
 
@@ -39,6 +40,11 @@ const closePreview=()=>{
 </style>
 
 <style scoped>
+.pdfPreview{
+  height: calc(100vh - 50px);
+  width: 100vw;
+  margin-top: 30px;
+}
 .imagePreview{
   max-width: 80vw;
   max-height: 80vh;

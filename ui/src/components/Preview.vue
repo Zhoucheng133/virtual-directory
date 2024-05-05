@@ -81,7 +81,7 @@ const closePreview=()=>{
 .titleBar{
   user-select: none;
   padding-left: 20px;
-  padding-right: 50px;
+  padding-right: 20px;
   height: 50px;
   display: flex;
   align-items: center;

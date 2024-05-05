@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="content">
-      <div  v-for="(item, index) in stores().data" :key="index">
+      <div v-for="(item, index) in stores().data" :key="index" @click="stores().openHandler(item)">
         <a-dropdown :trigger="['contextmenu']">
           <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
             <div class="tableItem" style="justify-content: center; display: flex;">

@@ -148,6 +148,15 @@ export default defineStore('index', ()=>{
     return unkownIcon;
   }
 
+  const openHandler=(item: Data)=>{
+    if(item.isFile){
+      // TODO 预览文件
+    }else{
+      // TODO 打开文件夹
+      path.value.push(item.fileName);
+      getData();
+    }
+  }
 
   watch(data, ()=>{
     selectedCount.value=0
@@ -174,5 +183,5 @@ export default defineStore('index', ()=>{
     }
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect };
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler };
 })

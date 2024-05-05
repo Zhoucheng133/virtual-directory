@@ -107,42 +107,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp.use(cors());
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
 
-  // 指向页面
-  expressApp.get('/', async(_req: any, res: any)=>{
-    res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
-  })
-
-  // 判断是否需要登陆
-  expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
-    if(username.length==0){
-      res.json(false);
-    }else{
-      res.json(true);
-    }
-  })
-
-  const loginController=(name: string, pass: string)=>{
-    if(username.length==0){
-      return true;
-    }
-    const mypass=CryptoJS.SHA256(password).toString();
-    if(pass==mypass && name==username){
-      return true;
-    }
-    return false;
-  }
-
-  // 登陆请求
-  expressApp.get('/api/login', async(req: any, res: any)=>{
-    const name=req.query.username;
-    const pass=req.query.password;
-    if(loginController(name, pass)){
-      res.json(true);
-    }else{
-      res.json(false);
-    }
-  })
-
+  // 格式化文件大小显示
   const formatFileSize=(bytes: number)=>{
     if (bytes === 0) return '0 Bytes';
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -150,6 +115,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  // 获取后缀名
   const getExt = (fileName: string) => {
     if (!fileName) return undefined; // 处理文件名为 undefined 或 null 的情况
     const parts = fileName.split('.');
@@ -157,6 +123,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     return parts.pop()!.toLowerCase(); // 使用非空断言确保 pop() 方法不会返回 undefined
   };
 
+  // 解析文件类型
   const getType=(fileName: string)=>{
     const ext=getExt(fileName);
     if(ext){
@@ -224,6 +191,43 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
     return "";
   }
+
+  // 登录请求
+  const loginController=(name: string, pass: string)=>{
+    if(username.length==0){
+      return true;
+    }
+    const mypass=CryptoJS.SHA256(password).toString();
+    if(pass==mypass && name==username){
+      return true;
+    }
+    return false;
+  }
+
+  // 指向页面
+  expressApp.get('/', async(_req: any, res: any)=>{
+    res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
+  })
+
+  // 判断是否需要登陆
+  expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
+    if(username.length==0){
+      res.json(false);
+    }else{
+      res.json(true);
+    }
+  })
+
+  // 登陆请求
+  expressApp.get('/api/login', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    if(loginController(name, pass)){
+      res.json(true);
+    }else{
+      res.json(false);
+    }
+  })
 
   // 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{

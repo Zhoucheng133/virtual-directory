@@ -145,11 +145,7 @@ export default defineStore('index', ()=>{
     if(item.isFile){
       preview.value.fileName=item.fileName;
       preview.value.link=`${baseURL}/api/getFile?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
-      if(item.type=='video'){
-        preview.value.type='video';
-      }else if(item.type=='audio'){
-        preview.value.type='audio';
-      }
+      preview.value.type=item.type;
     }else{
       path.value.push(item.fileName);
       getData();

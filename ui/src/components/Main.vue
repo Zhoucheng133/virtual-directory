@@ -1,13 +1,13 @@
 <template>
   <div class="body">
-    <div class="mainPage" ref="mainPageRef">
+    <div class="mainPage" :style="{width: pageWidth+'px'}">
       <div class="fixedArea">
-        <div class="head" :style="{width: pageWidth-20+'px'}">
+        <div class="head" :style="{width: pageWidth+'px'}">
           <div class="pathItem" v-for="(item, index) in stores().path" :key="index" :style="{marginLeft: index==0 ? '10px' : '0'}" @click="stores().toDir(item)">
             <i class="bi bi-arrow-right-short" v-if="index!=0"></i><div class="pathText" :style="{fontWeight: index==stores().path.length-1 ? 'bold' : 'normal', color: index==stores().path.length-1 ? '#1677ff' : 'grey'}">{{ item }}</div>
           </div>
         </div>
-        <div class="opHead" :style="{width: pageWidth-20+'px'}">
+        <div class="opHead" :style="{width: pageWidth+'px'}">
           <a-dropdown-button type="primary">
             上传
             <template #overlay>
@@ -21,10 +21,10 @@
           <div class="newFolderButton">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
         </div>
-        <div class="selectText" :style="{width: pageWidth-20+'px'}">
+        <div class="selectText" :style="{width: pageWidth+'px'}">
           已选择 {{ stores().selectedCount }} 个项目
         </div>
-        <div class="tableHead" :style="{width: pageWidth-20+'px'}">
+        <div class="tableHead" :style="{width: pageWidth+'px'}">
           <div class="tableHeadItem" style="justify-content: center; display: flex;">
             <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
           </div>
@@ -32,7 +32,7 @@
           <div class="tableHeadItem">大小</div>
         </div>
       </div>
-      <div class="content" :style="{width: pageWidth-20+'px'}">
+      <div class="content" :style="{width: pageWidth+'px'}">
         <div v-for="(item, index) in stores().data" :key="index">
           <a-dropdown :trigger="['contextmenu']">
             <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
@@ -79,11 +79,22 @@ const fadeOutPreview=()=>{
   }, 300);
   document.body.style.overflowY = 'auto';
 }
+const calWidth=()=>{
+  if(window.innerWidth>1040){
+    pageWidth.value=1000;
+  }else if(window.innerWidth>380){
+    pageWidth.value=window.innerWidth-60
+  }else{
+    pageWidth.value=320
+  }
+  
+}
 window.onresize=()=>{
-  pageWidth.value=mainPageRef.value.offsetWidth;
+  calWidth();
 }
 onMounted(()=>{
   stores().getData();
+  calWidth();
 })
 </script>
 
@@ -232,7 +243,7 @@ body{
   height: 50px;
   /* background-color: red; */
   /* border: 1px solid; */
-  max-width: 1000px;
+  /* max-width: 1000px; */
   display: flex;
   align-items: center;
   overflow: auto;
@@ -267,9 +278,9 @@ body{
 }
 .mainPage{
   /* padding: 10px; */
-  padding-left: 10px;
-  padding-right: 10px;
-  max-width: 1000px;
+  /* padding-left: 10px; */
+  /* padding-right: 10px; */
+  /* max-width: 1000px; */
   /* margin: auto; */
   user-select: none;
   padding-bottom: 20px;

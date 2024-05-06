@@ -11,6 +11,7 @@ import cors from 'cors';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
+import archiver from 'archiver';
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
@@ -235,10 +236,52 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  expressApp.get('/api/multidownload', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    // Required: 文件地址dir, 文件[files]
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      const filesToDownload = JSON.parse(req.query.files);
+      const dir=path.join(localPath, ...filePath);
+      // const zipFileName = filePath.length==0 ? encodeURIComponent(path.basename(localPath)+".zip") : encodeURIComponent(path.basename(dir)+".zip");
+      let zipFileName="";
+      if(filesToDownload.length==1){
+        zipFileName=encodeURIComponent(filesToDownload[0]+".zip");
+      }else{
+        zipFileName=encodeURIComponent(filesToDownload[0]+"等文件.zip");
+      }
+      res.setHeader('Content-disposition', `attachment; filename=${zipFileName}`);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      archive.on('error', function(err) {
+        res.status(500).send({ error: err.message });
+      });
+      filesToDownload.forEach((filename: string) => {
+        const filePath = path.join(dir, filename);
+        if(fs.statSync(filePath).isFile()){
+          archive.file(filePath, { name: filename });
+        }else{
+          const relativePath = path.relative(dir, filePath);
+          archive.directory(filePath, relativePath);
+        }
+      });
+      archive.pipe(res);
+      archive.finalize();
+      res.on('close', function () {
+        archive.abort();
+      });
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
+
+  // 单文件下载
   expressApp.get('/api/download', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    
     const filePath=JSON.parse(req.query.path);
     if(loginController(name, pass)){
       const dir=path.join(localPath, ...filePath);
@@ -262,7 +305,10 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
         }
       });
     }else{
-
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
     }
   })
 

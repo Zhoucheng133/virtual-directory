@@ -191,10 +191,10 @@ export default defineStore('index', ()=>{
     let selectedList=[];
     data.value.forEach(item=>{
       if(item.isSelected){
-        selectedList.push(item);
+        selectedList.push(item.fileName);
       }
     })
-    if(selectedList.length==1 && selectedList[0].isFile){
+    if(selectedList.length==1){
       downloadHandler(selectedList[0]);
     }else{
       multiDownload(selectedList);
@@ -202,7 +202,7 @@ export default defineStore('index', ()=>{
   }
 
   const multiDownload=(items)=>{
-    console.log(items);
+    window.location.href=`${baseURL}/api/multidownload?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value].slice(1))}&files=${JSON.stringify(items)}`;
   }
 
   const downloadHandler=(item)=>{

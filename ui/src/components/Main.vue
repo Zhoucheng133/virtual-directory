@@ -18,7 +18,7 @@
             </a-menu>
           </template>
           </a-dropdown-button>
-          <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0">下载</a-button>
+          <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().multiDownload()">下载</a-button>
           <div class="newFolderButton">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
         </div>
@@ -52,7 +52,7 @@
               <a-menu>
                 <a-menu-item @click="stores().openHandler(item)">打开</a-menu-item>
                 <a-menu-divider />
-                <a-menu-item key="2"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
+                <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
                 <a-menu-divider />
                 <a-menu-item key="3"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
                 <a-menu-item key="4"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>

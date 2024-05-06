@@ -187,5 +187,23 @@ export default defineStore('index', ()=>{
     };
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview };
+  const multiDownload=()=>{
+    let selectedList=[];
+    data.value.forEach(item=>{
+      if(item.isSelected){
+        selectedList.push(item);
+      }
+    })
+    if(selectedList.length==1){
+      downloadHandler(selectedList[0]);
+    }
+  }
+
+  const downloadHandler=(item)=>{
+    if(item.isFile){
+      window.location.href=`${baseURL}/api/download?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
+    }
+  }
+
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, multiDownload };
 })

@@ -50,7 +50,7 @@
             </div>
             <template #overlay>
               <a-menu>
-                <a-menu-item key="1">打开</a-menu-item>
+                <a-menu-item @click="stores().openHandler(item)">打开</a-menu-item>
                 <a-menu-divider />
                 <a-menu-item key="2"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
                 <a-menu-divider />

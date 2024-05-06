@@ -235,6 +235,37 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  expressApp.get('/api/download', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    
+    const filePath=JSON.parse(req.query.path);
+    if(loginController(name, pass)){
+      const dir=path.join(localPath, ...filePath);
+       fs.stat(dir, (err, stats) => {
+        if (err) {
+          console.log(err);
+          res.end("Request ERR");
+        } else {
+          if (stats.isDirectory()) {
+            res.end("Not file")
+            return;
+          } else {
+            const stream = fs.createReadStream(dir);
+            var fileSize=stats.size;
+            res.setHeader("Accept-Ranges","bytes");
+            res.setHeader('Content-Length', fileSize);
+            res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(dir))}`);
+            res.setHeader('Content-Type', 'application/octet-stream');
+            stream.pipe(res);
+          }
+        }
+      });
+    }else{
+
+    }
+  })
+
   // 获取文件信息
   expressApp.get('/api/getFile', async(req: any, res: any)=>{
     const name=req.query.username;
@@ -291,7 +322,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }else{
       res.json({
         ok: false,
-        data: "目录不存在"
+        data: "用户验证失败"
       });
     }
   })

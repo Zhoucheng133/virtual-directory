@@ -18,7 +18,7 @@
             </a-menu>
           </template>
           </a-dropdown-button>
-          <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().multiDownload()">下载</a-button>
+          <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().mainDownload()">下载</a-button>
           <div class="newFolderButton">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
         </div>

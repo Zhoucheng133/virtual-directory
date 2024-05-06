@@ -187,23 +187,31 @@ export default defineStore('index', ()=>{
     };
   }
 
-  const multiDownload=()=>{
+  const mainDownload=()=>{
     let selectedList=[];
     data.value.forEach(item=>{
       if(item.isSelected){
         selectedList.push(item);
       }
     })
-    if(selectedList.length==1){
+    if(selectedList.length==1 && selectedList[0].isFile){
       downloadHandler(selectedList[0]);
+    }else{
+      multiDownload(selectedList);
     }
+  }
+
+  const multiDownload=(items)=>{
+    console.log(items);
   }
 
   const downloadHandler=(item)=>{
     if(item.isFile){
       window.location.href=`${baseURL}/api/download?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value, item.fileName].slice(1))}`;
+    }else{
+      multiDownload([item])
     }
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, multiDownload };
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, mainDownload };
 })

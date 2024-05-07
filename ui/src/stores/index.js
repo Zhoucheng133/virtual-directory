@@ -227,6 +227,7 @@ export default defineStore('index', ()=>{
     }).then((response)=>{
       if(response.data.ok){
         message.success("重命名成功");
+        getData();
       }else{
         message.error(`重命名失败: ${response.data.data}`);
       }

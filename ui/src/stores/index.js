@@ -213,5 +213,9 @@ export default defineStore('index', ()=>{
     }
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, mainDownload };
+  const renameHandler=(preName, newName)=>{
+    console.log(`${preName}: ${newName}`); 
+  }
+
+  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, mainDownload, renameHandler };
 })

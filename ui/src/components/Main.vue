@@ -54,8 +54,8 @@
                 <a-menu-divider />
                 <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
                 <a-menu-divider />
-                <a-menu-item key="3"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
-                <a-menu-item key="4"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+                <a-menu-item @click="renameModal(item)"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
+                <a-menu-item><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
@@ -66,15 +66,28 @@
   <div :class="previewIn ? 'preview':'previewOut'" v-if="stores().preview.item.fileName">
     <Preview @fadeOut="fadeOutPreview" />
   </div>
+  <a-modal v-model:open="showRenameModel" title="重命名" centered okText="完成" cancelText="取消" @ok="okRename">
+    <a-input v-model:value="inputFileName" :placeholder="formerName"></a-input>
+  </a-modal>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
 import stores from '../stores';
 import Preview from './Preview.vue';
-const mainPageRef=ref(null);
 const pageWidth=ref(1000);
 let previewIn=ref(true);
+let showRenameModel=ref(false);
+let inputFileName=ref("");
+let formerName=ref("")
+const renameModal=(item)=>{
+  formerName.value=item.fileName;
+  showRenameModel.value=true;
+}
+const okRename=()=>{
+  stores().renameHandler(formerName.value, inputFileName.value)
+  showRenameModel.value=false;
+}
 const fadeOutPreview=()=>{
   previewIn.value=false;
   setTimeout(() => {

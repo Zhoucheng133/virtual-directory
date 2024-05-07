@@ -236,6 +236,35 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  // 新建文件夹
+  expressApp.post('/api/newFolder', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    // Required: 文件地址[dir], 文件夹名[name]
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      const dir=path.join(localPath, ...filePath);
+      fs.mkdir(dir+"/"+req.query.name, { recursive: true }, (err) => {
+				if (err) {
+					res.json({
+            ok: false,
+            data: "新建文件夹请求事变"
+          });
+				} else {
+					res.json({
+            ok: true,
+            data: ""
+          });
+				}
+			});
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
+
   // 重命名
   expressApp.post('/api/rename', async(req: any, res: any)=>{
     const name=req.query.username;

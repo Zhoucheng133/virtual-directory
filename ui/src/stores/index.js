@@ -246,7 +246,7 @@ export default defineStore('index', ()=>{
         message.success("新建文件夹成功");
         getData();
       }else{
-        message.error(`新建文件夹成功: ${response.data.data}`);
+        message.error(`新建文件夹失败: ${response.data.data}`);
       }
     })
   }

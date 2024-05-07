@@ -261,7 +261,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
       const files=JSON.parse(req.query.items);
       var rlt=await new Promise(async (resolve)=>{
         for(const item of files){
-          const path=dir+"/"+item.name;
+          const path=dir+"/"+item;
           await delFile(path)
           .then((result) => {
             if(result==false){

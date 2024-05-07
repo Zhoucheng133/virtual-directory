@@ -251,6 +251,26 @@ export default defineStore('index', ()=>{
     })
   }
 
+  const delHandler=(items)=>{
+    let selectedList=[];
+    if(items==undefined){
+      data.value.forEach(item=>{
+        if(item.isSelected){
+          selectedList.push(item.fileName);
+        }
+      })
+    }
+    
+    axios.post(baseURL+'/api/del', null, {
+      params: {
+        path: JSON.stringify(path.value.slice(1)),
+        items: item==undefined ? JSON.stringify(selectedList) : JSON.stringify([items.fileName]),
+        username: userData.value.username,
+        password: CryptoJS.SHA256(userData.value.password).toString()
+      }
+    })
+  }
+
   return {
     path, 
     data, 
@@ -270,6 +290,7 @@ export default defineStore('index', ()=>{
     downloadHandler, 
     mainDownload, 
     renameHandler,
-    newFolderHandler
+    newFolderHandler,
+    delHandler
   };
 })

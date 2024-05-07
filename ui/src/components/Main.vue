@@ -20,7 +20,7 @@
           </a-dropdown-button>
           <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().mainDownload()">下载</a-button>
           <div class="newFolderButton" @click="newFolderModal">新建文件夹</div>
-          <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
+          <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'" @click="stores().delHandler()">删除</div>
         </div>
         <div class="selectText">
           已选择 {{ stores().selectedCount }} 个项目
@@ -55,7 +55,7 @@
                 <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="renameModal(item)"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
-                <a-menu-item><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+                <a-menu-item @click="stores().delHandler(item)"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>

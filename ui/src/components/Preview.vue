@@ -1,7 +1,7 @@
 <template>
   <div class="titleBar">
     <div class="fileName">{{ stores().preview.item.fileName }}</div>
-    <div class="downloadButton">下载</div>
+    <div class="downloadButton" @click="stores().downloadHandler(stores().preview.item)">下载</div>
     <div class="closeButton" @click="closePreview"><i class="bi bi-x"></i></div>
   </div>
   <div class="previewMain">

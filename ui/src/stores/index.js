@@ -215,7 +215,6 @@ export default defineStore('index', ()=>{
   }
 
   const renameHandler=(oldName, newName)=>{
-    // console.log(`${oldName}: ${newName}`); 
     axios.post(baseURL+"/api/rename", null, {
       params: {
         path: JSON.stringify(path.value.slice(1)),
@@ -234,5 +233,43 @@ export default defineStore('index', ()=>{
     })
   }
 
-  return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, mainDownload, renameHandler };
+  const newFolderHandler=(name)=>{
+    axios.post(baseURL+'/api/newFolder', null, {
+      params: {
+        path: JSON.stringify(path.value.slice(1)),
+        name: name,
+        username: userData.value.username,
+        password: CryptoJS.SHA256(userData.value.password).toString()
+      }
+    }).then((response)=>{
+      if(response.data.ok){
+        message.success("新建文件夹成功");
+        getData();
+      }else{
+        message.error(`新建文件夹成功: ${response.data.data}`);
+      }
+    })
+  }
+
+  return {
+    path, 
+    data, 
+    isLogin, 
+    init, 
+    loginController, 
+    loading, 
+    getData, 
+    getIconSrc, 
+    selectedCount, 
+    allSelectToggle, 
+    allSelect, 
+    openHandler, 
+    toDir, 
+    preview, 
+    setPreview, 
+    downloadHandler, 
+    mainDownload, 
+    renameHandler,
+    newFolderHandler
+  };
 })

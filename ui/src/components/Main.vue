@@ -19,7 +19,7 @@
           </template>
           </a-dropdown-button>
           <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().mainDownload()">下载</a-button>
-          <div class="newFolderButton">新建文件夹</div>
+          <div class="newFolderButton" @click="newFolderModal">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'">删除</div>
         </div>
         <div class="selectText">
@@ -69,6 +69,9 @@
   <a-modal v-model:open="showRenameModel" title="重命名" centered okText="完成" cancelText="取消" @ok="okRename">
     <a-input v-model:value="inputFileName" :placeholder="formerName"></a-input>
   </a-modal>
+  <a-modal v-model:open="showNewFolderModal" title="新建文件夹" centered okText="完成" cancelText="取消" @ok="okNewFolder">
+    <a-input placeholder="新建文件夹" v-model:value="inputNewFolder"></a-input>
+  </a-modal>
 </template>
 
 <script setup>
@@ -80,9 +83,18 @@ let previewIn=ref(true);
 let showRenameModel=ref(false);
 let inputFileName=ref("");
 let formerName=ref("")
+let showNewFolderModal=ref(false);
+let inputNewFolder=ref("");
+const okNewFolder=()=>{
+  stores().newFolderHandler(inputNewFolder.value);
+  showNewFolderModal.value=false;
+}
 const renameModal=(item)=>{
   formerName.value=item.fileName;
   showRenameModel.value=true;
+}
+const newFolderModal=()=>{
+  showNewFolderModal.value=true;
 }
 const okRename=()=>{
   stores().renameHandler(formerName.value, inputFileName.value)

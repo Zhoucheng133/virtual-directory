@@ -16,6 +16,7 @@ import videoIcon from "../assets/fileIcons/video.svg";
 import wordIcon from "../assets/fileIcons/word.svg";
 import xlsIcon from "../assets/fileIcons/xls.svg";
 import zipIcon from "../assets/fileIcons/zip.svg";
+import { message } from "ant-design-vue";
 
 export default defineStore('index', ()=>{
 
@@ -213,8 +214,23 @@ export default defineStore('index', ()=>{
     }
   }
 
-  const renameHandler=(preName, newName)=>{
-    console.log(`${preName}: ${newName}`); 
+  const renameHandler=(oldName, newName)=>{
+    // console.log(`${oldName}: ${newName}`); 
+    axios.post(baseURL+"/api/rename", null, {
+      params: {
+        path: JSON.stringify(path.value.slice(1)),
+        oldName: oldName,
+        newName: newName,
+        username: userData.value.username,
+        password: CryptoJS.SHA256(userData.value.password).toString()
+      }
+    }).then((response)=>{
+      if(response.data.ok){
+        message.success("重命名成功");
+      }else{
+        message.error(`重命名失败: ${response.data.data}`);
+      }
+    })
   }
 
   return { path, data, isLogin, init, loginController, loading, getData, getIconSrc, selectedCount, allSelectToggle, allSelect, openHandler, toDir, preview, setPreview, downloadHandler, mainDownload, renameHandler };

@@ -236,10 +236,40 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  // 重命名
+  expressApp.post('/api/rename', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    // Required: 文件地址[dir], 原文件名[oldName]， 新文件名[newName]
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      const dir=path.join(localPath, ...filePath);
+      fs.rename(dir+"/"+req.query.oldName, dir+"/"+req.query.newName, (err) => {
+        if(err){
+          res.json({
+            ok: false,
+            data: "重命名请求失败"
+          });
+        }else{
+          res.json({
+            ok: true,
+            data: '',
+          });
+        }
+      })
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
+  
+  // 多文件下载
   expressApp.get('/api/multidownload', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    // Required: 文件地址dir, 文件[files]
+    // Required: 文件地址[dir], 文件[files]
     if(loginController(name, pass)){
       const filePath=JSON.parse(req.query.path);
       const filesToDownload = JSON.parse(req.query.files);

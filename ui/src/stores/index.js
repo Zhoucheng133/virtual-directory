@@ -16,7 +16,7 @@ import videoIcon from "../assets/fileIcons/video.svg";
 import wordIcon from "../assets/fileIcons/word.svg";
 import xlsIcon from "../assets/fileIcons/xls.svg";
 import zipIcon from "../assets/fileIcons/zip.svg";
-import { message } from "ant-design-vue";
+import { Modal, message } from "ant-design-vue";
 
 export default defineStore('index', ()=>{
 
@@ -252,30 +252,43 @@ export default defineStore('index', ()=>{
   }
 
   const delHandler=(items)=>{
-    let selectedList=[];
-    if(items==undefined){
-      data.value.forEach(item=>{
-        if(item.isSelected){
-          selectedList.push(item.fileName);
+    Modal.confirm({
+      title: "确定要删除这个(些)文件/文件夹吗",
+      content: '这是一个不可撤销的操作',
+      okText: '确定',
+      cancelText: '取消',
+      centered: true,
+      onOk(){
+        let selectedList=[];
+        if(items==undefined){
+          data.value.forEach(item=>{
+            if(item.isSelected){
+              selectedList.push(item.fileName);
+            }
+          })
         }
-      })
-    }
-    
-    axios.post(baseURL+'/api/del', null, {
-      params: {
-        path: JSON.stringify(path.value.slice(1)),
-        items: items==undefined ? JSON.stringify(selectedList) : JSON.stringify([items.fileName]),
-        username: userData.value.username,
-        password: CryptoJS.SHA256(userData.value.password).toString()
-      }
-    }).then((response)=>{
-      if(response.data.ok){
-        message.success("删除成功");
-        getData();
-      }else{
-        message.error(`删除失败: ${response.data.data}`);
-      }
+        
+        axios.post(baseURL+'/api/del', null, {
+          params: {
+            path: JSON.stringify(path.value.slice(1)),
+            items: items==undefined ? JSON.stringify(selectedList) : JSON.stringify([items.fileName]),
+            username: userData.value.username,
+            password: CryptoJS.SHA256(userData.value.password).toString()
+          }
+        }).then((response)=>{
+          if(response.data.ok){
+            message.success("删除成功");
+            getData();
+          }else{
+            message.error(`删除失败: ${response.data.data}`);
+          }
+        })
+      },
+      okCancel(){
+
+      },
     })
+    
   }
 
   return {

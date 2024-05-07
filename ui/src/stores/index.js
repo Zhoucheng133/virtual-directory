@@ -275,18 +275,21 @@ export default defineStore('index', ()=>{
             username: userData.value.username,
             password: CryptoJS.SHA256(userData.value.password).toString()
           }
-        }).then((response)=>{
+        }).then(async (response)=>{
           if(response.data.ok){
             message.success("删除成功");
-            getData();
+            await getData();
+            selectedCount.value=0;
+            allSelect.value=false;
+            data.value.forEach(item=>{
+              item.selected=false;
+            })
           }else{
             message.error(`删除失败: ${response.data.data}`);
           }
         })
       },
-      okCancel(){
-
-      },
+      okCancel(){},
     })
     
   }

@@ -236,11 +236,60 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
+  // 删除文件函数
+  async function delFile(path: any) {
+    const fs = require('fs').promises;
+    try {
+      // 执行删除操作
+      await fs.rm(path, { recursive: true });
+      // console.log("删除成功");
+      return true;
+    } catch (err) {
+      // console.log("删除出错:", err);
+      return false;
+    }
+  }
+
+  // 删除文件
+  expressApp.post('/api/del', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    // Required: 文件地址[path], 文件夹名[items]
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      const dir=path.join(localPath, ...filePath);
+      const files=JSON.parse(req.query.items);
+      var rlt=await new Promise(async (resolve)=>{
+        for(const item of files){
+          const path=dir+"/"+item.name;
+          await delFile(path)
+          .then((result) => {
+            if(result==false){
+              resolve(false);
+              return;
+            }
+          })
+        }
+        resolve(true);
+        return;
+      })
+      res.json({
+        ok: rlt,
+        data: rlt ? "" : "删除请求失败"
+      });
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
+
   // 新建文件夹
   expressApp.post('/api/newFolder', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    // Required: 文件地址[dir], 文件夹名[name]
+    // Required: 文件地址[path], 文件夹名[name]
     if(loginController(name, pass)){
       const filePath=JSON.parse(req.query.path);
       const dir=path.join(localPath, ...filePath);
@@ -269,7 +318,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp.post('/api/rename', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    // Required: 文件地址[dir], 原文件名[oldName]， 新文件名[newName]
+    // Required: 文件地址[path], 原文件名[oldName]， 新文件名[newName]
     if(loginController(name, pass)){
       const filePath=JSON.parse(req.query.path);
       const dir=path.join(localPath, ...filePath);
@@ -298,7 +347,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp.get('/api/multidownload', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    // Required: 文件地址[dir], 文件[files]
+    // Required: 文件地址[path], 文件[files]
     if(loginController(name, pass)){
       const filePath=JSON.parse(req.query.path);
       const filesToDownload = JSON.parse(req.query.files);

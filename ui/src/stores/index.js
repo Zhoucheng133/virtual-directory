@@ -264,9 +264,16 @@ export default defineStore('index', ()=>{
     axios.post(baseURL+'/api/del', null, {
       params: {
         path: JSON.stringify(path.value.slice(1)),
-        items: item==undefined ? JSON.stringify(selectedList) : JSON.stringify([items.fileName]),
+        items: items==undefined ? JSON.stringify(selectedList) : JSON.stringify([items.fileName]),
         username: userData.value.username,
         password: CryptoJS.SHA256(userData.value.password).toString()
+      }
+    }).then((response)=>{
+      if(response.data.ok){
+        message.success("删除成功");
+        getData();
+      }else{
+        message.error(`删除失败: ${response.data.data}`);
       }
     })
   }

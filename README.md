@@ -8,6 +8,9 @@
 ![crypto-js](https://img.shields.io/badge/crypto_js-4.2.0-yellow)
 ![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
 ![archiver](https://img.shields.io/badge/archiver-7.0.1-darkgreen)
+![bootstrap-icons](https://img.shields.io/badge/bootstrap_icons-1.11.3-purple)
+![uuid](https://img.shields.io/badge/uuid-9.0.1-orange)
+![multer](https://img.shields.io/badge/multer-1.4.5-lightblue)
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 
@@ -16,6 +19,8 @@
 -  Windows 11
 
 ## 效果图
+
+待补充
 
 ### 服务端：
 
@@ -158,22 +163,4 @@
 ## 关于配置
 如果你希望在自己的电脑中配置该项目，以下为操作步骤：
 
-1. 安装`node`，推荐版本为`node@16`
-2. 安装`yarn`（推荐），输入命令来安装：
-   ```bash
-   npm install -g yarn
-   ```
-3. 使用命令行进入到项目文件夹
-   ```bash
-   # 注意根据实际情况
-   cd virtual_directory
-   ```
-4. 输入命令：
-   ```bash
-   yarn install
-   ```
-5. 接着输入命令来运行(`serve`)或生成(`build`)：
-   ```bash
-   yarn run electron:serve
-   yarn run electron:build
-   ```
+待补充

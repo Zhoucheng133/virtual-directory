@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 extraResources: ['./ui/dist/**']
 win:
-  executableName: virdir
+  executableName: Virtual Directory
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

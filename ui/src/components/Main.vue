@@ -199,6 +199,10 @@ body{
 }
 .fileName{
   width: 100%;
+  height: 100%;
+  line-height: 40px;
+  top: 50%;
+  /* transform: translateY(50%); */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import * as CryptoJS from 'crypto-js';
 import stores from ".";
 import axios from "axios";
@@ -33,8 +33,18 @@ export default defineStore('upload', ()=>{
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress: progressEvent => {
+        const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        console.log(`上传进度：${progress}%`);
+      }
     })
   }
+
+  watch(fileList,(newVal, oldVal)=>{
+    if(oldVal.length!=0 && newVal.every(item => item.status == 'done')){
+      stores().getData();
+    }
+  })
   
   return { fileList, uploadURL, handleDirChange }
 

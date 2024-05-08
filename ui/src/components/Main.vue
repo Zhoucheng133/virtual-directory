@@ -84,6 +84,7 @@
   <a-modal v-model:open="showNewFolderModal" title="新建文件夹" centered okText="完成" cancelText="取消" @ok="okNewFolder">
     <a-input placeholder="新建文件夹" v-model:value="inputNewFolder"></a-input>
   </a-modal>
+  <UploadPanel class="panel" />
 </template>
 
 <script setup>
@@ -91,6 +92,7 @@ import { onMounted, ref } from 'vue';
 import stores from '../stores';
 import Preview from './Preview.vue';
 import upload from '../stores/upload';
+import UploadPanel from './UploadPanel.vue'
 const pageWidth=ref(1000);
 let previewIn=ref(true);
 let showRenameModel=ref(false);
@@ -151,6 +153,11 @@ body{
 </style>
 
 <style scoped>
+.panel{
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+}
 @keyframes fadeIn {
   0%{
     opacity: 0;

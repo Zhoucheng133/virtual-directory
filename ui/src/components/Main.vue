@@ -8,16 +8,15 @@
           </div>
         </div>
         <div class="opHead">
-          <a-upload v-model:file-list="upload().fileList" :action="upload().uploadURL" :showUploadList="false">
+          <a-upload v-model:file-list="upload().fileList" :action="upload().uploadURL()" :showUploadList="false" :multiple="true">
             <a-dropdown-button type="primary">
               上传
               <template #overlay>
               <a-menu>
-                <a-upload directory v-model:file-list="upload().fileList" :action="upload().uploadURL" :showUploadList="false">
-                  <a-menu-item key="1">
-                    上传文件夹
-                  </a-menu-item>
-                </a-upload>
+                <!-- <a-upload directory v-model:file-list="upload().fileList" :showUploadList="false" @change="upload().handleDirChange"></a-upload> -->
+                <a-menu-item @click="uploadDirHandler">
+                  上传文件夹
+                </a-menu-item>
               </a-menu>
             </template>
             </a-dropdown-button>
@@ -26,6 +25,15 @@
           <div class="newFolderButton" @click="newFolderModal">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'" @click="stores().delHandler()">删除</div>
         </div>
+        <input
+          type="file"
+          id="fileInput"
+          ref="fileInput"
+          @change="upload().handleDirChange"
+          multiple
+          directory
+          webkitdirectory
+          style="display: none;" />
         <div class="selectText">
           已选择 {{ stores().selectedCount }} 个项目
         </div>
@@ -90,6 +98,11 @@ let inputFileName=ref("");
 let formerName=ref("")
 let showNewFolderModal=ref(false);
 let inputNewFolder=ref("");
+const uploadDirHandler=()=>{
+  const fileInput=document.getElementById('fileInput');
+  // console.log(fileInput);
+  fileInput.click();
+}
 const okNewFolder=()=>{
   stores().newFolderHandler(inputNewFolder.value);
   showNewFolderModal.value=false;

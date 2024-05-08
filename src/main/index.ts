@@ -12,6 +12,7 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
 import archiver from 'archiver';
+import multer from 'multer';
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
@@ -194,6 +195,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     return "";
   }
 
+  // 获取Content内容
   const getContentType=(extension: any)=>{
     const contentType = mime.contentType(extension);
     return contentType || 'application/octet-stream';
@@ -209,6 +211,18 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
       return true;
     }
     return false;
+  }
+
+  // 删除文件函数
+  async function delFile(path: any) {
+    const fs = require('fs').promises;
+    try {
+      // 执行删除操作
+      await fs.rm(path, { recursive: true });
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
   // 指向页面
@@ -236,19 +250,53 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     }
   })
 
-  // 删除文件函数
-  async function delFile(path: any) {
-    const fs = require('fs').promises;
-    try {
-      // 执行删除操作
-      await fs.rm(path, { recursive: true });
-      // console.log("删除成功");
-      return true;
-    } catch (err) {
-      // console.log("删除出错:", err);
-      return false;
-    }
+  // 删除路径最后内容
+  function removeLastDirectory(filePath: any) {
+    return filePath.replace(/[\\\/][^\\\/]+$/, '');
   }
+
+  // 上传文件
+  expressApp.post('/api/upload', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    // Required: 上传地址[path]
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      let dir=path.join(localPath, ...filePath);
+      const storage = multer.diskStorage({
+        destination: function (_req, _file, cb) {
+          const fs = require('fs-extra');
+          if(req.query.isDir=='true'){
+            dir=removeLastDirectory(dir);
+          }
+          fs.ensureDirSync(dir);
+          cb(null, dir);
+        },
+        filename: function (_req, file, cb) {
+          cb(null, Buffer.from(file.originalname, "latin1").toString("utf8"));
+        }
+      });
+      const upload = multer({ storage: storage }).any();
+      upload(req, res, (err) => {
+        if (err) {
+          console.log(err);
+          res.status(400).json({
+            ok: false,
+            data: "上传出错"
+          });
+        }
+        res.status(200).json({
+          ok: true,
+          data: ""
+        });
+      });
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
 
   // 删除文件
   expressApp.post('/api/del', async(req: any, res: any)=>{

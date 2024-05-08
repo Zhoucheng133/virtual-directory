@@ -187,7 +187,7 @@ body{
   width: 100vw;
   height: 100vh;
   background-color: rgba(255, 255, 255, 0.9);
-  z-index: 10;
+  z-index: 50;
 }
 .delButton_disabled{
   color: grey;

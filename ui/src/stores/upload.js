@@ -28,23 +28,56 @@ export default defineStore('upload', ()=>{
     }
   }
 
+  const pushIntoFileList=(newObj)=>{
+    const index = fileList.value.findIndex(obj => obj.name === newObj.name && obj.size === newObj.size);
+    if (index !== -1) {
+      fileList.value[index] = newObj;
+    } else {
+      // 如果不存在，将新对象添加到数组中
+      fileList.value.push(newObj);
+    }
+  }
+
   const uploadFiles=(formData)=>{
     axios.post(dirUploadURL(formData.get("paths")), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
       onUploadProgress: progressEvent => {
-        const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        console.log(`上传进度：${progress}%`);
+        const fileData={
+          name: formData.get('files').name,
+          percentage: Math.round((progressEvent.loaded / progressEvent.total) * 100),
+          status: "uploading",
+          size: formData.get('files').size
+        }
+        pushIntoFileList(fileData)
+      }
+    }).then((response)=>{
+      if(response.data.ok){
+        const fileData={
+          name: formData.get('files').name,
+          percentage: 100,
+          status: "done",
+          size: formData.get('files').size
+        }
+        pushIntoFileList(fileData)
+      }else{
+        const fileData={
+          name: formData.get('files').name,
+          percentage: 0,
+          status: "err",
+          size: formData.get('files').size
+        }
+        pushIntoFileList(fileData)
       }
     })
   }
 
-  watch(fileList,(newVal, oldVal)=>{
-    if(oldVal.length!=0 && newVal.every(item => item.status == 'done')){
+  watch(fileList,(newVal)=>{
+    if(newVal.every(item => item.status == 'done')){
       stores().getData();
     }
-  })
+  }, {deep: true})
   
   return { fileList, uploadURL, handleDirChange }
 

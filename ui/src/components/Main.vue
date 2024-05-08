@@ -8,16 +8,20 @@
           </div>
         </div>
         <div class="opHead">
-          <a-dropdown-button type="primary">
-            上传
-            <template #overlay>
-            <a-menu>
-              <a-menu-item key="1">
-                上传文件夹
-              </a-menu-item>
-            </a-menu>
-          </template>
-          </a-dropdown-button>
+          <a-upload v-model:file-list="upload().fileList" :action="upload().uploadURL" :showUploadList="false">
+            <a-dropdown-button type="primary">
+              上传
+              <template #overlay>
+              <a-menu>
+                <a-upload directory v-model:file-list="upload().fileList" :action="upload().uploadURL" :showUploadList="false">
+                  <a-menu-item key="1">
+                    上传文件夹
+                  </a-menu-item>
+                </a-upload>
+              </a-menu>
+            </template>
+            </a-dropdown-button>
+          </a-upload>
           <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().mainDownload()">下载</a-button>
           <div class="newFolderButton" @click="newFolderModal">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'" @click="stores().delHandler()">删除</div>
@@ -78,6 +82,7 @@
 import { onMounted, ref } from 'vue';
 import stores from '../stores';
 import Preview from './Preview.vue';
+import upload from '../stores/upload';
 const pageWidth=ref(1000);
 let previewIn=ref(true);
 let showRenameModel=ref(false);

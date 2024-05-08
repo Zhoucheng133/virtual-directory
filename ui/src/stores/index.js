@@ -314,6 +314,8 @@ export default defineStore('index', ()=>{
     mainDownload, 
     renameHandler,
     newFolderHandler,
-    delHandler
+    delHandler,
+    baseURL,
+    userData
   };
 })

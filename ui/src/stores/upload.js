@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import * as CryptoJS from 'crypto-js';
 import stores from ".";
 import axios from "axios";
+import { message } from "ant-design-vue";
 
 export default defineStore('upload', ()=>{
   let fileList=ref([]);
@@ -76,6 +77,7 @@ export default defineStore('upload', ()=>{
   watch(fileList,(newVal)=>{
     if(newVal.every(item => item.status == 'done')){
       stores().getData();
+      message.success("上传成功");
     }
   }, {deep: true})
   

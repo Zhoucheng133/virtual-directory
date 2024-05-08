@@ -7,17 +7,19 @@
         <i class="bi bi-arrow-down-short" v-else></i>
       </div>
     </div>
-    <div class="item" v-for="(item, index) in upload().fileList" :key="index">
-    <!-- <div class="item" v-for="(item, index) in testList" :key="index"> -->
-      <div class="name">
-        <div class="nameText">{{ item.name }}</div>
-        <div class="size">{{ sizeCal(item) }}</div>
+    <div class="content">
+      <div class="item" v-for="(item, index) in upload().fileList" :key="index">
+      <!-- <div class="item" v-for="(item, index) in testList" :key="index"> -->
+        <div class="name">
+          <div class="nameText">{{ item.name }}</div>
+          <div class="size">{{ sizeCal(item) }}</div>
+        </div>
+        <div class="statusIcon">
+          <i class="bi bi-check-circle" v-if="item.status=='done'"></i>
+          <i class="bi bi-arrow-up-circle"v-else></i>
+        </div>
+        <div class="progress" v-if="item.status!='done'" :style="{width: item.percent+'%'}"></div>
       </div>
-      <div class="statusIcon">
-        <i class="bi bi-check-circle" v-if="item.status=='done'"></i>
-        <i class="bi bi-arrow-up-circle"v-else></i>
-      </div>
-      <div class="progress" v-if="item.status!='done'" :style="{width: item.percent+'%'}"></div>
     </div>
   </div>
 </template>
@@ -25,7 +27,7 @@
 <script setup>
 import { ref } from 'vue';
 import upload from '../stores/upload';
-let panelHeight=ref(400);
+let panelHeight=ref(50);
 const formatFileSize=(bytes)=>{
   if (bytes === 0) return '0 Bytes';
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -44,7 +46,21 @@ const togglePanel=()=>{
 }
 </script>
 
+<style>
+::-webkit-scrollbar{
+  width: 5px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: lightgrey;
+}
+</style>
+
 <style scoped>
+.content{
+  /* overflow-y: overlay; */
+  overflow-y: auto;
+  height: 350px;
+}
 .size{
   font-size: 12px;
   margin-top: 5px;
@@ -55,12 +71,18 @@ const togglePanel=()=>{
   top: 0;
   left: 0;
   background-color: #edf5ff;
+  transition: all ease-in-out .2s;
 }
 .statusIcon{
   display: flex;
   justify-content: center;
   font-size: 16px;
   z-index: 10;
+}
+.nameText{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .name{
   overflow: hidden;

@@ -12,26 +12,28 @@ import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
 import archiver from 'archiver';
 import multer from 'multer';
+import icon from '../../resources/icon.png?asset'
 
 let mainWindow: BrowserWindow;
 let expressApp: any;
 var sockets: any[] = [];
 let server: any;
 
-function createWindow(): void {
+function createWindow(){
   mainWindow = new BrowserWindow({
     width: 700,
     height: 500,
     show: false,
+    title: "Virtual Directory",
+    icon: icon,
     autoHideMenuBar: true,
     resizable: false,
     titleBarStyle: "hidden",
-    icon: path.join(__dirname, '../../resources/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     },
-    title: "Virtual Directory"
+    
   })
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -49,7 +51,7 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('zhouc.vd')
+  electronApp.setAppUserModelId('com.zhouc.vd')
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })

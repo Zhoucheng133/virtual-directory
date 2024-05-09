@@ -1,8 +1,8 @@
 <template>
   <div class="titleBar">
     <div class="dragArea"></div>
-    <div class="minButton">
-      <i class="bi bi-dash" @click="minApp"></i>
+    <div class="minButton" @click="minApp">
+      <i class="bi bi-dash"></i>
     </div>
     <div class="closeButton" @click="closeApp">
       <i class="bi bi-x"></i>

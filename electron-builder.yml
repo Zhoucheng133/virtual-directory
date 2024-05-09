@@ -14,6 +14,7 @@ asarUnpack:
 extraResources: ['./ui/dist/**']
 win:
   executableName: Virtual Directory
+  icon: 'build/icon.png'
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

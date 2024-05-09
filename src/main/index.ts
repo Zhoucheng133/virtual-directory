@@ -1,7 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
 import { networkInterfaces } from 'os';
 import express from 'express';
 import path from 'path';
@@ -27,7 +26,7 @@ function createWindow(): void {
     autoHideMenuBar: true,
     resizable: false,
     titleBarStyle: "hidden",
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: path.join(__dirname, '../../resources/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false

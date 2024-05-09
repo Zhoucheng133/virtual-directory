@@ -1,5 +1,5 @@
 <template>
-  <div class="body">
+  <div class="body" @dragenter.prevent="drag().handleDragEnter">
     <div class="mainPage" :style="{width: pageWidth+'px'}">
       <div class="fixedArea" :style="{width: pageWidth+'px'}">
         <div class="head" >
@@ -13,7 +13,6 @@
               上传
               <template #overlay>
               <a-menu>
-                <!-- <a-upload directory v-model:file-list="upload().fileList" :showUploadList="false" @change="upload().handleDirChange"></a-upload> -->
                 <a-menu-item @click="uploadDirHandler">
                   上传文件夹
                 </a-menu-item>
@@ -85,6 +84,7 @@
     <a-input placeholder="新建文件夹" v-model:value="inputNewFolder"></a-input>
   </a-modal>
   <UploadPanel class="panel" />
+  <DragView class="dragview" v-show="drag().onDrag" @dragleave.prevent.stop="drag().handleDragLeave"/>
 </template>
 
 <script setup>
@@ -92,7 +92,9 @@ import { onMounted, ref } from 'vue';
 import stores from '../stores';
 import Preview from './Preview.vue';
 import upload from '../stores/upload';
-import UploadPanel from './UploadPanel.vue'
+import UploadPanel from './UploadPanel.vue';
+import DragView from './DragView.vue';
+import drag from "../stores/drag";
 const pageWidth=ref(1000);
 let previewIn=ref(true);
 let showRenameModel=ref(false);
@@ -102,7 +104,6 @@ let showNewFolderModal=ref(false);
 let inputNewFolder=ref("");
 const uploadDirHandler=()=>{
   const fileInput=document.getElementById('fileInput');
-  // console.log(fileInput);
   fileInput.click();
 }
 const okNewFolder=()=>{
@@ -153,6 +154,12 @@ body{
 </style>
 
 <style scoped>
+.dragview{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
 .panel{
   position: fixed;
   bottom: 50px;
@@ -339,6 +346,7 @@ body{
 .body{
   width: 100vw;
   display: flex;
+  min-height: 100vh;
   justify-content: center;
 }
 .mainPage{

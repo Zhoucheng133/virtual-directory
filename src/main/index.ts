@@ -263,7 +263,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const name=req.query.username;
     const pass=req.query.password;
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       let dir=path.join(localPath, ...filePath);
       fs.stat(dir, (err, stats) => {
         if (err) {
@@ -309,7 +309,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const pass=req.query.password;
     // Required: 上传地址[path]
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       let dir=path.join(localPath, ...filePath);
       const storage = multer.diskStorage({
         destination: function (_req, _file, cb) {
@@ -352,7 +352,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const pass=req.query.password;
     // Required: 文件地址[path], 文件夹名[items]
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       const dir=path.join(localPath, ...filePath);
       const files=JSON.parse(req.query.items);
       var rlt=await new Promise(async (resolve)=>{
@@ -387,7 +387,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const pass=req.query.password;
     // Required: 文件地址[path], 文件夹名[name]
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       const dir=path.join(localPath, ...filePath);
       fs.mkdir(dir+"/"+req.query.name, { recursive: true }, (err) => {
 				if (err) {
@@ -416,7 +416,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const pass=req.query.password;
     // Required: 文件地址[path], 原文件名[oldName]， 新文件名[newName]
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       const dir=path.join(localPath, ...filePath);
       fs.rename(dir+"/"+req.query.oldName, dir+"/"+req.query.newName, (err) => {
         if(err){
@@ -445,7 +445,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const pass=req.query.password;
     // Required: 文件地址[path], 文件[files]
     if(loginController(name, pass)){
-      const filePath=JSON.parse(req.query.path);
+      const filePath=JSON.parse(decodeURIComponent(req.query.path));
       const filesToDownload = JSON.parse(req.query.files);
       const dir=path.join(localPath, ...filePath);
       // const zipFileName = filePath.length==0 ? encodeURIComponent(path.basename(localPath)+".zip") : encodeURIComponent(path.basename(dir)+".zip");
@@ -486,7 +486,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   expressApp.get('/api/download', async(req: any, res: any)=>{
     const name=req.query.username;
     const pass=req.query.password;
-    const filePath=JSON.parse(req.query.path);
+    const filePath=JSON.parse(decodeURIComponent(req.query.path));
     if(loginController(name, pass)){
       const dir=path.join(localPath, ...filePath);
        fs.stat(dir, (err, stats) => {
@@ -521,7 +521,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
     const name=req.query.username;
     const pass=req.query.password;
     
-    const filePath=JSON.parse(req.query.path);
+    const filePath=JSON.parse(decodeURIComponent(req.query.path));
     if(loginController(name, pass)){
       const dir=path.join(localPath, ...filePath);
       fs.stat(dir, (err, stats) => {
@@ -580,7 +580,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   // 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
 
-    const innerPath=JSON.parse(req.query.path);
+    const innerPath=JSON.parse(decodeURIComponent(req.query.path));
     const name=req.query.username;
     const pass=req.query.password;
     

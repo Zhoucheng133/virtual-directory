@@ -22,8 +22,8 @@ export default defineStore('index', ()=>{
 
   let path=ref(['根目录']);
   let data=ref([]);
-  const baseURL="http://127.0.0.1:8088";
-  // const baseURL="";
+  // const baseURL="http://127.0.0.1:8088";
+  const baseURL="";
 
   let gridStyle=ref(false);
   let isLogin=ref(false);

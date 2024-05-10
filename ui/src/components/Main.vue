@@ -44,15 +44,15 @@
         <div class="selectText">
           已选择 {{ stores().selectedCount }} 个项目
         </div>
-        <div class="tableHead" v-show="!stores().gridStyle">
+        <div class="tableHead">
           <div class="tableHeadItem" style="justify-content: center; display: flex;">
             <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
           </div>
-          <div class="tableHeadItem">文件名称</div>
-          <div class="tableHeadItem">大小</div>
+          <div class="tableHeadItem" v-show="!stores().gridStyle">文件名称</div>
+          <div class="tableHeadItem" v-show="!stores().gridStyle">大小</div>
         </div>
       </div>
-      <div class="content" :style="{marginTop: stores().gridStyle ? '130px':'160px'}">
+      <div class="content" style="margin-top: 160px;">
         <div v-if="!stores().gridStyle">
           <div v-for="(item, index) in stores().data" :key="index">
             <a-dropdown :trigger="['contextmenu']">
@@ -190,7 +190,7 @@ body{
 .gridCheckbox{
   position: absolute;
   top: 5px;
-  left: 10px;
+  left: 15px;
 }
 .gridItem:hover{
   background-color: rgb(240, 240, 240);

@@ -25,7 +25,7 @@ export default defineStore('index', ()=>{
   const baseURL="http://127.0.0.1:8088";
   // const baseURL="";
 
-  let gridStyle=ref(true);
+  let gridStyle=ref(false);
   let isLogin=ref(false);
   let loading=ref(true);
   let userData=ref({

@@ -8,6 +8,7 @@
 ![crypto-js](https://img.shields.io/badge/crypto_js-4.2.0-yellow)
 ![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
 ![archiver](https://img.shields.io/badge/archiver-7.0.1-darkgreen)
+![pinia](https://img.shields.io/badge/pinia-2.1.7-yellow)
 ![bootstrap-icons](https://img.shields.io/badge/bootstrap_icons-1.11.3-purple)
 ![uuid](https://img.shields.io/badge/uuid-9.0.1-orange)
 ![multer](https://img.shields.io/badge/multer-1.4.5-lightblue)

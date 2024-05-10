@@ -11,8 +11,13 @@
 ![bootstrap-icons](https://img.shields.io/badge/bootstrap_icons-1.11.3-purple)
 ![uuid](https://img.shields.io/badge/uuid-9.0.1-orange)
 ![multer](https://img.shields.io/badge/multer-1.4.5-lightblue)
+![sharp](https://img.shields.io/badge/multer-0.33.3-lightgreen)
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
+
+**简易模式和权限设定功能仍在开发ing**
+
+UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 经过测试的系统
 -  macOS 13.4
@@ -20,31 +25,53 @@
 
 ## 效果图
 
-待补充
-
 ### 服务端：
 
+![服务端截图](demo/demo1.png)
 
 ### 客户端：
 
+![客户端截图](demo/demo2.png)
 
 ### 视频预览
 
+![视频预览截图](demo/demo3.png)
 
 ## 使用说明
 
 - 一般步骤：
   1. 打开软件选择需要分享的目录
-  2. 选择是否要添加访问权限，即需要登录之后才能进行访问和操作，**如果你需要在公网中访问务必选择此项**
+  2. 选择是否要添加访问权限，即需要登录之后才能进行访问和操作
   3. （如果选择了需要账户密码登录使用）设定用户名和密码
   4. 输入合适的端口号，默认为`8081`，**注意不是所有的端口号都能使用**
   5. 点击`启动服务`
   6. 在局域网内可以通过`IPv4`地址访问到虚拟目录网站
-  7. 注意，如果你希望在局域网/公网中访问到页面，务必保证没有被防火墙拦截
+  7. 注意，如果你希望在局域网内/公网中访问到页面，**务必保证没有被防火墙拦截**
 
 - **注意没有互联网连接时，在打开页面时可能出现问题**
 
+## 常见问题
+
+- 点击启动服务出现错误弹窗
+  1. 端口不允许，很多端口已经被系统占用，因此你不能使用这些端口
+  2. 分享了系统目录或者需要权限访问的目录，在Windows上这可能包括所有硬盘的根目录
+- 在局域网内无法访问到页面
+  - 很大概率是防火墙的问题，你可以先尝试在服务端机器上尝试是否可以正确打开，如果在服务端上可以正常打开，那你可能需要修改防火墙设置或者关闭防火墙，在Windows上在这里：`控制面板->所有控制面板项->Windows Defender 防火墙->允许的应用`，你需要手动将Virtual Directory添加到允许的应用
+- 视频/图片/音频无法预览
+  - 很大概率是编码问题，即便你使用第三方的播放器或者图片查看器可以正确打开，但是在网页端能够预览的编码格式有限
+- 为什么新版本没有macOS系统了
+  - 很抱歉我现在使用的机器是一台Windows系统的PC，如果你需要在macOS系统上使用，你可以自行打包，详细见文末的`关于配置`
+
 ## 更新日志
+
+- ### v4.0.1 (2024/5/10)
+  - (更新内容相较于v3.2.4)
+  - 使用Vue3+Vite+Electron重构
+  - 修复特殊字符问题
+  - 修复页面语言识别问题
+  - 修复无法拖拽上传的问题
+  - 改进了运行效率
+  - 改进了服务端界面布局
 
 - ### v4.0.0 Beta (2024/5/8) 
   - 使用Vue3+Vite+Electron重构
@@ -163,4 +190,24 @@
 ## 关于配置
 如果你希望在自己的电脑中配置该项目，以下为操作步骤：
 
-待补充
+你需要安装`Node.js`，至少需要`Node.js@18`，本人开发环境的版本是`Node.js@18.20.2`，并且安装了`yarn`包管理器
+
+```bash
+npm install yarn -g
+```
+
+通过下面的命令来安装所需要的依赖：
+```bash
+cd [本项目地址]
+yarn install
+```
+
+如果你希望打包，可以使用下面的命令
+```bash
+yarn run build
+yarn run electron-builder --win
+# 如果是macOS系统
+yarn run electron-builder --mac
+# 如果是Linux系统
+yarn run electron-builder --linux
+```

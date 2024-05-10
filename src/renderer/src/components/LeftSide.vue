@@ -17,27 +17,24 @@
           <a-tooltip placement="bottom" :title="formData().dir">
             <a-input v-model:value="formData().dir" spellcheck="false" disabled></a-input>
           </a-tooltip>
-          <a-button style="margin-left: 10px;" @click="formData().selectDir">浏览</a-button>
+          <a-button style="margin-left: 10px;" @click="formData().selectDir" :disabled="mainData().onRunning">浏览</a-button>
         </div>
       </a-form-item>
       <a-form-item label="设置权限">
         <div style="display: flex; flex-direction: column; margin-top: 5px;">
-          <!-- <a-checkbox v-model:checked="formData().read" :disabled="formData().easyMode">读取</a-checkbox>
-          <a-checkbox v-model:checked="formData().write" :disabled="formData().easyMode">写入</a-checkbox>
-          <a-checkbox v-model:checked="formData().del" :disabled="formData().easyMode">删除</a-checkbox> -->
           <a-checkbox v-model:checked="formData().read" disabled>读取</a-checkbox>
           <a-checkbox v-model:checked="formData().write" disabled>写入</a-checkbox>
           <a-checkbox v-model:checked="formData().del" disabled>删除</a-checkbox>
         </div>
       </a-form-item>
-      <a-form-item label="需要登陆">
+      <a-form-item label="需要登陆" :disabled="mainData().onRunning">
         <a-switch v-model:checked="formData().useLogin"></a-switch>
       </a-form-item>
       <a-form-item label="用户名">
-        <a-input v-model:value="formData().username" :disabled="!formData().useLogin"></a-input>
+        <a-input v-model:value="formData().username" :disabled="!formData().useLogin || mainData().onRunning"></a-input>
       </a-form-item>
       <a-form-item label="密码">
-        <a-input-password v-model:value="formData().password" :disabled="!formData().useLogin"></a-input-password>
+        <a-input-password v-model:value="formData().password" :disabled="!formData().useLogin || mainData().onRunning"></a-input-password>
       </a-form-item>
     </a-form>
   </div>
@@ -45,6 +42,7 @@
 
 <script setup lang="ts">
 import formData from '@renderer/stores/formData';
+import mainData from '@renderer/stores/mainData';
 import { onMounted } from 'vue';
 onMounted(()=>{
   const form=localStorage.getItem('form');

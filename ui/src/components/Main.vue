@@ -82,7 +82,7 @@
           </div>
         </div>
         <div v-if="stores().gridStyle" class="gridViewStyle" :style="{'grid-template-columns':'repeat('+Math.floor((pageWidth)/120)+', 1fr)', 'grid-column-gap': (pageWidth-120*Math.floor((pageWidth)/120))/Math.floor((pageWidth)/120)+'px'}">
-          <div class="gridItem" v-for="(item, index) in stores().data" :key="index" @click="stores().openHandler(item)">
+          <div :class="stores().data[index].isSelected ? 'gridItem_selected' : 'gridItem'" v-for="(item, index) in stores().data" :key="index" @click="stores().openHandler(item)">
             <a-dropdown :trigger="['contextmenu']">
               <div>
                 <div class="gridImg">
@@ -102,6 +102,7 @@
                 </a-menu>
               </template>
             </a-dropdown>
+            <a-checkbox class="gridCheckbox" @click.stop="(event)=>event.stopPropagation()"  v-model:checked="stores().data[index].isSelected"></a-checkbox>
           </div>
         </div>
       </div>
@@ -186,15 +187,24 @@ body{
 </style>
 
 <style scoped>
+.gridCheckbox{
+  position: absolute;
+  top: 5px;
+  left: 10px;
+}
 .gridItem:hover{
   background-color: rgb(240, 240, 240);
 }
-.gridItem{
+.gridItem_selected{
+  background-color: rgb(245, 245, 245);
+}
+.gridItem, .gridItem_selected{
   cursor: pointer;
   transition: background-color linear .2s;
   border-radius: 10px;
   padding: 10px;
   width: 120px;
+  position: relative;
 }
 .gridImg{
   display: flex;

@@ -10,7 +10,7 @@
         </div>
       </a-form-item>
       <a-form-item label="端口设置">
-        <a-input-number v-model:value="formData().port" :min="1000" :max="9999" style="margin-right: 20px;"></a-input-number> 
+        <a-input-number v-model:value="formData().port" :min="1000" :max="9999" style="margin-right: 20px;"  :disabled="mainData().onRunning"></a-input-number> 
       </a-form-item>
       <a-form-item label="映射目录">
         <div style="display: flex; align-items: center;">
@@ -27,8 +27,8 @@
           <a-checkbox v-model:checked="formData().del" disabled>删除</a-checkbox>
         </div>
       </a-form-item>
-      <a-form-item label="需要登陆" :disabled="mainData().onRunning">
-        <a-switch v-model:checked="formData().useLogin"></a-switch>
+      <a-form-item label="需要登陆">
+        <a-switch v-model:checked="formData().useLogin" :disabled="mainData().onRunning"></a-switch>
       </a-form-item>
       <a-form-item label="用户名">
         <a-input v-model:value="formData().username" :disabled="!formData().useLogin || mainData().onRunning"></a-input>

@@ -23,6 +23,14 @@
           <a-button style="margin-left: 10px;" :disabled="stores().selectedCount==0" @click="stores().mainDownload()">下载</a-button>
           <div class="newFolderButton" @click="newFolderModal">新建文件夹</div>
           <div :class="stores().selectedCount!=0?'delButton':'delButton_disabled'" @click="stores().delHandler()">删除</div>
+          <div class="viewStyle" @click="stores().toggleViewStyle">
+            <div class="viewStyleItem" v-if="!stores().gridStyle">
+              <i class="bi bi-grid-3x3"></i>
+            </div>
+            <div class="viewStyleItem" v-else>
+              <i class="bi bi-list"></i>
+            </div>
+          </div>
         </div>
         <input
           type="file"
@@ -36,7 +44,7 @@
         <div class="selectText">
           已选择 {{ stores().selectedCount }} 个项目
         </div>
-        <div class="tableHead">
+        <div class="tableHead" v-show="!stores().gridStyle">
           <div class="tableHeadItem" style="justify-content: center; display: flex;">
             <a-checkbox @change="stores().allSelectToggle" v-model:checked="stores().allSelect" style="margin-right: 7px;">全选</a-checkbox>
           </div>
@@ -44,32 +52,57 @@
           <div class="tableHeadItem">大小</div>
         </div>
       </div>
-      <div class="content">
-        <div v-for="(item, index) in stores().data" :key="index">
-          <a-dropdown :trigger="['contextmenu']">
-            <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
-              <div class="tableItem" style="justify-content: center; display: flex;">
-                <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
+      <div class="content" :style="{marginTop: stores().gridStyle ? '130px':'160px'}">
+        <div v-if="!stores().gridStyle">
+          <div v-for="(item, index) in stores().data" :key="index">
+            <a-dropdown :trigger="['contextmenu']">
+              <div :class="stores().data[index].isSelected ? 'tableSelected' : 'tableGrid'">
+                <div class="tableItem" style="justify-content: center; display: flex;">
+                  <a-checkbox v-model:checked="stores().data[index].isSelected"></a-checkbox>
+                </div>
+                <div class="tableItem" @click="stores().openHandler(item)">
+                  <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
+                </div>
+                <div class="tableItem" @click="stores().openHandler(item)">
+                  <div class="fileName">{{ item.fileName }}</div>
+                </div>
+                <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
               </div>
-              <div class="tableItem" @click="stores().openHandler(item)">
-                <img :src="stores().getIconSrc(item)" width="25px" draggable="false">
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="stores().openHandler(item)">打开</a-menu-item>
+                  <a-menu-divider />
+                  <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
+                  <a-menu-divider />
+                  <a-menu-item @click="renameModal(item)"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
+                  <a-menu-item @click="stores().delHandler(item)"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </div>
+        </div>
+        <div v-if="stores().gridStyle" class="gridViewStyle" :style="{'grid-template-columns':'repeat('+Math.floor((pageWidth)/120)+', 1fr)', 'grid-column-gap': (pageWidth-120*Math.floor((pageWidth)/120))/Math.floor((pageWidth)/120)+'px'}">
+          <div class="gridItem" v-for="(item, index) in stores().data" :key="index" @click="stores().openHandler(item)">
+            <a-dropdown :trigger="['contextmenu']">
+              <div>
+                <div class="gridImg">
+                  <img :src="stores().getIconSrc(item)" height="50px" draggable="false" v-if="item.type!='image'">
+                  <img :src="stores().imgPreview(item.fileName)" height="50px" v-else>
+                </div>
+                <div class="gridText">{{ item.fileName }}</div>
               </div>
-              <div class="tableItem" @click="stores().openHandler(item)">
-                <div class="fileName">{{ item.fileName }}</div>
-              </div>
-              <div class="tableItem" @click="stores().openHandler(item)">{{ item.isFile ? item.size: '' }}</div>
-            </div>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item @click="stores().openHandler(item)">打开</a-menu-item>
-                <a-menu-divider />
-                <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
-                <a-menu-divider />
-                <a-menu-item @click="renameModal(item)"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
-                <a-menu-item @click="stores().delHandler(item)"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="stores().openHandler(item)">打开</a-menu-item>
+                  <a-menu-divider />
+                  <a-menu-item @click="stores().downloadHandler(item)"><i class="bi bi-download" style="margin-right: 10px;"></i>下载</a-menu-item>
+                  <a-menu-divider />
+                  <a-menu-item @click="renameModal(item)"><i class="bi bi-pen" style="margin-right: 10px;"></i>重命名</a-menu-item>
+                  <a-menu-item @click="stores().delHandler(item)"><i class="bi bi-trash3" style="margin-right: 10px;"></i>删除</a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </div>
         </div>
       </div>
     </div>
@@ -136,7 +169,6 @@ const calWidth=()=>{
   }else{
     pageWidth.value=320
   }
-  
 }
 window.onresize=()=>{
   calWidth();
@@ -154,6 +186,48 @@ body{
 </style>
 
 <style scoped>
+.gridItem:hover{
+  background-color: rgb(240, 240, 240);
+}
+.gridItem{
+  cursor: pointer;
+  transition: background-color linear .2s;
+  border-radius: 10px;
+  padding: 10px;
+  width: 120px;
+}
+.gridImg{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.gridText{
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  line-height: 16px;
+}
+.gridViewStyle{
+  display: grid;
+  grid-row-gap: 10px;
+}
+.viewStyleText{
+  margin-left: 5px;
+}
+.viewStyleItem:hover{
+  color: #1677ff;
+}
+.viewStyleItem{
+  display: flex;
+  cursor: pointer;
+  transition: color linear .2s;
+}
+.viewStyle{
+  margin-left: auto;
+}
 .dragview{
   position: fixed;
   top: 0;
@@ -267,9 +341,6 @@ body{
   background-color: white;
   z-index: 10;
 }
-.content{
-  margin-top: 160px;
-}
 .tableGrid, .tableSelected{
   display: grid;
   grid-template-columns: 50px 50px auto 100px;
@@ -356,7 +427,7 @@ body{
   /* max-width: 1000px; */
   /* margin: auto; */
   user-select: none;
-  padding-bottom: 20px;
+  padding-bottom: 100px;
   /* height: 200px; */
   /* background-color: red; */
 }

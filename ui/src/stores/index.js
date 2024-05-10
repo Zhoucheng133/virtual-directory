@@ -24,6 +24,8 @@ export default defineStore('index', ()=>{
   let data=ref([]);
   const baseURL="http://127.0.0.1:8088";
   // const baseURL="";
+
+  let gridStyle=ref(true);
   let isLogin=ref(false);
   let loading=ref(true);
   let userData=ref({
@@ -37,6 +39,9 @@ export default defineStore('index', ()=>{
     link: '',
   });
 
+  const toggleViewStyle=()=>{
+    gridStyle.value=!gridStyle.value;
+  }
   const loginController=async (username, password)=>{
     const loginfeedback=await axios.get(baseURL+'/api/login', {
       params: {
@@ -295,6 +300,10 @@ export default defineStore('index', ()=>{
     
   }
 
+  const imgPreview=(fileName)=>{
+    return `${baseURL}/api/imgPreview?username=${userData.value.username}&password=${CryptoJS.SHA256(userData.value.password).toString()}&path=${JSON.stringify([...path.value.slice(1), fileName])}`;
+  }
+
   return {
     path, 
     data, 
@@ -317,6 +326,9 @@ export default defineStore('index', ()=>{
     newFolderHandler,
     delHandler,
     baseURL,
-    userData
+    userData,
+    gridStyle,
+    toggleViewStyle,
+    imgPreview
   };
 })

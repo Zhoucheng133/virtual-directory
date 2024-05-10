@@ -87,7 +87,7 @@
               <div>
                 <div class="gridImg">
                   <img :src="stores().getIconSrc(item)" height="50px" draggable="false" v-if="item.type!='image'">
-                  <img :src="stores().imgPreview(item.fileName)" height="50px" v-else>
+                  <img v-lazy="stores().imgPreview(item.fileName)" height="50px" v-else>
                 </div>
                 <div class="gridText">{{ item.fileName }}</div>
               </div>

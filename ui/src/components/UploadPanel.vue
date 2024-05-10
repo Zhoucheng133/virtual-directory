@@ -62,8 +62,9 @@ const togglePanel=()=>{
   height: 350px;
 }
 .size{
-  font-size: 12px;
+  font-size: 11px;
   margin-top: 5px;
+  color: rgb(160, 160, 160);
 }
 .progress{
   position: absolute;
@@ -83,6 +84,7 @@ const togglePanel=()=>{
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 14px;
 }
 .name{
   overflow: hidden;

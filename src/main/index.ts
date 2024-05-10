@@ -14,6 +14,7 @@ import archiver from 'archiver';
 import multer from 'multer';
 import icon from '../../resources/icon.png?asset'
 
+import sharp from 'sharp';
 let mainWindow: BrowserWindow;
 let expressApp: any;
 var sockets: any[] = [];
@@ -256,6 +257,51 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   function removeLastDirectory(filePath: any) {
     return filePath.replace(/[\\\/][^\\\/]+$/, '');
   }
+
+  // 预览图片
+  expressApp.get('/api/imgPreview', async(req: any, res: any)=>{
+    const name=req.query.username;
+    const pass=req.query.password;
+    if(loginController(name, pass)){
+      const filePath=JSON.parse(req.query.path);
+      let dir=path.join(localPath, ...filePath);
+      fs.stat(dir, (err, stats) => {
+        if (err) {
+          res.end("Request ERR");
+        } else {
+          if (stats.isDirectory()) {
+            res.end("Not file");
+            return;
+          } else {
+            // const randomValue = Date.now() + Math.floor(Math.random() * 1000);
+            sharp(dir)
+            .resize({ width: 80, height: 80, fit: 'inside' })
+            .withMetadata()
+            .toBuffer((err, buffer) => {
+              if (err) {
+                console.error(`加载缩略图失败: ${err}`);
+                res.status(500).send('加载缩略图失败');
+              } else {
+                // const compressedImageBase64 = buffer.toString('base64');
+                // const dataUrl = `data:image/jpeg;base64,${compressedImageBase64}`;
+                
+                res.writeHead(200, {
+                  'Content-Type': 'image/jpeg',
+                  'Content-Length': buffer.length
+                });
+                res.end(buffer, 'binary');
+              }
+            });
+          }
+        }
+      });
+    }else{
+      res.json({
+        ok: false,
+        data: "用户验证失败"
+      });
+    }
+  })
 
   // 上传文件
   expressApp.post('/api/upload', async(req: any, res: any)=>{

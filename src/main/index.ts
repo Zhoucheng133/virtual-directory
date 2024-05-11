@@ -315,6 +315,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 上传文件
   expressApp.post('/api/upload', async(req: any, res: any)=>{
+    if(!enableWrite){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     // Required: 上传地址[path]
@@ -358,6 +365,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 删除文件
   expressApp.post('/api/del', async(req: any, res: any)=>{
+    if(!enableDel){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     // Required: 文件地址[path], 文件夹名[items]
@@ -393,6 +407,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 新建文件夹
   expressApp.post('/api/newFolder', async(req: any, res: any)=>{
+    if(!enableWrite){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     // Required: 文件地址[path], 文件夹名[name]
@@ -422,6 +443,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 重命名
   expressApp.post('/api/rename', async(req: any, res: any)=>{
+    if(!enableWrite){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     // Required: 文件地址[path], 原文件名[oldName]， 新文件名[newName]

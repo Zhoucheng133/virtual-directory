@@ -16,8 +16,6 @@
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 
-**简易模式和权限设定功能仍在开发ing**
-
 UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 经过测试的系统
@@ -64,6 +62,10 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
   - 很抱歉我现在使用的机器是一台Windows系统的PC，如果你需要在macOS系统上使用，你可以自行打包，详细见文末的`关于配置`
 
 ## 更新日志
+
+- ### v4.0.2 (2024/5/11)
+  - 添加权限设置，包括读取，写入和删除的权限
+  - 添加简易模式（只允许上传）
 
 - ### v4.0.1 (2024/5/10)
   - (更新内容相较于v3.2.4)

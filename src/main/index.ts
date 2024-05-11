@@ -270,6 +270,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 预览图片
   expressApp.get('/api/imgPreview', async(req: any, res: any)=>{
+    if(!enableRead){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     if(loginController(name, pass)){
@@ -479,6 +486,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
   
   // 多文件下载
   expressApp.get('/api/multidownload', async(req: any, res: any)=>{
+    if(!enableRead){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     // Required: 文件地址[path], 文件[files]
@@ -522,6 +536,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 单文件下载
   expressApp.get('/api/download', async(req: any, res: any)=>{
+    if(!enableRead){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     const filePath=JSON.parse(decodeURIComponent(req.query.path));
@@ -556,6 +577,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 获取文件信息
   expressApp.get('/api/getFile', async(req: any, res: any)=>{
+    if(!enableRead){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
     const name=req.query.username;
     const pass=req.query.password;
     

@@ -1,6 +1,6 @@
 {
   "name": "virdir",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "zhouc",

@@ -22,9 +22,9 @@
       </a-form-item>
       <a-form-item label="设置权限">
         <div style="display: flex; flex-direction: column; margin-top: 5px;">
-          <a-checkbox v-model:checked="formData().read" :disabled="mainData().onRunning">读取</a-checkbox>
-          <a-checkbox v-model:checked="formData().write" :disabled="mainData().onRunning">写入</a-checkbox>
-          <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning">删除</a-checkbox>
+          <a-checkbox v-model:checked="formData().read" :disabled="mainData().onRunning || formData().easyMode">读取</a-checkbox>
+          <a-checkbox v-model:checked="formData().write" :disabled="mainData().onRunning || formData().easyMode">写入</a-checkbox>
+          <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning || formData().easyMode">删除</a-checkbox>
         </div>
       </a-form-item>
       <a-form-item label="需要登陆">

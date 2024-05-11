@@ -617,6 +617,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 获取数据
   expressApp.get('/api/getData', async(req: any, res: any)=>{
+    if(!enableRead){
+      res.json({
+        ok: false,
+        data: "权限不允许"
+      });
+      return;
+    }
 
     const innerPath=JSON.parse(decodeURIComponent(req.query.path));
     const name=req.query.username;
@@ -625,7 +632,6 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
     let dirs: any[]=[];
     if(loginController(name, pass)){
       try {
-        // console.log(path.join(localPath, ...innerPath));
         const files=fs.readdirSync(path.join(localPath, ...innerPath));
         files.forEach(async item => {
           const itemPath = path.join(localPath, ...innerPath, item);

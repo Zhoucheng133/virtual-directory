@@ -3,7 +3,7 @@
     <a-form :label-col="{ style: { width: '70px' } }">
       <a-form-item label="简易模式">
         <div style="display: flex; align-items: center;">
-          <a-switch v-model:checked="formData().easyMode" style="margin-right: 20px;" disabled></a-switch>
+          <a-switch v-model:checked="formData().easyMode" style="margin-right: 20px;" :disabled="mainData().onRunning"></a-switch>
           <a-tooltip placement="bottom" title="简易模式下只能从客户端上传文件到本机">
             <i class="bi bi-question"></i>
           </a-tooltip>
@@ -22,9 +22,9 @@
       </a-form-item>
       <a-form-item label="设置权限">
         <div style="display: flex; flex-direction: column; margin-top: 5px;">
-          <a-checkbox v-model:checked="formData().read" disabled>读取</a-checkbox>
-          <a-checkbox v-model:checked="formData().write" disabled>写入</a-checkbox>
-          <a-checkbox v-model:checked="formData().del" disabled>删除</a-checkbox>
+          <a-checkbox v-model:checked="formData().read" :disabled="mainData().onRunning">读取</a-checkbox>
+          <a-checkbox v-model:checked="formData().write" :disabled="mainData().onRunning">写入</a-checkbox>
+          <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning">删除</a-checkbox>
         </div>
       </a-form-item>
       <a-form-item label="需要登陆">

@@ -108,7 +108,7 @@ ipcMain.handle('selectDir', async ()=>{
 })
 
 // 运行服务
-ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
+ipcMain.handle('runServer', (_event, port, localPath, username, password, enableRead, enableWrite, enableDel)=>{
   expressApp=express();
   expressApp.use(cors());
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
@@ -236,9 +236,19 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password)=>{
   // 判断是否需要登陆
   expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
     if(username.length==0){
-      res.json(false);
+      res.json({
+        rlt: false,
+        read: enableRead,
+        write: enableWrite,
+        del: enableDel,
+      });
     }else{
-      res.json(true);
+      res.json({
+        rlt: true,
+        read: enableRead,
+        write: enableWrite,
+        del: enableDel,
+      });
     }
   })
 

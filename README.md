@@ -67,6 +67,9 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
   - 添加权限设置，包括读取，写入和删除的权限
   - 添加简易模式（只允许上传）
 
+<details>
+<summary>过往的版本</summary>
+  
 - ### v4.0.1 (2024/5/10)
   - (更新内容相较于v3.2.4)
   - 使用Vue3+Vite+Electron重构
@@ -189,6 +192,7 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 - ### v1.0 (2023/7/5)
   - 第一个版本
+</details>
 
 ## 关于配置
 如果你希望在自己的电脑中配置该项目，以下为操作步骤：

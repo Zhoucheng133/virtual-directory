@@ -1,10 +1,10 @@
 <template>
   <div class="titleBar">
     <div class="dragArea"></div>
-    <div class="minButton" @click="minApp">
+    <div class="minButton" @click="minApp" v-if="isWin">
       <i class="bi bi-dash"></i>
     </div>
-    <div class="closeButton" @click="closeApp">
+    <div class="closeButton" @click="closeApp" v-if="isWin">
       <i class="bi bi-x"></i>
     </div>
   </div>
@@ -16,6 +16,7 @@
 
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import LeftSide from './components/LeftSide.vue';
 import RightSide from './components/RightSide.vue';
 const closeApp=()=>{
@@ -24,6 +25,14 @@ const closeApp=()=>{
 const minApp=()=>{
   window.electron.ipcRenderer.send("minApp");
 }
+
+let isWin=ref(false);
+
+window.electron.ipcRenderer.invoke('getSys').then((response)=>{
+  if(response=='Windows'){
+    isWin.value=true;
+  }
+})
 </script>
 
 <style>

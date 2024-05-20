@@ -703,6 +703,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
   });
 })
 
+// 停止服务
 ipcMain.handle('stopServer', ()=>{
   sockets.forEach(function(socket){
 		socket.destroy();
@@ -713,4 +714,14 @@ ipcMain.handle('stopServer', ()=>{
     });
   }
   return false;
+})
+
+// 获取系统信息
+ipcMain.handle('getSys', ()=>{
+  if (process.platform == 'darwin') {
+    return 'macOS';
+  } else if (process.platform == 'win32') {
+    return 'Windows';
+  }
+  return 'Linux';
 })

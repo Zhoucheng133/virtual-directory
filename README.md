@@ -212,9 +212,10 @@ yarn install
 如果你希望打包，可以使用下面的命令
 ```bash
 yarn run build
+# 如果是Windows系统
 yarn run electron-builder --win
 # 如果是macOS系统
 yarn run electron-builder --mac
-# 如果是Linux系统
+# 如果是Linux系统 (不确保可以正确地运行在Linux系统上)
 yarn run electron-builder --linux
 ```

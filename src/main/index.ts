@@ -31,6 +31,7 @@ function createWindow(){
     resizable: false,
     titleBarStyle: "hidden",
     webPreferences: {
+      nodeIntegration: true,
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     },
@@ -231,6 +232,10 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
   // 指向页面
   expressApp.get('/', async(_req: any, res: any)=>{
     res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
+  })
+
+  expressApp.get('/vite.svg', async(_req: any, res: any)=>{
+    res.sendFile(path.join(__dirname, '../../ui/dist', 'vite.svg'));
   })
 
   // 判断是否需要登陆

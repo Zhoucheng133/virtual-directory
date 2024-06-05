@@ -1,11 +1,10 @@
 <template>
   <div class="bg">
-    <div class="logPanel">
-      <div class="logItem" v-for="(item, index) in logData().log" :key="index">
-        <div class="logContent">{{ item.content }}</div>
-        <div class="logTime">{{ item.time }}</div>
-      </div>
+    <div class="ipPanel">
+      <i class="bi bi-router"></i>
+      {{ ip }}:{{ formData().port }}
     </div>
+    <div class="openLink" @click="openLink">打开链接</div>
     <div class="buttonArea" style="display: flex; justify-content: space-between;">
       <a-button @click="copyIP">复制地址</a-button>
       <a-button class="runButton" type="primary" @click="mainData().toggleRun" :danger="mainData().onRunning ? true : false">
@@ -20,22 +19,48 @@ import formData from '@renderer/stores/formData';
 import logData from '@renderer/stores/logData';
 import mainData from '@renderer/stores/mainData';
 import { message } from 'ant-design-vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const copyIP=()=>{
   navigator.clipboard.writeText(logData().ip+':'+formData().port);
   message.success("复制成功！");
 }
+let ip=ref('');
+const openLink=()=>{
+  if(mainData().onRunning){
+    window.open(`http://localhost:${formData().port}`)
+    console.log(`http:localhost:${formData().port}`);
+    
+  }else{
+    message.info("服务没有在运行")
+  }
+}
 
 onMounted(()=>{
   logData().initLog();
   window.electron.ipcRenderer.invoke('getIP').then((response)=>{
-    logData().setIP(response);
+    ip.value=response
   })
 })
 </script>
 
 <style scoped>
+.openLink:hover{
+  color: #3075ca;
+}
+.openLink{
+  margin-top: 20px;
+  color: #4096ff;
+  cursor: pointer;
+  transition: color linear .2s;
+}
+.bi-router{
+  margin-right: 10px;
+  font-size: 20px;
+}
+.ipPanel{
+  display: flex;
+}
 .buttonArea{
   display: flex;
   align-items: center;

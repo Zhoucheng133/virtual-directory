@@ -22,7 +22,7 @@ let server: any;
 
 function createWindow(){
   mainWindow = new BrowserWindow({
-    width: 700,
+    width: 400,
     height: 500,
     show: false,
     title: "Virtual Directory",

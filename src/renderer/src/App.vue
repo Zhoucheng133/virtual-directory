@@ -9,16 +9,14 @@
     </div>
   </div>
   <div class="mainPage">
-    <LeftSide class="pageComponent" />
-    <RightSide class="pageComponent" />
+    <PageContent class="pageComponent" />
   </div>
 </template>
 
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import LeftSide from './components/LeftSide.vue';
-import RightSide from './components/RightSide.vue';
+import PageContent from './components/PageContent.vue';
 const closeApp=()=>{
   window.electron.ipcRenderer.send("closeApp");
 }

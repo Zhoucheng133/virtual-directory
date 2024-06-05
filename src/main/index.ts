@@ -431,7 +431,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 				if (err) {
 					res.json({
             ok: false,
-            data: "新建文件夹请求事变"
+            data: "新建文件夹请求失败"
           });
 				} else {
 					res.json({

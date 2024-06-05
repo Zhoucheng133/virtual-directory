@@ -698,7 +698,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 			sockets.splice(sockets.indexOf(socket), 1);
 		});
 	});
-  server.listen(port, () => {
+  server.listen(port, '0.0.0.0', () => {
     console.log(`Server is running at http://localhost:${port}`);
   });
 })

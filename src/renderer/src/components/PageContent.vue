@@ -34,7 +34,6 @@
       </a-button>
     </div>
     <div class="info" @click="toGithub">
-      <div style="margin-right: 5px; color: lightgrey; font-size: 13px">Click Here to see</div>
       <img src="../assets/icon.png" alt="" height="25px">
       <div style="margin-left: 5px; margin-right: 5px; color: lightgrey; font-size: 13px">in</div>
       <i class="bi bi-github"></i>

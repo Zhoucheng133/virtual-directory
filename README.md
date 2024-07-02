@@ -63,13 +63,16 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 更新日志
 
+### v4.0.4 (2024/7/3)
+- 修复无法下载单个文件的问题
+
+<details>
+<summary>过往的版本</summary>
+
 ### v4.0.3 (2024/6/5)
 - 添加查看ip地址
 - 修复了一些错别字
 - 调整了一下界面
-
-<details>
-<summary>过往的版本</summary>
 
 - ### v4.0.2 (2024/5/11)
   - 添加权限设置，包括读取，写入和删除的权限

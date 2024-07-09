@@ -33,10 +33,8 @@
         {{ mainData().onRunning ? '停止服务' : '启动服务' }}
       </a-button>
     </div>
-    <div class="info" @click="toGithub">
-      <img src="../assets/icon.png" alt="" height="25px">
-      <div style="margin-left: 5px; margin-right: 5px; color: lightgrey; font-size: 13px">in</div>
-      <i class="bi bi-github"></i>
+    <div class="info">
+      <i class="bi bi-github" @click="toGithub"></i>
     </div>
   </div>
 </template>
@@ -79,12 +77,15 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+.bi-github{
+  cursor: pointer;
+}
 .info{
   margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .formView{
   display: grid;

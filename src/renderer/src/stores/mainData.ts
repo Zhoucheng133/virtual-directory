@@ -7,7 +7,7 @@ import logData from "./logData";
 export default defineStore('mainData', ()=>{
   let onRunning=ref(false);
   
-  const toggleRun=()=>{
+  const toggleRun=async ()=>{
     if(onRunning.value){
       // 停止运行
       onRunning.value=false;
@@ -15,6 +15,11 @@ export default defineStore('mainData', ()=>{
       logData().addLog('停止服务')
     }else{
       // 运行服务
+      const ok = await window.electron.ipcRenderer.invoke('checkPath', formData().dir);
+      if(!ok){
+        message.error("映射目录不合法");
+        return;
+      }
       if(formData().dir.length==0){
         message.error("映射目录不能为空!");
         return;

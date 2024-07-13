@@ -730,3 +730,10 @@ ipcMain.handle('getSys', ()=>{
   }
   return 'Linux';
 })
+
+ipcMain.handle('checkPath', (_event, path)=>{
+  if(fs.existsSync(path)){
+    return true;
+  }
+  return false;
+})

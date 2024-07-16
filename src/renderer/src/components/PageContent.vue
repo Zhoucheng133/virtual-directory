@@ -39,17 +39,17 @@
     <div class="info">
       <i class="bi bi-github" @click="toGithub"></i>
     </div>
+    <a-modal v-model:open="ftpModal" title="FTP设置" @ok="okFTP" centered>
+      <template #footer>
+        <a-button key="submit" type="primary" @click="okFTP">完成</a-button>
+      </template>
+      <a-checkbox v-model:checked="formData().useFTP" :disabled="mainData().onRunning">启用FTP</a-checkbox>
+      <div class="formView" style="margin-top: 10px">
+        <div class="title">端口号</div>
+        <div><a-input-number v-model:value="formData().ftpPort" :min="1000" :max="9999" style="margin-right: 20px;" :disabled="mainData().onRunning || !formData().useFTP"></a-input-number></div>
+      </div>
+    </a-modal>
   </div>
-  <a-modal v-model:open="ftpModal" title="FTP设置" @ok="okFTP" centered>
-    <template #footer>
-      <a-button key="submit" type="primary" @click="okFTP">完成</a-button>
-    </template>
-    <a-checkbox v-model:checked="formData().useFTP" :disabled="mainData().onRunning">启用FTP</a-checkbox>
-    <div class="formView" style="margin-top: 10px">
-      <div class="title">端口号</div>
-      <div><a-input-number v-model:value="formData().ftpPort" :min="1000" :max="9999" style="margin-right: 20px;" :disabled="mainData().onRunning || !formData().useFTP"></a-input-number></div>
-    </div>
-  </a-modal>
 </template>
 
 <script setup lang="ts">

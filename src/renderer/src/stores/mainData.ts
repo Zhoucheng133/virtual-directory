@@ -15,6 +15,10 @@ export default defineStore('mainData', ()=>{
       logData().addLog('停止服务')
     }else{
       // 运行服务
+      if(formData().port==formData().ftpPort && formData().useFTP){
+        message.error("FTP端口和主服务端口相同");
+        return;
+      }
       const ok = await window.electron.ipcRenderer.invoke('checkPath', formData().dir);
       if(!ok){
         message.error("映射目录不合法");

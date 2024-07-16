@@ -8,15 +8,18 @@
       <i class="bi bi-x"></i>
     </div>
   </div>
-  <div class="mainPage">
-    <PageContent class="pageComponent" />
-  </div>
+  <a-config-provider :locale="zhCN">
+    <div class="mainPage">
+      <PageContent class="pageComponent" />
+    </div>
+  </a-config-provider>
 </template>
 
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import PageContent from './components/PageContent.vue';
+import zhCN from "ant-design-vue/es/locale/zh_CN";
 const closeApp=()=>{
   window.electron.ipcRenderer.send("closeApp");
 }

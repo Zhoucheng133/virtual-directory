@@ -11,6 +11,8 @@ export default defineStore('formData', ()=>{
   let useLogin=ref(false);
   let username=ref("");
   let password=ref("");
+  let ftpPort=ref(2211);
+  let useFTP=ref(false);
 
   watch(read, (newVal)=>{
     if(!newVal){
@@ -59,5 +61,5 @@ export default defineStore('formData', ()=>{
     password.value=val.password;
   }
 
-  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm, selectDir };
+  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm, selectDir, ftpPort, useFTP };
 })

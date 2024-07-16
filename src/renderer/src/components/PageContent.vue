@@ -16,7 +16,10 @@
         <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning || formData().easyMode">删除</a-checkbox>
       </div>
       <div class="title">需要登录</div>
-      <div><a-switch v-model:checked="formData().useLogin" :disabled="mainData().onRunning"></a-switch></div>
+      <div style="display: flex;">
+        <a-switch v-model:checked="formData().useLogin" :disabled="mainData().onRunning"></a-switch>
+        <div class="openLink" @click="setFTP">FTP设置</div>
+      </div>
       <div class="title">用户名</div>
       <a-input v-model:value="formData().username" :disabled="!formData().useLogin || mainData().onRunning"></a-input>
       <div class="title">密码</div>
@@ -37,6 +40,16 @@
       <i class="bi bi-github" @click="toGithub"></i>
     </div>
   </div>
+  <a-modal v-model:open="ftpModal" title="FTP设置" @ok="okFTP" centered>
+    <template #footer>
+      <a-button key="submit" type="primary" @click="okFTP">完成</a-button>
+    </template>
+    <a-checkbox v-model:checked="formData().useFTP" :disabled="mainData().onRunning">启用FTP</a-checkbox>
+    <div class="formView" style="margin-top: 10px">
+      <div class="title">端口号</div>
+      <div><a-input-number v-model:value="formData().ftpPort" :min="1000" :max="9999" style="margin-right: 20px;" :disabled="mainData().onRunning || !formData().useFTP"></a-input-number></div>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -54,6 +67,13 @@ onMounted(()=>{
     formData().setForm(data);
   }
 })
+let ftpModal=ref(false)
+const okFTP=()=>{
+  ftpModal.value=false;
+}
+const setFTP=()=>{
+  ftpModal.value=true;
+}
 const copyIP=()=>{
   navigator.clipboard.writeText(ip+':'+formData().port);
   message.success("复制成功！");

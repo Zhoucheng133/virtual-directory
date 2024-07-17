@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 
 export default defineStore('formData', ()=>{
-  let easyMode=ref(false);
   let port=ref(8081);
   let dir=ref("");
   let write=ref(true);
@@ -14,24 +13,8 @@ export default defineStore('formData', ()=>{
   let ftpPort=ref(2211);
   let useFTP=ref(false);
 
-  watch(read, (newVal)=>{
-    if(!newVal){
-      del.value=false;
-      easyMode.value=true;
-    }
-  })
-  watch(easyMode, (newVal)=>{
-    if(newVal){
-      read.value=false;
-      write.value=true;
-      del.value=false;
-    }else{
-      read.value=true;
-    }
-  })
-  watch([easyMode, port, dir, write, read, del, useLogin, username, password], ()=>{
+  watch([port, dir, write, read, del, useLogin, username, password, ftpPort, useFTP], ()=>{
     localStorage.setItem("form", JSON.stringify({
-      easyMode: easyMode.value,
       port: port.value,
       dir: dir.value,
       write: write.value,
@@ -39,7 +22,9 @@ export default defineStore('formData', ()=>{
       del: del.value,
       useLogin: useLogin.value,
       username: username.value,
-      password: password.value
+      password: password.value,
+      ftpPort: ftpPort.value,
+      useFTP: useFTP.value
     }));
   })
 
@@ -50,7 +35,6 @@ export default defineStore('formData', ()=>{
   };
 
   const setForm=(val:any)=>{
-    easyMode.value=val.easyMode;
     port.value=val.port;
     dir.value=val.dir;
     write.value=val.write;
@@ -59,7 +43,9 @@ export default defineStore('formData', ()=>{
     useLogin.value=val.useLogin;
     username.value=val.username;
     password.value=val.password;
+    useFTP.value=val.useFTP;
+    ftpPort.value=val.ftpPort;
   }
 
-  return { easyMode, port, dir, write, read, del, useLogin, username, password, setForm, selectDir, ftpPort, useFTP };
+  return { port, dir, write, read, del, useLogin, username, password, setForm, selectDir, ftpPort, useFTP };
 })

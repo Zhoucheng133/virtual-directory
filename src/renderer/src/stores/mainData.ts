@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import formData from "./formData";
 import { message } from "ant-design-vue";
-import logData from "./logData";
 
 export default defineStore('mainData', ()=>{
   let onRunning=ref(false);
@@ -12,7 +11,6 @@ export default defineStore('mainData', ()=>{
       // 停止运行
       onRunning.value=false;
       window.electron.ipcRenderer.invoke('stopServer');
-      logData().addLog('停止服务')
     }else{
       // 运行服务
       if(formData().port==formData().ftpPort && formData().useFTP){
@@ -56,7 +54,6 @@ export default defineStore('mainData', ()=>{
           formData().ftpPort
         )
       }
-      logData().addLog('运行服务')
       onRunning.value=true;
     }
   }

@@ -242,7 +242,7 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   if(useDAV){
     const dav = new webdav.WebDAVServer({});
-    const root = new webdav.PhysicalFileSystem(localPath); // 指定文件系统的根目录
+    const root = new webdav.PhysicalFileSystem(localPath);
     dav.setFileSystemSync('/', root);
     expressApp.use(webdav.extensions.express("/dav", dav));
   }

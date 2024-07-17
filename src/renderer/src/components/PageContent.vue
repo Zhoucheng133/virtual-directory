@@ -18,7 +18,7 @@
       <div class="title">需要登录</div>
       <div style="display: flex;">
         <a-switch v-model:checked="formData().useLogin" :disabled="mainData().onRunning"></a-switch>
-        <a-checkbox style="margin-left: auto;" v-model:checked="formData().useDAV">启用WebDAV</a-checkbox>
+        <a-checkbox style="margin-left: auto;" v-model:checked="formData().useDAV" :disabled="mainData().onRunning">启用WebDAV</a-checkbox>
       </div>
       <div class="title">用户名</div>
       <a-input v-model:value="formData().username" :disabled="!formData().useLogin || mainData().onRunning"></a-input>

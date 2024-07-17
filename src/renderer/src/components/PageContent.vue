@@ -27,7 +27,10 @@
     </div>
     <div class="ipPanel">
       <i class="bi bi-router"></i>
-      {{ ip }}:{{ formData().port }}
+      <div style="height: 40px; display: flex; flex-direction: column; justify-content: center;">
+        <div>{{ ip }}:{{ formData().port }}</div>
+        <div v-if="formData().useDAV">{{ ip }}:{{ formData().port }}/dav</div>
+      </div>
       <div class="openLink" @click="openLink">打开链接</div>
     </div>
     <div class="buttonArea" style="display: flex; justify-content: space-between;">

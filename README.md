@@ -64,7 +64,7 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 ## 更新日志
 
 ### v4.1.0 (2024/7/17)
-- 添加了FTP功能
+- 添加了WebDAV功能
 - 精简了一部分代码
 
 <details>

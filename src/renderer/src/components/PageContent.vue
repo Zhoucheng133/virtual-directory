@@ -12,8 +12,8 @@
       </div>
       <div class="title">权限</div>
       <div style="display: flex; margin-top: 5px;">
-        <a-checkbox v-model:checked="formData().write" :disabled="mainData().onRunning || formData().easyMode">写入</a-checkbox>
-        <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning || formData().easyMode">删除</a-checkbox>
+        <a-checkbox v-model:checked="formData().write" :disabled="mainData().onRunning">写入</a-checkbox>
+        <a-checkbox v-model:checked="formData().del" :disabled="mainData().onRunning">删除</a-checkbox>
       </div>
       <div class="title">需要登录</div>
       <div style="display: flex;">

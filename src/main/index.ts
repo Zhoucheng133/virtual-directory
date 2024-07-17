@@ -13,8 +13,7 @@ import mime from 'mime-types';
 import archiver from 'archiver';
 import multer from 'multer';
 import icon from '../../resources/icon.png?asset'
-import { FtpSrv } from 'ftp-srv';
-process.env.DEBUG = "-ftp-srv*";
+import { v2 as webdav } from 'webdav-server'
 
 import sharp from 'sharp';
 let mainWindow: BrowserWindow;
@@ -85,7 +84,6 @@ ipcMain.on('minApp', ()=>{
   mainWindow.minimize();
 })
 
-let ip="";
 
 // 获取IP地址
 ipcMain.handle('getIP', ()=>{
@@ -98,7 +96,6 @@ ipcMain.handle('getIP', ()=>{
       }
     }
   }
-  ip=addr[0];
   return addr[0];
 })
 
@@ -113,35 +110,11 @@ ipcMain.handle('selectDir', async ()=>{
   return returnPath;
 })
 
-let ftpServer: FtpSrv;
-
 // 运行服务
-ipcMain.handle('runServer', (_event, port, localPath, username, password, enableRead, enableWrite, enableDel, useFTP: boolean, ftpPort)=>{
+ipcMain.handle('runServer', (_event, port, localPath, username, password, enableRead, enableWrite, enableDel, useDAV: boolean)=>{
   expressApp=express();
   expressApp.use(cors());
   expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
-
-  if(useFTP){
-    ftpServer = new FtpSrv({
-      url: `ftp://0.0.0.0:${ftpPort}`,
-      pasv_url: `ftp://${ip}`,
-      pasv_min: 5054,
-      pasv_max: 5055,
-      anonymous: username=="" ? true : false,
-      greeting: ["Hello user"]
-    });
-  
-    ftpServer.on('login', (data, resolve, reject) => {
-      if(username==""){
-        return resolve({ root: localPath });
-      }else if(data.username==username && data.password==password){
-        return resolve({ root: localPath });
-      }else {
-        reject();
-      }
-    });
-    ftpServer.listen()
-  }
 
   // 格式化文件大小显示
   const formatFileSize=(bytes: number)=>{
@@ -266,6 +239,13 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
   expressApp.get('/vite.svg', async(_req: any, res: any)=>{
     res.sendFile(path.join(__dirname, '../../ui/dist', 'vite.svg'));
   })
+
+  if(useDAV){
+    const dav = new webdav.WebDAVServer({});
+    const root = new webdav.PhysicalFileSystem(localPath); // 指定文件系统的根目录
+    dav.setFileSystemSync('/', root);
+    expressApp.use(webdav.extensions.express("/dav", dav));
+  }
 
   // 判断是否需要登陆
   expressApp.get('/api/needLogin', async(_req: any, res: any)=>{
@@ -739,7 +719,6 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
 // 停止服务
 ipcMain.handle('stopServer', ()=>{
-  ftpServer.close();
   sockets.forEach(function(socket){
 		socket.destroy();
 	});

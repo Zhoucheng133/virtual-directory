@@ -13,10 +13,6 @@ export default defineStore('mainData', ()=>{
       window.electron.ipcRenderer.invoke('stopServer');
     }else{
       // 运行服务
-      if(formData().port==formData().ftpPort && formData().useFTP){
-        message.error("FTP端口和主服务端口相同");
-        return;
-      }
       const ok = await window.electron.ipcRenderer.invoke('checkPath', formData().dir);
       if(!ok){
         message.error("映射目录不合法");
@@ -38,8 +34,7 @@ export default defineStore('mainData', ()=>{
           formData().read, 
           formData().write, 
           formData().del, 
-          formData().useFTP, 
-          formData().ftpPort
+          formData().useDAV, 
         )
       }else{
         window.electron.ipcRenderer.invoke('runServer', 
@@ -50,8 +45,7 @@ export default defineStore('mainData', ()=>{
           formData().read, 
           formData().write, 
           formData().del, 
-          formData().useFTP, 
-          formData().ftpPort
+          formData().useDAV, 
         )
       }
       onRunning.value=true;

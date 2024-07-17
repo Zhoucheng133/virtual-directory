@@ -10,10 +10,9 @@ export default defineStore('formData', ()=>{
   let useLogin=ref(false);
   let username=ref("");
   let password=ref("");
-  let ftpPort=ref(2211);
-  let useFTP=ref(false);
+  let useDAV=ref(false);
 
-  watch([port, dir, write, read, del, useLogin, username, password, ftpPort, useFTP], ()=>{
+  watch([port, dir, write, read, del, useLogin, username, password, useDAV], ()=>{
     localStorage.setItem("form", JSON.stringify({
       port: port.value,
       dir: dir.value,
@@ -23,8 +22,7 @@ export default defineStore('formData', ()=>{
       useLogin: useLogin.value,
       username: username.value,
       password: password.value,
-      ftpPort: ftpPort.value,
-      useFTP: useFTP.value
+      useDAV: useDAV.value,
     }));
   })
 
@@ -43,9 +41,7 @@ export default defineStore('formData', ()=>{
     useLogin.value=val.useLogin;
     username.value=val.username;
     password.value=val.password;
-    useFTP.value=val.useFTP;
-    ftpPort.value=val.ftpPort;
+    useDAV.value=val.useDAV;
   }
-
-  return { port, dir, write, read, del, useLogin, username, password, setForm, selectDir, ftpPort, useFTP };
+  return { port, dir, write, read, del, useLogin, username, password, setForm, selectDir, useDAV };
 })

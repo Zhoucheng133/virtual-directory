@@ -49,7 +49,10 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
   6. 在局域网内可以通过`IPv4`地址访问到虚拟目录网站
   7. 注意，如果你希望在局域网内/公网中访问到页面，**务必保证没有被防火墙拦截**
 
-- **注意没有互联网连接时，在打开页面时可能出现问题**
+- 使用WebDAV
+  1. 访问的客户端需要有可以连接WebDAV的工具，例如iOS端的Documents或者安卓端的ES文件管理器等
+  2. 勾选启用WebDAV服务，启动服务
+  3. 在Documents或其他可以访问WebDAV服务的软件中连接到WebDAV即可，地址为`<ip地址>:<端口号>/dav`
 
 ## 常见问题
 

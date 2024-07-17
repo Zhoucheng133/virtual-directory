@@ -32,9 +32,29 @@ export default defineStore('mainData', ()=>{
         return;
       }
       if(formData().useLogin){
-        window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, formData().username, formData().password, formData().read, formData().write, formData().del)
+        window.electron.ipcRenderer.invoke('runServer', 
+          formData().port, 
+          formData().dir, 
+          formData().username, 
+          formData().password, 
+          formData().read, 
+          formData().write, 
+          formData().del, 
+          formData().useFTP, 
+          formData().ftpPort
+        )
       }else{
-        window.electron.ipcRenderer.invoke('runServer', formData().port, formData().dir, '', '', formData().read, formData().write, formData().del)
+        window.electron.ipcRenderer.invoke('runServer', 
+          formData().port, 
+          formData().dir, 
+          '', 
+          '', 
+          formData().read, 
+          formData().write, 
+          formData().del, 
+          formData().useFTP, 
+          formData().ftpPort
+        )
       }
       logData().addLog('运行服务')
       onRunning.value=true;

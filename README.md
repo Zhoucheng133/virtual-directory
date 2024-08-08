@@ -12,7 +12,7 @@
 ![bootstrap-icons](https://img.shields.io/badge/bootstrap_icons-1.11.3-purple)
 ![uuid](https://img.shields.io/badge/uuid-9.0.1-orange)
 ![multer](https://img.shields.io/badge/multer-1.4.5-lightblue)
-![sharp](https://img.shields.io/badge/multer-0.33.3-lightgreen)
+![sharp](https://img.shields.io/badge/sharp-0.33.3-lightgreen)
 
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 

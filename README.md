@@ -18,8 +18,6 @@
 
 UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
-正在尝试使用macOS虚拟机打包macOS版本...
-
 ## 经过测试的系统
 -  macOS 14
 -  Windows 11

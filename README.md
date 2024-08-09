@@ -66,11 +66,14 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 更新日志
 
-### v4.1.1 (2024/7/30)
-- 修复Windows图标显示问题
+### v4.1.2 (2024/8/9)
+- 添加播放器中文支持
 
 <details>
 <summary>过往的版本</summary>
+
+### v4.1.1 (2024/7/30)
+- 修复Windows图标显示问题
 
 ### v4.1.0 (2024/7/17)
 - 添加了WebDAV功能

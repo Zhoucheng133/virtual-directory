@@ -17,7 +17,7 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import PageContent from './components/PageContent.vue';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 const closeApp=()=>{
@@ -29,11 +29,14 @@ const minApp=()=>{
 
 let isWin=ref(false);
 
-window.electron.ipcRenderer.invoke('getSys').then((response)=>{
-  if(response=='Windows'){
-    isWin.value=true;
-  }
+onMounted(() => {
+  window.electron.ipcRenderer.invoke('getSys').then((response)=>{
+    if(response=='Windows'){
+      isWin.value=true;
+    }
+  })
 })
+
 </script>
 
 <style>

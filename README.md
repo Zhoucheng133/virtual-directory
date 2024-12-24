@@ -1,5 +1,7 @@
 # Virtual Directory
 
+<img src='build/icon.png' width=100 />
+
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 
 UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)

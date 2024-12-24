@@ -64,7 +64,7 @@ UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)
 
 ## 更新日志
 
-### v4.0.3 (2024/12/24)
+### v4.1.3 (2024/12/24)
 - 添加了对macOS系统的支持
 - 修复一个问题
 

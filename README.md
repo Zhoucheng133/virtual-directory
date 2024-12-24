@@ -1,19 +1,5 @@
 # Virtual Directory
 
-![vue](https://img.shields.io/badge/vue.js-3.4.15-green?logo=vue.js)
-![Electron](https://img.shields.io/badge/Electron-28.2-white)
-![Antd](https://img.shields.io/badge/Antd-4.x-blue)
-![express](https://img.shields.io/badge/express-4.19.2-red )
-![cors](https://img.shields.io/badge/cors-2.8.5-orange)
-![crypto-js](https://img.shields.io/badge/crypto_js-4.2.0-yellow)
-![mime-types](https://img.shields.io/badge/mime_types-2.1.35-pink)
-![archiver](https://img.shields.io/badge/archiver-7.0.1-darkgreen)
-![pinia](https://img.shields.io/badge/pinia-2.1.7-yellow)
-![bootstrap-icons](https://img.shields.io/badge/bootstrap_icons-1.11.3-purple)
-![uuid](https://img.shields.io/badge/uuid-9.0.1-orange)
-![multer](https://img.shields.io/badge/multer-1.4.5-lightblue)
-![sharp](https://img.shields.io/badge/sharp-0.33.3-lightgreen)
-
 ![License](https://img.shields.io/badge/License-MIT-dark_green)
 
 UI网页端项目[在这里](https://github.com/Zhoucheng133/virtual-dir-page)

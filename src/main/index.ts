@@ -20,6 +20,7 @@ let mainWindow: BrowserWindow;
 let expressApp: any;
 var sockets: any[] = [];
 let server: any;
+const platform = process.platform;
 
 function createWindow(){
   mainWindow = new BrowserWindow({
@@ -114,8 +115,12 @@ ipcMain.handle('selectDir', async ()=>{
 ipcMain.handle('runServer', (_event, port, localPath, username, password, enableRead, enableWrite, enableDel, useDAV: boolean)=>{
   expressApp=express();
   expressApp.use(cors());
-  expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
-
+  if(platform=='win32'){
+    expressApp.use('/assets', express.static(path.join(__dirname, '../../ui/dist/assets')));
+  }else if(platform=='darwin'){
+    expressApp.use('/assets', express.static(path.join(app.getAppPath(), '../ui/dist/assets')));
+  }
+  
   // 格式化文件大小显示
   const formatFileSize=(bytes: number)=>{
     if (bytes === 0) return '0 Bytes';
@@ -233,11 +238,19 @@ ipcMain.handle('runServer', (_event, port, localPath, username, password, enable
 
   // 指向页面
   expressApp.get('/', async(_req: any, res: any)=>{
-    res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
+    if(platform=='win32'){
+      res.sendFile(path.join(__dirname, '../../ui/dist', 'index.html'));
+    }else{
+      res.sendFile(path.join(app.getAppPath(), '../ui/dist', 'index.html'));
+    }
   })
 
   expressApp.get('/vite.svg', async(_req: any, res: any)=>{
-    res.sendFile(path.join(__dirname, '../../ui/dist', 'vite.svg'));
+    if(platform=='win32'){
+      res.sendFile(path.join(__dirname, '../../ui/dist', 'vite.svg'));
+    }else{
+      res.sendFile(path.join(app.getAppPath(), '../ui/dist', 'vite.svg'));
+    }
   })
 
   if(useDAV){
